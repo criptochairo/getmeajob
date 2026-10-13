@@ -1,0 +1,62 @@
+# Persona FICTICIA para pruebas y ejemplo. Ningún dato real.
+schema_version: 1
+personal:
+  full_name: "Ana Ejemplo Pérez"
+  preferred_name: "Ana"
+  pronouns: "ella"
+  email: "ana.ejemplo@example.com"
+  phone: "55 0000 0000"
+  location: {city: "Ciudad de México", area: "Coyoacán", state: "CDMX", country: "México"}
+  links: {linkedin: "https://www.linkedin.com/in/ana-ejemplo", portfolio: "", github: "", other: []}
+headline: {es: "Analista de datos | SQL, Python y Power BI", en: "Data Analyst | SQL, Python and Power BI"}
+summary_facts:
+  - {text: "4 años analizando datos de ventas y operaciones", confirmed: "2026-10-13"}
+experience:
+  - id: comercial-norte-analista
+    title: "Analista de datos"
+    company: "Comercial del Norte (ficticia)"
+    location: "Ciudad de México"
+    work_mode: hybrid
+    engagement: employee
+    start: "2022-03"
+    end: present
+    responsibilities: ["Tableros de ventas en Power BI", "Consultas SQL para operaciones"]
+    achievements:
+      - {text: "Redujo 30% el tiempo de cierre mensual automatizando reportes", evidence: "reporte interno 2024", confirmed: "2026-10-13"}
+    tools: ["SQL", "Python", "Power BI"]
+    exit_reason: "Busco un rol remoto con más alcance analítico"
+    omit_from_cv: false
+    confirmed: "2026-10-13"
+education:
+  - {degree: "Licenciatura en Actuaría", field: "Actuaría", institution: "Universidad Ejemplo", start: "2016", end: "2020", status: completed, license: {has_license: false, number_on_file: false}, gpa: "8.9", honors: "", confirmed: "2026-10-13"}
+certifications:
+  - {name: "Google Data Analytics", issuer: "Google", date: "2023-05", expires: "", credential_id: "", url: "", confirmed: "2026-10-13"}
+languages:
+  - {language: "Español", level: "Nativo", cefr: "C2", certificate: ""}
+  - {language: "Inglés", level: "Avanzado", cefr: "B2", certificate: ""}
+skills: {technical: ["SQL", "Python", "estadística"], tools: ["Power BI", "Excel"], soft: ["comunicación"], domain: ["ventas", "operaciones"]}
+years_by_domain:
+  - {domain: "análisis de datos", years: 4, evidence: "Comercial del Norte", confirmed: "2026-10-13"}
+projects: []
+volunteering: []
+publications: []
+awards: []
+preferences:
+  roles_wanted: ["analista de datos", "analista BI"]
+  industries_wanted: ["retail", "fintech"]
+  industries_avoid: []
+  seniority: mid
+  work_modes: [remote, hybrid]
+  contract_types: ["nómina"]
+  relocation: "No"
+  travel: "Ocasional"
+  dealbreakers: []
+  excluded_companies: ["Comercial del Norte (ficticia)"]
+  confidential_search: true
+  chosen_role_families: [{id: datos, name: "Análisis de datos / BI", label: seguro}]
+cv_policy:
+  omit_employers: ["Empresa Omitida"]
+  if_form_requires_all_employers: escalate
+  forbidden_strings: ["55 9999 9999"]
+  page_size: Letter
+  pdf_name: "CV {full_name}.pdf"

@@ -1,0 +1,94 @@
+# Respuestas permitidas para formularios. Si una pregunta no tiene respuesta aquí (ni en profile.yaml) → se escala, no se improvisa.
+# Lo llena la entrevista (skill gmaj-onboarding). "prefer_not_to_say" es una respuesta válida en todo lo demográfico.
+schema_version: 1
+
+identity:
+  date_of_birth: ""            # opcional; algunos formularios en México lo piden
+  age: null
+  gender: ""                   # como el usuario quiera responderlo, o prefer_not_to_say
+  pronouns: ""
+  nationalities: []
+  government_ids: escalate     # CURP, RFC, NSS, pasaporte: NUNCA se escriben sin escalar
+
+work_authorization:
+  countries_authorized: []     # países donde puede trabajar legalmente sin patrocinio
+  requires_sponsorship: {}     # {US: true, CA: true, ...}
+  visas: []
+  remote_contractor_note: ""   # p. ej. "Trabajo como contratista internacional desde México"
+
+engagement:
+  employee_ok: true
+  contractor_ok: true
+  freelance_ok: false
+  hourly_ok: true
+
+availability:
+  notice_period: ""            # "2 semanas"
+  start_date_rule: ""          # "2 semanas después de la oferta"
+  timezone: ""                 # America/Mexico_City
+  can_work_hours: ""           # "9-18 CDMX; puede cubrir horario de EE.UU. Este"
+  hours_per_week: 40
+
+salary_expectation:
+  currency: ""                 # moneda base (MXN)
+  floor_month: null            # piso: lo mínimo que aceptaría (mensual bruto, moneda base)
+  target_month: null           # meta
+  monthly: null                # lo que responde cuando piden expectativa mensual bruta
+  yearly: null
+  hourly_usd: null
+  monthly_usd: null
+  range_rule: ""               # cómo responder si piden rango
+  office_min_month: null       # expectativa para híbrido/presencial (si la acepta)
+  last_gross_month: null       # último sueldo bruto mensual (opcional)
+  disclose_last_salary: escalate   # yes | no | escalate
+
+address_for_forms:
+  street: ""
+  neighborhood: ""             # colonia
+  zip: ""
+  city: ""
+  state: ""
+  country: ""
+
+relocation: ""
+travel: ""
+education_highest: ""
+gpa: ""
+transcript_file: ""            # ruta dentro de user/documents/
+country_specific: {}           # p. ej. MX: {rfc_active: true, efirma_active: true}
+
+conflicts:
+  previously_employed_by_employer: "Según profile.yaml experience; si la empresa no aparece ahí: No"
+  previously_worked_at_affiliates: "No, salvo lo que diga profile.yaml"
+  known_employees_at: {}       # {empresa: "nombre / relación"}
+  relatives_at_employer: false
+  government_official_relative: false
+  politically_exposed_person: false
+  referred_by: null
+
+consents:
+  sms: true
+  keep_application_for_other_roles: true
+  background_check: true
+  references_available: "Disponibles a solicitud"
+
+accepted_terms: {}             # {empresa_termino: AAAA-MM-DD} términos que el usuario aceptó expresamente
+
+references: []                 # [{name, relation, contact}] solo con permiso de cada referencia
+
+how_did_you_hear: "Por el canal donde se publicó la vacante (LinkedIn, Indeed, OCC...)"
+
+eeo_voluntary:
+  gender: prefer_not_to_say
+  race_ethnicity: prefer_not_to_say
+  veteran: prefer_not_to_say
+  disability: prefer_not_to_say
+
+escalate_always:
+  - "Video o audio grabado, o entrevista con IA"
+  - "Assessment o prueba técnica"
+  - "CAPTCHA que no se resuelve con un clic"
+  - "Crear cuenta con contraseña o verificar un código"
+  - "Números de identificación oficial (CURP, RFC, NSS, pasaporte)"
+  - "Términos que van más allá de un aviso de privacidad"
+  - "Pregunta abierta de ensayo o técnica (se redacta borrador para aprobación)"

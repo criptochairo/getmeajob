@@ -1,0 +1,21 @@
+# Persona FICTICIA para pruebas.
+schema_version: 1
+identity: {date_of_birth: "", age: 28, gender: "mujer", pronouns: "ella", nationalities: ["mexicana"], government_ids: escalate}
+work_authorization: {countries_authorized: ["MX"], requires_sponsorship: {US: true}, visas: [], remote_contractor_note: "Puedo trabajar como contratista desde México"}
+engagement: {employee_ok: true, contractor_ok: true, freelance_ok: false, hourly_ok: true}
+availability: {notice_period: "2 semanas", start_date_rule: "2 semanas después de la oferta", timezone: "America/Mexico_City", can_work_hours: "9-18 CDMX", hours_per_week: 40}
+salary_expectation: {currency: MXN, floor_month: 30000, target_month: 40000, monthly: 40000, yearly: 480000, hourly_usd: 14, monthly_usd: 2200, range_rule: "40,000-45,000 MXN", office_min_month: 60000, last_gross_month: null, disclose_last_salary: escalate}
+address_for_forms: {street: "Calle Ficticia 1", neighborhood: "Centro", zip: "00000", city: "Ciudad de México", state: "CDMX", country: "México"}
+relocation: "No"
+travel: "Ocasional"
+education_highest: "Licenciatura"
+gpa: "8.9"
+transcript_file: ""
+country_specific: {MX: {rfc_active: true, efirma_active: false}}
+conflicts: {previously_employed_by_employer: "Según profile.yaml", previously_worked_at_affiliates: "No", known_employees_at: {}, relatives_at_employer: false, government_official_relative: false, politically_exposed_person: false, referred_by: null}
+consents: {sms: true, keep_application_for_other_roles: true, background_check: true, references_available: "Disponibles a solicitud"}
+accepted_terms: {}
+references: []
+how_did_you_hear: "Por el canal donde se publicó la vacante"
+eeo_voluntary: {gender: prefer_not_to_say, race_ethnicity: prefer_not_to_say, veteran: prefer_not_to_say, disability: prefer_not_to_say}
+escalate_always: ["Video o audio grabado", "Assessment", "CAPTCHA", "Crear cuenta", "IDs oficiales"]

@@ -1,0 +1,29 @@
+# Qué motor hace cada cosa. La mayoría de usuarios tiene UNO: claude o codex. `dual` es opcional y requiere ambos.
+schema_version: 1
+mode: claude                   # claude | codex | dual   (lo propone `gmaj doctor`; cámbialo con `gmaj engines set <modo>`)
+
+# Solo en modo dual: qué motor toma cada rol. Si uno se queda sin cuota, el otro toma su turno (failover).
+assign:
+  orchestrate: claude        # corrida diaria, verificación de modalidad, LinkedIn/Indeed/OCC/chats
+  score: claude
+  tailor: claude
+  tailor_high: claude
+  review: codex              # quien adapta nunca aprueba
+  apply: codex               # formularios largos de ATS (Workday, Greenhouse, Lever, Ashby...)
+  mail: codex
+  profile: claude
+failover: true
+
+# Modelo y esfuerzo por rol y motor. model: null = el modelo por defecto del CLI.
+roles:
+  orchestrate: {claude: {model: sonnet, effort: medium}, codex: {model: null, effort: medium}}
+  score:       {claude: {model: haiku, effort: low},     codex: {model: null, effort: low}}
+  tailor:      {claude: {model: sonnet, effort: medium}, codex: {model: null, effort: medium}}
+  tailor_high: {claude: {model: opus, effort: medium},   codex: {model: null, effort: high}}
+  review:      {claude: {model: opus, effort: medium},   codex: {model: null, effort: medium}}
+  apply:       {claude: {model: sonnet, effort: medium}, codex: {model: null, effort: medium}}
+  mail:        {claude: {model: haiku, effort: low},     codex: {model: null, effort: low}}
+  profile:     {claude: {model: opus, effort: medium},   codex: {model: null, effort: high}}
+
+claude_permission_mode: auto
+codex_sandbox: workspace-write

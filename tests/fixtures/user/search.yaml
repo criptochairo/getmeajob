@@ -1,0 +1,213 @@
+schema_version: 1
+market:
+  country: MX
+  country_label: México
+  city: Ciudad de México
+  linkedin_location: Mexico
+currency:
+  base: MXN
+  rates:
+    USD: 18.0
+    EUR: 19.5
+salary:
+  floor_month: 30000
+  target_month: 40000
+  office_min_month: 60000
+  unknown_salary: keep
+work_mode:
+  remote: accept
+  hybrid: zones
+  onsite: reject
+  zones:
+    ok:
+    - benito juárez
+    - coyoacán
+    - mexico city, mexico
+    - ciudad de méxico
+    ask:
+    - polanco
+    - naucalpan
+    reject:
+    - santa fe
+eligibility:
+  candidate_location: Ciudad de México, México
+  reject_phrases:
+  - must be authorized to work in the united states
+  - must be legally authorized to work in the us
+  - us work authorization required
+  - no visa sponsorship
+  - must reside in the united states
+  - must be located in the us
+  - us citizens only
+  - security clearance
+  - eu work permit required
+  accept_phrases:
+  - latam
+  - latin america
+  - mexico
+  - méxico
+  - anywhere
+  - worldwide
+  - americas
+  - contractor
+  location_ok:
+  - mexico
+  - méxico
+  - latam
+  - latin america
+  - latinoamerica
+  - americas
+  - worldwide
+  - anywhere
+  - global
+  - remote
+  - remoto
+queries:
+  es:
+  - analista de datos
+  - analista de inteligencia de negocios
+  en:
+  - data analyst
+  - business intelligence analyst
+relevance_keywords:
+- data
+- datos
+- analyst
+- analista
+- business intelligence
+- bi
+variants:
+- family: datos
+  language: es
+  cv: cv_datos_es
+  cover: cover_datos_es
+sources:
+  remotive:
+    enabled: true
+    url: https://remotive.com/api/remote-jobs
+  remoteok:
+    enabled: true
+    url: https://remoteok.com/api
+  weworkremotely:
+    enabled: true
+    url: https://weworkremotely.com/remote-jobs.rss
+  himalayas:
+    enabled: true
+    url: https://himalayas.app/jobs/api/search
+  workingnomads:
+    enabled: true
+    url: https://www.workingnomads.com/api/exposed_jobs/
+  alignerr:
+    enabled: false
+    url: https://www.alignerr.com/api/jobs
+    page_size: 100
+    delay_seconds: 1
+  linkedin_guest:
+    enabled: true
+    url: https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search
+    passes:
+    - name: remote
+      locations:
+      - Mexico
+      - Latin America
+      filter: f_WT=2
+    posted_within_hours: 48
+    or_group_size: 5
+    max_pages_per_query: 2
+    delay_seconds: 5
+    delay_jitter: 4
+    retries_429: 1
+    backoff_429: 60
+    pause_on_block_seconds: 300
+    max_consecutive_blocks: 3
+  computrabajo:
+    enabled: true
+    url: https://mx.computrabajo.com
+    modality: remoto
+    language: es
+  occ:
+    enabled: false
+    browser: true
+    location_suffix: México
+    offer_url: https://www.occ.com.mx/empleo/oferta/{id}/
+  indeed:
+    enabled: false
+    browser: true
+    domain: mx.indeed.com
+    locations:
+    - México
+  greenhouse:
+  - acme
+  lever: []
+  ashby: []
+apply_sources:
+- linkedin_guest
+- indeed
+- occ
+- computrabajo
+- mail
+- himalayas
+- greenhouse
+- lever
+- ashby
+- remotive
+- weworkremotely
+- remoteok
+- workingnomads
+languages_allowed:
+- es
+- en
+exclusions:
+  companies: []
+  off_target_title_keywords:
+  - sales
+  - ventas
+  - nurse
+  title_keywords:
+  - intern
+  - internship
+  - becario
+  - pasantía
+  - practicante
+  - trainee
+scoring:
+  role_fit:
+    weight: 40
+    tiers:
+    - score: 40
+      match: Data / BI analyst
+  work_mode:
+    weight: 20
+    remote: 20
+    hybrid: 5
+    onsite: 0
+    unknown: 10
+  salary:
+    weight: 20
+    note: 20 si >= target, 10 entre piso y target, 8 si no publicado, 0 si < piso
+  skills_match:
+    weight: 15
+    note: ''
+  seniority:
+    weight: 5
+    note: ''
+  threshold_tailor: 50
+limits:
+  tailor_per_day: 20
+  per_platform_per_day:
+    linkedin: 25
+    indeed: 25
+    occ: 25
+    computrabajo: 25
+    default: 25
+  first_week_per_day: 10
+  start_date: '2026-10-01'
+  pause_between_applications_seconds:
+  - 45
+  - 120
+  jitter_pct: 10
+operation:
+  autonomy: supervised
+  supervised_until_clean_approvals: 10
+  discover_time: 08:30
+  run_time: 09:30

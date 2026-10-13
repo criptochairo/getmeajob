@@ -1,0 +1,96 @@
+# Perfil del candidato — ÚNICA fuente de hechos. Nada que no esté aquí puede aparecer en un CV, carta o formulario.
+# Lo llena la entrevista (skill gmaj-onboarding). Cada hecho lleva `confirmed: AAAA-MM-DD` (fecha en que el usuario lo confirmó).
+# Un valor "TODO" significa "pendiente": nunca se usa.
+schema_version: 1
+
+personal:
+  full_name: ""            # nombre legal completo, como aparece en documentos
+  preferred_name: ""       # cómo le gusta que le llamen (opcional)
+  pronouns: ""             # opcional: ella / él / elle / prefiero no decir
+  email: ""
+  phone: ""                # formato local, p. ej. 55 0000 0000
+  location:
+    city: ""
+    area: ""               # alcaldía / colonia / barrio, para calcular traslados
+    state: ""
+    country: ""
+  links:
+    linkedin: ""
+    portfolio: ""
+    github: ""
+    other: []
+
+headline: {es: "", en: ""}   # titular corto bajo el nombre en el CV
+
+summary_facts: []            # afirmaciones ya aprobadas para resúmenes: [{text, confirmed}]
+
+experience: []
+# - id: empresa-puesto            # identificador corto
+#   title: ""                      # en el idioma de la entrevista; las variantes traducen sin agregar hechos
+#   company: ""
+#   via: ""                        # agencia / outsourcing, si aplica
+#   location: ""
+#   work_mode: remote | hybrid | onsite
+#   engagement: employee | contractor | freelance | internship
+#   start: "AAAA-MM"
+#   end: "AAAA-MM" | present
+#   responsibilities: []
+#   achievements: []               # [{text, evidence, confirmed}]  solo cifras que el usuario puede respaldar
+#   tools: []
+#   exit_reason: ""                # para formularios que lo piden
+#   last_gross_salary: null        # opcional: {amount, currency, period}
+#   omit_from_cv: false            # true = nunca aparece en el CV (ver cv_policy)
+#   confirmed: "AAAA-MM-DD"
+
+education: []
+# - degree: ""                     # Licenciatura en ..., Maestría en ...
+#   field: ""
+#   institution: ""
+#   start: "AAAA"
+#   end: "AAAA"
+#   status: completed | in_progress | incomplete
+#   license: {has_license: false, number_on_file: false}   # cédula profesional / licencia: el número nunca se escribe sin escalar
+#   gpa: ""                        # promedio, si lo sabe
+#   honors: ""
+#   confirmed: "AAAA-MM-DD"
+
+certifications: []
+# - {name: "", issuer: "", date: "AAAA-MM", expires: "", credential_id: "", url: "", confirmed: ""}
+
+languages: []
+# - {language: "Español", level: "Nativo", cefr: "C2", certificate: ""}
+
+skills:
+  technical: []
+  tools: []
+  soft: []
+  domain: []
+
+years_by_domain: []           # respuestas honestas a "¿cuántos años de experiencia en X?"
+# - {domain: "", years: 0, evidence: "empresa/puesto donde lo hizo", confirmed: ""}
+
+projects: []                  # [{name, description, start, end, url, confirmed}]
+volunteering: []
+publications: []
+awards: []
+
+preferences:                  # lo que el usuario busca (insumo para search.yaml)
+  roles_wanted: []            # en sus palabras
+  industries_wanted: []
+  industries_avoid: []
+  seniority: ""               # junior / mid / senior / lead / manager
+  work_modes: []              # remote / hybrid / onsite
+  contract_types: []          # nómina / honorarios / contractor USD / freelance
+  relocation: ""
+  travel: ""
+  dealbreakers: []            # p. ej. "no aceptar designación de oficial de cumplimiento"
+  excluded_companies: []      # incluye a su empleador actual si la búsqueda es confidencial
+  confidential_search: false
+  chosen_role_families: []    # resultado de gmaj-suggest-roles: [{id, name, label: seguro|adyacente|stretch}]
+
+cv_policy:
+  omit_employers: []          # empleadores que nunca se mencionan
+  if_form_requires_all_employers: escalate   # escalate | include | omit
+  forbidden_strings: []       # teléfonos o correos viejos, apodos, etc.
+  page_size: Letter           # Letter | A4
+  pdf_name: "CV {full_name}.pdf"

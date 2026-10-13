@@ -1,5 +1,5 @@
 # Todo lo personal vive aquí y NUNCA se versiona en el template.
-user/
+/user/
 
 .venv/
 __pycache__/

@@ -1,0 +1,108 @@
+# Configuración de búsqueda. La genera gmaj-build-profile a partir de profile.yaml + catalogs/countries/<país>.yaml.
+# La leen `gmaj discover` (fetch, prefilter) y los agentes (scoring, envío). Defaults: México.
+schema_version: 1
+
+market:
+  country: MX
+  country_label: "México"
+  city: ""                       # ciudad del usuario (zonas de híbrido/presencial)
+  linkedin_location: "Mexico"
+
+currency:
+  base: MXN
+  rates: {USD: 18.0, EUR: 19.5}  # 1 unidad = X moneda base; actualizar si cambia mucho
+
+salary:
+  floor_month: null              # piso absoluto (moneda base, mensual bruto)
+  target_month: null
+  office_min_month: null         # mínimo para híbrido/presencial (opcional)
+  unknown_salary: keep
+
+work_mode:
+  remote: accept
+  hybrid: reject                 # accept | reject | zones
+  onsite: reject                 # accept | reject | zones
+  zones: {ok: [], ask: [], reject: []}   # colonias/alcaldías/municipios para traslados
+
+eligibility:
+  candidate_location: ""
+  reject_phrases:
+    - "must be authorized to work in the united states"
+    - "must be legally authorized to work in the us"
+    - "us work authorization required"
+    - "no visa sponsorship"
+    - "must reside in the united states"
+    - "must be located in the us"
+    - "us citizens only"
+    - "security clearance"
+    - "eu work permit required"
+  accept_phrases: ["latam", "latin america", "mexico", "méxico", "anywhere", "worldwide", "americas", "contractor"]
+  location_ok: ["mexico", "méxico", "latam", "latin america", "latinoamerica", "americas", "worldwide", "anywhere", "global", "remote", "remoto"]
+
+queries: {es: [], en: []}        # títulos a buscar, por idioma (salen de las familias de rol elegidas)
+relevance_keywords: []           # palabras completas que hacen relevante un título ("analista", "datos"...; plurales incluidos)
+
+variants: []                     # [{family, language, cv: cv_<familia>_<idioma>, cover: cover_<familia>_<idioma>}]
+
+sources:
+  remotive:       {enabled: true, url: "https://remotive.com/api/remote-jobs"}
+  remoteok:       {enabled: true, url: "https://remoteok.com/api"}
+  weworkremotely: {enabled: true, url: "https://weworkremotely.com/remote-jobs.rss"}
+  himalayas:      {enabled: true, url: "https://himalayas.app/jobs/api/search"}
+  workingnomads:  {enabled: true, url: "https://www.workingnomads.com/api/exposed_jobs/"}
+  alignerr:       {enabled: false, url: "https://www.alignerr.com/api/jobs", page_size: 100, delay_seconds: 1}
+  linkedin_guest:
+    enabled: true
+    url: "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
+    passes:
+      - {name: remote, locations: ["Mexico", "Latin America"], filter: "f_WT=2"}
+    # Anti-429: ventana de 48 h, consultas agrupadas con OR, esperas al azar de 5-9 s, 3 bloqueos seguidos → se rinde.
+    posted_within_hours: 48
+    or_group_size: 5
+    max_pages_per_query: 2
+    delay_seconds: 5
+    delay_jitter: 4
+    retries_429: 1
+    backoff_429: 60
+    pause_on_block_seconds: 300
+    max_consecutive_blocks: 3
+    cooldown_hours: 6             # tras rendirse, nadie vuelve a llamar a LinkedIn en este tiempo (también el conteo de mercado)
+  computrabajo:   {enabled: true, url: "https://mx.computrabajo.com", modality: "remoto", language: es}
+  # Solo por navegador (anti-bot): los barre el agente con `gmaj collector occ|indeed` y `gmaj add-jobs`.
+  occ:    {enabled: false, browser: true, location_suffix: "México", offer_url: "https://www.occ.com.mx/empleo/oferta/{id}/"}
+  indeed: {enabled: false, browser: true, domain: "mx.indeed.com", locations: ["México"]}
+  greenhouse: []                 # slugs de empresas (catalogs/ats_boards.yaml)
+  lever: []
+  ashby: []
+
+apply_sources: [linkedin_guest, indeed, occ, computrabajo, mail, himalayas, greenhouse, lever, ashby, remotive, weworkremotely, remoteok, workingnomads]
+
+languages_allowed: [es, en]
+
+exclusions:
+  companies: []
+  off_target_title_keywords: []  # títulos que nunca son del objetivo (se descartan sin gastar scoring)
+  title_keywords: ["intern", "internship", "becario", "pasantía", "practicante", "trainee"]
+
+scoring:                         # rúbrica 0-100; prompts/score.md la aplica junto con generated/candidate_brief.md
+  role_fit: {weight: 40, tiers: []}   # [{score: 40, match: "..."}]
+  work_mode: {weight: 20, remote: 20, hybrid: 5, onsite: 0, unknown: 10}
+  salary: {weight: 20, note: "20 si >= target, 10 entre piso y target, 8 si no publicado, 0 si < piso"}
+  skills_match: {weight: 15, note: ""}
+  seniority: {weight: 5, note: ""}
+  threshold_tailor: 50
+
+limits:
+  tailor_per_day: 20
+  per_platform_per_day: {linkedin: 25, indeed: 25, occ: 25, computrabajo: 25, default: 25}
+  first_week_per_day: 10         # cuentas nuevas: tope menor los primeros 7 días desde start_date
+  start_date: null               # lo fija el setup (AAAA-MM-DD)
+  pause_between_applications_seconds: [45, 120]
+  jitter_pct: 10
+
+operation:
+  autonomy: supervised           # supervised | autopilot
+  supervised_until_clean_approvals: 10
+  discover_time: "08:30"
+  run_time: "09:30"
+  linkedin_alerts: []           # alertas de empleo de LinkedIn por correo creadas en el setup: [{family, keywords, created}]
