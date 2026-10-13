@@ -62,6 +62,7 @@ Pregunta si tiene un CV (PDF o Word) o puede exportar su perfil de LinkedIn ("M�
     - Canales donde **ya tiene cuenta** (LinkedIn, Indeed, OCC, Computrabajo...) y en cuáles está dispuesto a crearla él mismo.
     - Explica el **modo supervisado**: las primeras 10 postulaciones esperan su visto bueno; después se le ofrecerá el piloto automático.
     - Hora de la corrida diaria y si la computadora suele estar encendida a esa hora.
+    - ¿Podemos leer su Gmail (solo lectura)? Sirve para detectar entrevistas y rechazos, y para recibir **alertas de LinkedIn por correo** (se crean en gmaj-build-profile), la fuente más estable de vacantes de LinkedIn.
     - Plan de suscripción (Claude Pro/Max, ChatGPT Plus/Pro): con planes chicos se reducen `limits.tailor_per_day` (p. ej. 10) para no agotar la cuota.
 
 ## 3. Cierre

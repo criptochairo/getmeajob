@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import sys
 
-from . import engines, paths, render_cv, schedule, validate
+from . import cooldown, engines, paths, render_cv, schedule, validate
 
 WIN = sys.platform.startswith('win')
 MAC = sys.platform == 'darwin'
@@ -61,6 +61,9 @@ def checks():
     v = validate.check()
     out.append(item('perfil completo (gmaj validate)', v['ok'], '; '.join(v['problems'][:5]) or 'ok',
                     'continúa la entrevista (skill gmaj-onboarding)', required=False))
+    paused = cooldown.active('linkedin_guest')
+    out.append(item('LinkedIn sin bloqueo', not paused, cooldown.describe(paused) if paused else 'ok',
+                    'esperar; las alertas por correo siguen trayendo vacantes', required=False))
     out.append(item('tarea diaria de descubrimiento', schedule.status('discover'), '', 'gmaj schedule install --time 08:30',
                     required=False))
     return out

@@ -4,6 +4,9 @@ from datetime import datetime, timezone
 from urllib.parse import parse_qsl
 from bs4 import BeautifulSoup
 from .common import job, queries, relevant, LOG
+from .. import cooldown
+
+SOURCE = 'linkedin_guest'
 
 def parse_cards(html):
     soup = BeautifulSoup(html, 'html.parser')
@@ -49,6 +52,11 @@ def blocked(exc):
     return getattr(exc, 'response', None) is not None and exc.response.status_code in (403, 429)
 
 def fetch(config, client):
+    paused = cooldown.active(SOURCE)
+    if paused:
+        # Otro proceso (o la corrida anterior) ya fue bloqueado: no insistir hasta que pase el enfriamiento.
+        client.error('source', 'LinkedIn ' + cooldown.describe(paused))
+        return
     seen = set()
     tpr = f'r{window_seconds(client)}'
     LOG.info('linkedin_guest: f_TPR=%s', tpr)
@@ -72,6 +80,8 @@ def fetch(config, client):
                         strikes += 1
                         if strikes >= max_blocks:
                             client.error('remaining queries', f'Skipped after {strikes} consecutive blocks')
+                            cooldown.start(SOURCE, f'{strikes} bloqueos seguidos en la búsqueda diaria',
+                                           float(client.options.get('cooldown_hours', cooldown.DEFAULT_HOURS)))
                             return
                         LOG.info('linkedin_guest: bloqueado (%d/%d), pausa %.0f s y sigo con la siguiente búsqueda', strikes, max_blocks, pause)
                         time.sleep(pause)

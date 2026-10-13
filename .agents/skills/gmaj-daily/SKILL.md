@@ -37,4 +37,4 @@ c. `uv run gmaj prefilter`.
 - Modo dual: el turno de navegador lo toma un motor a la vez (`user/state/browser.lock`); los ATS largos (`assign.apply`) los envía ese motor con `uv run gmaj run-role apply --chrome --prompt-file <prompt con prompts/apply.md + carpetas>`; espera a que termine antes de tocar el navegador.
 
 ## 6. Reporte
-Escribe `user/reports/<fecha>.md`: fuentes con errores o 0 resultados (`user/data/fetch_report.json`), nuevas / filtradas / calificadas, carpetas creadas, enviadas, por aprobar, escaladas (con motivo), correos importantes, consumo (`user/logs/usage.jsonl` de hoy). Última línea: "Corrida completa". Cierra todas tus pestañas.
+Escribe `user/reports/<fecha>.md`: fuentes con errores o 0 resultados (`user/data/fetch_report.json`; si LinkedIn está en pausa por bloqueo — `user/data/linkedin_guest_cooldown.json` — dilo y que las alertas por correo cubren el hueco), nuevas / filtradas / calificadas, carpetas creadas, enviadas, por aprobar, escaladas (con motivo), correos importantes, consumo (`user/logs/usage.jsonl` de hoy). Última línea: "Corrida completa". Cierra todas tus pestañas.

@@ -36,5 +36,12 @@ Pide la revisión a otra instancia: escribe la lista de archivos en un prompt y 
 ## 5. Aprobación del usuario
 Muestra la lista de PDFs (rutas) y pídele que los abra y revise. Aplica sus correcciones (actualizando primero `profile.yaml` si es un hecho). Pide confirmación expresa: "¿Apruebas estos CVs para usarlos en tus postulaciones?". Registra `profile.cv_policy.approved: <fecha>`.
 
-## 6. Cierre
+## 6. Alertas de LinkedIn por correo (segunda fuente, sin peticiones)
+Explica: LinkedIn limita cuántas búsquedas automáticas acepta; si un día bloquea, las alertas por correo siguen trayendo sus vacantes sin hacerle ninguna petición. Requiere que el agente pueda leer su Gmail (conector de Claude o plugin de Codex); si no lo tiene, ofrece conectarlo o sáltate este paso.
+1. Pide permiso para crear las alertas en su cuenta (o que él haga clic, si lo prefiere).
+2. Por cada familia elegida, en una pestaña nueva con su sesión: `https://www.linkedin.com/jobs/search/?keywords=<2-3 títulos de la familia unidos con OR>&location=<market.linkedin_location>&f_TPR=r86400` (+ `&f_WT=2` si solo quiere remoto). Activa **"Crear alerta" / "Set alert"** con frecuencia **diaria** y aviso **por correo**. Máximo ~5 alertas en total.
+3. Verifica en "Preferencias de alertas de empleo" que quedaron, cierra las pestañas y anota en `search.yaml operation.linkedin_alerts` la lista `[{family, keywords, created}]`.
+4. Las alertas entran solas: `gmaj mail` las extrae a `user/data/mail_leads.json` y la corrida diaria las inserta con `gmaj add-jobs`.
+
+## 7. Cierre
 `uv run gmaj validate` debe pasar. Opcional: ofrece sugerencias para alinear su perfil de LinkedIn/Indeed/OCC con el CV (titular, extracto, experiencia) — OCC no deja postular con el perfil incompleto. Luego vuelve a `INSTALL.md` paso 5 (programar la corrida diaria).
