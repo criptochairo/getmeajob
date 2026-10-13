@@ -1,0 +1,24 @@
+# México: valores por defecto que gmaj-build-profile copia a user/search.yaml.
+schema_version: 1
+market: {country: MX, country_label: "México", linkedin_location: "Mexico"}
+currency: {base: MXN, rates: {USD: 18.0, EUR: 19.5}}
+languages_allowed: [es, en]
+linkedin_passes:
+  - {name: remote, locations: ["Mexico", "Latin America"], filter: "f_WT=2"}
+  # Si acepta híbrido/presencial en su ciudad: {name: local, locations: ["<Ciudad>, Mexico"], filter: "f_WT=1,3"}
+sources:
+  computrabajo: {enabled: true, url: "https://mx.computrabajo.com", modality: "remoto", language: es}
+  occ: {enabled: false, browser: true, location_suffix: "México", offer_url: "https://www.occ.com.mx/empleo/oferta/{id}/", start_url: "https://www.occ.com.mx/"}
+  indeed: {enabled: false, browser: true, domain: "mx.indeed.com", start_url: "https://mx.indeed.com/", locations: ["México"]}
+eligibility:
+  accept_phrases: ["latam", "latin america", "mexico", "méxico", "anywhere", "worldwide", "americas", "contractor"]
+  location_ok: ["mexico", "méxico", "latam", "latin america", "latinoamerica", "americas", "worldwide", "anywhere", "global", "remote", "remoto"]
+form_questions:      # preguntas frecuentes en formularios mexicanos (la entrevista las cubre)
+  - "Fecha de nacimiento / edad"
+  - "CURP, RFC, NSS (siempre escalar)"
+  - "Cédula profesional (sí/no)"
+  - "Pretensión salarial mensual bruta"
+  - "Último sueldo"
+  - "Disponibilidad para viajar / cambiar de residencia"
+  - "Nivel de inglés (porcentaje o CEFR)"
+  - "Colonia y código postal"

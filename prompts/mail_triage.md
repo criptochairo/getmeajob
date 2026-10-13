@@ -1,0 +1,11 @@
+# Revisión de correo (solo lectura) — {{DATE}}
+
+Usa tu conector de Gmail (Claude) o plugin de Gmail (Codex) en las cuentas listadas en `user/profile.yaml` → `personal.email` (y `mail_accounts` si existe). **Solo lectura**: no respondas, no marques como leído, no archives, no borres, no abras enlaces. Nunca copies códigos de verificación, contraseñas ni enlaces de inicio de sesión: escribe "[código oculto]". Si no tienes acceso a Gmail, escribe `user/data/mail_triage.json` con `[]` y termina.
+
+1. Correos de las últimas 26 horas de: LinkedIn, Indeed, OCC, Computrabajo, Workday, Greenhouse, Lever, Ashby, SmartRecruiters, Paradox, y de las empresas que aparezcan en `user/applications/*/job.md`.
+2. **Vacantes sugeridas** (alertas y recomendaciones de las últimas 72 h, leídas o no): extrae solo las que coincidan con las familias de rol de `user/profile.yaml` → `preferences.chosen_role_families` y escribe `user/data/mail_leads.json` (sobrescribe): `[{"source": "linkedin_guest"|"indeed"|"occ"|"mail", "external_id": "...", "url": "...", "title": "...", "company": "...", "location": "...", "mode": "remote|hybrid|onsite|unknown", "description": "lo que diga el correo", "date": "..."}]`. LinkedIn: `external_id` = número de `/jobs/view/<id>`, url `https://www.linkedin.com/jobs/view/<id>`. Indeed: `external_id` = `jk`. OCC: id de `/empleo/oferta/<id>`. Otro sitio: `source: "mail"` con la URL del correo.
+3. Clasifica cada correo: `interview`, `info_request`, `rejection`, `confirmation`, `job_alert`, `other`.
+4. Escribe `user/data/mail_triage.json` (sobrescribe): `[{"date", "from", "company", "subject", "type", "job_folder": "applications/... o null", "deadline": "... o null"}]`.
+5. `interview` e `info_request`: agrega entrada a `user/inbox/tareas_humanas.md` (fecha, empresa, qué piden, fecha límite).
+6. `rejection` con carpeta identificada: `uv run gmaj log-applied <carpeta> rejected mail "rechazo por correo" --agent <tu motor>`.
+7. Imprime una línea por tipo con conteos.

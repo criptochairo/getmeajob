@@ -1,0 +1,213 @@
+# Catálogo de familias de rol (inspiración para gmaj-suggest-roles; no es una lista cerrada).
+# titles: títulos de búsqueda reales en español (mercado mexicano) e inglés. keywords: raíces para relevance_keywords.
+schema_version: 1
+families:
+  - id: analista-datos
+    name: "Análisis de datos / BI"
+    titles: {es: ["analista de datos", "analista de inteligencia de negocios", "analista de bi", "analista de reportes", "analista de datos senior", "especialista en análisis de datos"], en: ["data analyst", "business intelligence analyst", "bi analyst", "reporting analyst", "senior data analyst", "analytics specialist"]}
+    keywords: ["datos", "data", "analista", "analyst", "bi", "dashboard", "sql", "reportes"]
+    industries: ["retail", "fintech", "banca", "salud"]
+    adjacent: ["ingenieria-datos", "operaciones"]
+
+  - id: ingenieria-datos
+    name: "Ingeniería de datos"
+    titles: {es: ["ingeniero de datos", "ingeniero de datos senior", "ingeniero de pipelines de datos", "arquitecto de datos", "especialista en etl"], en: ["data engineer", "senior data engineer", "etl developer", "data platform engineer", "analytics engineer"]}
+    keywords: ["datos", "data", "etl", "pipeline", "spark", "airflow", "warehouse", "ingenieria"]
+    industries: ["fintech", "e-commerce", "telecomunicaciones", "software"]
+    adjacent: ["analista-datos", "desarrollo-software"]
+
+  - id: desarrollo-software
+    name: "Desarrollo de software"
+    titles: {es: ["desarrollador de software", "desarrollador full stack", "desarrollador backend", "desarrollador frontend", "ingeniero de software"], en: ["software engineer", "full stack developer", "backend developer", "frontend developer", "software developer"]}
+    keywords: ["software", "desarrollador", "developer", "programador", "backend", "frontend", "api", "código"]
+    industries: ["software", "fintech", "e-commerce", "consultoría tecnológica"]
+    adjacent: ["qa-testing", "ingenieria-datos"]
+
+  - id: qa-testing
+    name: "QA y pruebas de software"
+    titles: {es: ["analista de calidad de software", "qa tester", "ingeniero de pruebas", "analista de pruebas", "qa automation"], en: ["qa engineer", "qa tester", "test automation engineer", "quality assurance analyst", "software tester"]}
+    keywords: ["qa", "pruebas", "testing", "calidad", "automatización", "test", "quality"]
+    industries: ["software", "fintech", "e-commerce", "telecomunicaciones"]
+    adjacent: ["desarrollo-software", "soporte-ti"]
+
+  - id: soporte-ti
+    name: "Soporte y mesa de ayuda TI"
+    titles: {es: ["analista de soporte técnico", "help desk", "soporte ti", "técnico de mesa de ayuda", "administrador de infraestructura"], en: ["it support specialist", "help desk analyst", "it service desk analyst", "desktop support engineer", "it support technician"]}
+    keywords: ["soporte", "helpdesk", "mesa de ayuda", "it", "infraestructura", "redes", "windows", "tickets"]
+    industries: ["servicios financieros", "manufactura", "salud", "gobierno"]
+    adjacent: ["ciberseguridad", "atencion-cliente"]
+
+  - id: ciberseguridad
+    name: "Ciberseguridad"
+    titles: {es: ["analista de ciberseguridad", "analista de seguridad de la información", "especialista en seguridad informática", "analista soc", "ingeniero de seguridad"], en: ["cybersecurity analyst", "information security analyst", "soc analyst", "security engineer", "security operations specialist"]}
+    keywords: ["seguridad", "security", "ciberseguridad", "soc", "vulnerabilidades", "infosec", "incidentes"]
+    industries: ["fintech", "banca", "telecomunicaciones", "gobierno"]
+    adjacent: ["soporte-ti", "cumplimiento-pld"]
+
+  - id: producto
+    name: "Gestión de producto"
+    titles: {es: ["product manager", "gerente de producto", "product owner", "analista de producto", "jefe de producto"], en: ["product manager", "product owner", "associate product manager", "product analyst", "technical product manager"]}
+    keywords: ["producto", "product", "roadmap", "backlog", "usuarios", "discovery", "agile"]
+    industries: ["software", "fintech", "e-commerce", "edtech"]
+    adjacent: ["proyectos-pmo", "diseno-ux-ui"]
+
+  - id: proyectos-pmo
+    name: "Proyectos y PMO"
+    titles: {es: ["gerente de proyectos", "coordinador de proyectos", "project manager", "analista pmo", "scrum master"], en: ["project manager", "project coordinator", "pmo analyst", "scrum master", "program manager"]}
+    keywords: ["proyectos", "project", "pmo", "scrum", "cronograma", "agile", "pmp"]
+    industries: ["consultoría", "construcción", "software", "manufactura"]
+    adjacent: ["producto", "operaciones"]
+
+  - id: operaciones
+    name: "Operaciones"
+    titles: {es: ["analista de operaciones", "coordinador de operaciones", "gerente de operaciones", "analista de procesos", "supervisor de operaciones"], en: ["operations analyst", "operations coordinator", "operations manager", "process analyst", "business operations specialist"]}
+    keywords: ["operaciones", "operations", "procesos", "eficiencia", "kpi", "coordinación", "mejora continua"]
+    industries: ["retail", "manufactura", "logística", "fintech"]
+    adjacent: ["proyectos-pmo", "logistica-cadena-suministro"]
+
+  - id: logistica-cadena-suministro
+    name: "Logística y cadena de suministro"
+    titles: {es: ["analista de logística", "coordinador de logística", "planeador de demanda", "analista de cadena de suministro", "coordinador de distribución"], en: ["logistics analyst", "supply chain analyst", "logistics coordinator", "demand planner", "distribution coordinator"]}
+    keywords: ["logística", "logistics", "cadena de suministro", "supply chain", "inventarios", "distribución", "almacén", "transporte"]
+    industries: ["manufactura", "retail", "e-commerce", "transporte"]
+    adjacent: ["operaciones", "compras"]
+
+  - id: compras
+    name: "Compras y abastecimiento"
+    titles: {es: ["comprador", "analista de compras", "especialista en compras", "analista de abastecimiento", "gerente de compras"], en: ["buyer", "procurement analyst", "purchasing specialist", "sourcing specialist", "procurement manager"]}
+    keywords: ["compras", "procurement", "proveedores", "sourcing", "abastecimiento", "negociación", "purchasing"]
+    industries: ["manufactura", "retail", "construcción", "salud"]
+    adjacent: ["logistica-cadena-suministro", "finanzas-contabilidad"]
+
+  - id: finanzas-contabilidad
+    name: "Finanzas y contabilidad"
+    titles: {es: ["contador", "analista financiero", "contador general", "analista de cuentas por pagar", "especialista en finanzas"], en: ["accountant", "financial analyst", "accounts payable specialist", "senior accountant", "finance analyst"]}
+    keywords: ["contabilidad", "finanzas", "contador", "accounting", "financial", "conciliaciones", "impuestos", "presupuesto"]
+    industries: ["banca", "manufactura", "consultoría", "retail"]
+    adjacent: ["auditoria", "compras"]
+
+  - id: auditoria
+    name: "Auditoría"
+    titles: {es: ["auditor interno", "auditor financiero", "analista de auditoría", "auditor de sistemas", "auditor senior"], en: ["internal auditor", "financial auditor", "audit analyst", "it auditor", "senior auditor"]}
+    keywords: ["auditoría", "audit", "control interno", "riesgos", "auditor", "hallazgos", "procesos"]
+    industries: ["banca", "consultoría", "manufactura", "gobierno"]
+    adjacent: ["finanzas-contabilidad", "cumplimiento-pld"]
+
+  - id: cumplimiento-pld
+    name: "Cumplimiento y prevención de lavado de dinero"
+    titles: {es: ["oficial de cumplimiento", "analista de prevención de lavado de dinero", "analista pld", "analista de cumplimiento regulatorio", "analista de monitoreo transaccional"], en: ["compliance analyst", "aml analyst", "kyc analyst", "compliance officer", "anti-money laundering specialist"]}
+    keywords: ["cumplimiento", "compliance", "pld", "aml", "kyc", "lavado de dinero", "regulatorio", "riesgo"]
+    industries: ["banca", "fintech", "casas de bolsa", "seguros"]
+    adjacent: ["auditoria", "legal-corporativo"]
+
+  - id: legal-corporativo
+    name: "Legal corporativo"
+    titles: {es: ["abogado corporativo", "abogado de contratos", "abogado senior", "asociado legal", "abogado de cumplimiento legal"], en: ["corporate counsel", "corporate lawyer", "contracts attorney", "legal counsel", "associate attorney"]}
+    keywords: ["legal", "abogado", "contratos", "jurídico", "corporativo", "derecho", "lawyer", "regulación"]
+    industries: ["banca", "fintech", "consultoría", "manufactura"]
+    adjacent: ["cumplimiento-pld", "legal-tech-legal-ops"]
+
+  - id: legal-tech-legal-ops
+    name: "Legal tech y legal operations"
+    titles: {es: ["especialista en legal operations", "analista de legal tech", "coordinador de legal operations", "gerente de operaciones legales", "analista de gestión de contratos"], en: ["legal operations specialist", "legal tech analyst", "legal operations manager", "contract manager", "legal project manager"]}
+    keywords: ["legal ops", "legal operations", "legaltech", "contratos", "automatización", "jurídico", "gestión legal", "software jurídico"]
+    industries: ["legaltech", "software", "fintech", "consultoría legal"]
+    adjacent: ["legal-corporativo", "operaciones"]
+
+  - id: paralegal
+    name: "Paralegal"
+    titles: {es: ["paralegal", "asistente jurídico", "asistente legal", "analista jurídico", "coordinador jurídico"], en: ["paralegal", "legal assistant", "legal specialist", "litigation paralegal", "legal coordinator"]}
+    keywords: ["paralegal", "jurídico", "legal", "expedientes", "litigio", "documentos legales", "asistente"]
+    industries: ["despachos de abogados", "banca", "gobierno", "inmobiliario"]
+    adjacent: ["legal-corporativo", "legal-tech-legal-ops"]
+
+  - id: recursos-humanos
+    name: "Recursos humanos"
+    titles: {es: ["analista de recursos humanos", "generalista de recursos humanos", "coordinador de recursos humanos", "analista de nómina", "business partner de recursos humanos"], en: ["hr analyst", "hr generalist", "hr coordinator", "payroll analyst", "hr business partner"]}
+    keywords: ["recursos humanos", "rh", "hr", "nómina", "payroll", "talento", "clima laboral", "capacitación"]
+    industries: ["manufactura", "retail", "servicios", "fintech"]
+    adjacent: ["reclutamiento", "finanzas-contabilidad"]
+
+  - id: reclutamiento
+    name: "Reclutamiento y selección"
+    titles: {es: ["reclutador", "especialista en reclutamiento", "reclutador técnico", "talent acquisition specialist", "coordinador de selección"], en: ["recruiter", "talent acquisition specialist", "technical recruiter", "sourcer", "recruitment coordinator"]}
+    keywords: ["reclutamiento", "recruiter", "selección", "talento", "talent", "sourcing", "entrevistas", "headhunting"]
+    industries: ["consultoría de recursos humanos", "tecnología", "servicios", "manufactura"]
+    adjacent: ["recursos-humanos", "ventas-b2b"]
+
+  - id: marketing-digital
+    name: "Marketing digital"
+    titles: {es: ["analista de marketing digital", "especialista en marketing digital", "coordinador de marketing", "community manager", "especialista en performance marketing"], en: ["digital marketing specialist", "performance marketing analyst", "marketing coordinator", "growth marketer", "digital marketing manager"]}
+    keywords: ["marketing", "digital", "campañas", "seo", "sem", "redes sociales", "paid media", "performance"]
+    industries: ["e-commerce", "retail", "agencias de publicidad", "fintech"]
+    adjacent: ["contenido-comunicacion", "ventas-b2b"]
+
+  - id: contenido-comunicacion
+    name: "Contenido y comunicación"
+    titles: {es: ["redactor", "editor de contenido", "especialista en comunicación", "coordinador de comunicación interna", "content writer"], en: ["content writer", "content editor", "communications specialist", "copywriter", "content strategist"]}
+    keywords: ["contenido", "redacción", "comunicación", "content", "copywriting", "editor", "periodismo", "storytelling"]
+    industries: ["medios", "agencias de publicidad", "software", "educación"]
+    adjacent: ["marketing-digital", "traduccion-idiomas"]
+
+  - id: diseno-ux-ui
+    name: "Diseño UX/UI"
+    titles: {es: ["diseñador ux", "diseñador ui", "diseñador de experiencia de usuario", "diseñador ux/ui", "diseñador de producto digital"], en: ["ux designer", "ui designer", "product designer", "ux/ui designer", "ux researcher"]}
+    keywords: ["diseño", "ux", "ui", "figma", "experiencia de usuario", "prototipos", "usabilidad", "design"]
+    industries: ["software", "fintech", "e-commerce", "agencias digitales"]
+    adjacent: ["producto", "marketing-digital"]
+
+  - id: ventas-b2b
+    name: "Ventas B2B"
+    titles: {es: ["ejecutivo de ventas", "ejecutivo de cuentas", "account executive", "representante de ventas b2b", "gerente de ventas"], en: ["account executive", "sales representative", "business development representative", "sales manager", "inside sales representative"]}
+    keywords: ["ventas", "sales", "b2b", "cuentas", "prospección", "pipeline", "crm", "negocios"]
+    industries: ["software", "manufactura", "servicios profesionales", "fintech"]
+    adjacent: ["customer-success", "marketing-digital"]
+
+  - id: atencion-cliente
+    name: "Atención al cliente"
+    titles: {es: ["ejecutivo de atención al cliente", "agente de servicio al cliente", "representante de servicio", "agente de call center", "especialista en atención a clientes"], en: ["customer service representative", "customer support agent", "customer care specialist", "call center agent", "support specialist"]}
+    keywords: ["atención al cliente", "servicio al cliente", "call center", "soporte", "customer service", "help desk", "postventa"]
+    industries: ["telecomunicaciones", "retail", "servicios financieros", "e-commerce"]
+    adjacent: ["customer-success", "soporte-ti"]
+
+  - id: customer-success
+    name: "Customer success"
+    titles: {es: ["customer success manager", "gerente de éxito del cliente", "ejecutivo de customer success", "account manager", "onboarding specialist"], en: ["customer success manager", "customer success specialist", "account manager", "onboarding manager", "client success manager"]}
+    keywords: ["customer success", "éxito del cliente", "retención", "onboarding", "churn", "cuentas", "saas", "renovaciones"]
+    industries: ["software", "saas", "fintech", "servicios profesionales"]
+    adjacent: ["ventas-b2b", "atencion-cliente"]
+
+  - id: educacion-capacitacion
+    name: "Educación y capacitación"
+    titles: {es: ["instructor", "diseñador instruccional", "coordinador de capacitación", "docente", "especialista en e-learning"], en: ["instructional designer", "training specialist", "learning and development specialist", "trainer", "e-learning developer"]}
+    keywords: ["educación", "capacitación", "docencia", "instructional", "e-learning", "formación", "cursos", "training"]
+    industries: ["educación", "edtech", "corporativo", "salud"]
+    adjacent: ["recursos-humanos", "contenido-comunicacion"]
+
+  - id: salud-administrativa
+    name: "Administración en salud"
+    titles: {es: ["coordinador administrativo de clínica", "asistente administrativo médico", "coordinador de facturación médica", "administrador de consultorio", "analista de seguros médicos"], en: ["healthcare administrator", "medical billing specialist", "clinic coordinator", "medical office manager", "health insurance analyst"]}
+    keywords: ["salud", "clínica", "hospital", "administrativo", "facturación médica", "pacientes", "seguros", "healthcare"]
+    industries: ["hospitales", "clínicas", "seguros de salud", "farmacéutica"]
+    adjacent: ["atencion-cliente", "finanzas-contabilidad"]
+
+  - id: administracion-inmobiliaria
+    name: "Administración inmobiliaria"
+    titles: {es: ["administrador de propiedades", "asesor inmobiliario", "coordinador de administración de inmuebles", "gerente de propiedades", "agente inmobiliario"], en: ["property manager", "real estate administrator", "leasing coordinator", "real estate agent", "real estate analyst"]}
+    keywords: ["inmobiliaria", "propiedades", "bienes raíces", "inmuebles", "arrendamiento", "real estate", "condominios", "rentas"]
+    industries: ["bienes raíces", "construcción", "desarrollo inmobiliario", "hospitalidad"]
+    adjacent: ["atencion-cliente", "finanzas-contabilidad"]
+
+  - id: traduccion-idiomas
+    name: "Traducción e idiomas"
+    titles: {es: ["traductor", "traductor inglés-español", "revisor de traducciones", "intérprete", "especialista en localización"], en: ["translator", "localization specialist", "translation reviewer", "bilingual specialist", "interpreter"]}
+    keywords: ["traducción", "traductor", "idiomas", "inglés", "localización", "bilingüe", "translation", "interpretación"]
+    industries: ["servicios lingüísticos", "software", "editorial", "turismo"]
+    adjacent: ["contenido-comunicacion", "entrenamiento-ia-datos"]
+
+  - id: entrenamiento-ia-datos
+    name: "Entrenamiento de IA y anotación de datos"
+    titles: {es: ["evaluador de modelos de ia", "anotador de datos", "especialista en evaluación de ia", "entrenador de modelos de lenguaje", "revisor de datos para ia"], en: ["ai trainer", "data annotator", "ai evaluation specialist", "llm evaluator", "ai data labeling specialist"]}
+    keywords: ["ia", "ai", "anotación", "etiquetado", "evaluación", "modelos de lenguaje", "llm", "data labeling"]
+    industries: ["inteligencia artificial", "software", "tecnología", "investigación"]
+    adjacent: ["analista-datos", "traduccion-idiomas"]

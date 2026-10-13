@@ -1,0 +1,16 @@
+# Boards públicos de ATS por industria (slugs para search.yaml sources.greenhouse/lever/ashby).
+# Slugs CANDIDATOS (algunos sin verificar). Solo sirven si la empresa contrata en la región del usuario. `gmaj discover` registra en
+# user/data/invalid_boards.txt los slugs que ya no responden. Contribuciones bienvenidas.
+schema_version: 1
+legal-tech:
+  greenhouse: [everlaw, ironcladhq, filevine, relativity, clio, lawmatics, litify]
+  lever: [luminance, mycase]
+  ashby: [harvey, evenup, supio, spellbook, legora, eudia, hebbia]
+fintech-latam:
+  greenhouse: [nubank, clip, konfio, kavak]
+  lever: []
+  ashby: [belvo]
+remote-first:
+  greenhouse: [gitlab, automattic, zapier]
+  lever: []
+  ashby: [deel, remote]

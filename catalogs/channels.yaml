@@ -1,0 +1,19 @@
+# Qué canales de envío soporta cada motor. status: ok | unverified | unsupported.
+# "ok" = probado en la operación real; "unverified" = se intenta y, si falla, se escala; "unsupported" = se escala directo.
+# Actualizar con los resultados de docs/fase0-verificacion.md.
+schema_version: 1
+channels:
+  linkedin:     {domains: [linkedin.com],                         claude: ok,         codex: unverified, notes: "Easy Apply; externas siguen el botón Apply"}
+  indeed:       {domains: [indeed.com, smartapply.indeed.com],    claude: ok,         codex: unverified, notes: "reCAPTCHA visible al final → escalar"}
+  occ:          {domains: [occ.com.mx],                           claude: ok,         codex: unverified, notes: "requiere CV del perfil completo"}
+  computrabajo: {domains: [computrabajo.com],                     claude: unverified, codex: unverified}
+  greenhouse:   {domains: [greenhouse.io, boards.greenhouse.io, job-boards.greenhouse.io], claude: unverified, codex: ok}
+  lever:        {domains: [lever.co, jobs.lever.co],              claude: unverified, codex: ok}
+  ashby:        {domains: [ashbyhq.com, jobs.ashbyhq.com],        claude: unverified, codex: ok}
+  workday:      {domains: [myworkdayjobs.com],                    claude: unverified, codex: ok, notes: "sesiones que caducan o piden cuenta → escalar"}
+  smartrecruiters: {domains: [smartrecruiters.com],               claude: unverified, codex: ok}
+  successfactors:  {domains: [successfactors.com, sapsf.com],     claude: unverified, codex: ok, notes: "shadow DOM / iframes"}
+  icims:        {domains: [icims.com],                            claude: unverified, codex: unverified}
+  paradox:      {domains: [paradox.ai],                           claude: ok,         codex: unverified, notes: "chips por texto exacto con JS"}
+  himalayas:    {domains: [himalayas.app],                        claude: ok,         codex: ok}
+  alignerr:     {domains: [alignerr.com, app.alignerr.com],       claude: ok,         codex: unverified, notes: "nunca iniciar la entrevista con IA en video"}

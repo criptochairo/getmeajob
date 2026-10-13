@@ -1,0 +1,16 @@
+# Plantilla para un país sin catálogo propio. gmaj-build-profile la llena con el usuario y, si funciona, conviene
+# guardarla como catalogs/countries/<código>.yaml y proponerla al repo.
+schema_version: 1
+market: {country: "", country_label: "", linkedin_location: ""}   # p. ej. CO, "Colombia", "Colombia"
+currency: {base: "", rates: {USD: null}}
+languages_allowed: [es, en]
+linkedin_passes:
+  - {name: remote, locations: ["<País>", "Latin America"], filter: "f_WT=2"}
+sources:
+  # Computrabajo existe en varios países: co., pe., cl., ar., ec., ve., gt., cr., do., bo., py., uy. + computrabajo.com
+  computrabajo: {enabled: false, url: "https://<cc>.computrabajo.com", modality: "remoto", language: es}
+  # Indeed por país: <cc>.indeed.com (p. ej. co.indeed.com); el colector funciona igual dentro de la pestaña.
+  indeed: {enabled: false, browser: true, domain: "<cc>.indeed.com", locations: ["<País>"]}
+eligibility:
+  accept_phrases: ["latam", "latin america", "anywhere", "worldwide", "americas", "contractor"]
+  location_ok: ["latam", "latin america", "americas", "worldwide", "anywhere", "global", "remote", "remoto"]
