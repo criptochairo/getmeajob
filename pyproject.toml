@@ -1,0 +1,30 @@
+[project]
+name = "getmeajob"
+version = "1.0.0"
+description = "GetMeAJob 1.0 by Criptochairo: búsqueda y postulación a empleos con Claude o Codex, sin inventar nada."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+dependencies = [
+    "pyyaml>=6.0",
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
+    "feedparser>=6.0",
+    "markdown>=3.5",
+]
+
+[project.scripts]
+gmaj = "gmaj.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["gmaj", "gmaj.fetchers"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

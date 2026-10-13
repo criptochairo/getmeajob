@@ -1,0 +1,15 @@
+# Todo lo personal vive aquí y NUNCA se versiona en el template.
+user/
+
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.pytest-tmp/
+*.egg-info/
+build/
+dist/
+*.tmp
+*.bak
+.claude/settings.local.json
+.DS_Store
