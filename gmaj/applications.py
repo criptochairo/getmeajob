@@ -16,7 +16,7 @@ def create(conn, row):
     if row['app_dir'] and paths.user(row['app_dir']).exists():
         return {'id': row['id'], 'dir': row['app_dir'], 'title': row['title'], 'company': row['company'],
                 'score': row['score'], 'cv_language': lang, 'existing': True}
-    folder = paths.applications(f"{dt.date.today():%Y-%m-%d}_{slug(row['company'], 20)}_{slug(row['title'])}")
+    folder = paths.applications(f"{dt.date.today():%Y-%m-%d}_{slug(row['company'], 20)}_{slug(row['title'])}_{row['id'][:6]}")
     folder.mkdir(parents=True, exist_ok=True)
     salary = ' '.join(str(x) for x in (row['salary_min'], row['salary_max'], row['salary_currency'], row['salary_period']) if x)
     (folder / 'job.md').write_text(
@@ -36,8 +36,18 @@ def apply_sources(config):
     return config.get('apply_sources') or list((config.get('sources') or {}).keys()) + ['mail']
 
 
+def created_today(conn):
+    return conn.execute("SELECT COUNT(*) FROM jobs WHERE app_dir LIKE ?", (f'applications/{dt.date.today():%Y-%m-%d}_%',)).fetchone()[0]
+
+
 def top(conn, config, min_score=None, limit=10):
+    """New folders for the best scored jobs, never exceeding limits.tailor_per_day across repeated calls the same day."""
     min_score = min_score if min_score is not None else (config.get('scoring') or {}).get('threshold_tailor', 50)
+    daily = (config.get('limits') or {}).get('tailor_per_day')
+    if daily:
+        limit = min(limit, max(0, daily - created_today(conn)))
+    if limit <= 0:
+        return []
     sources = apply_sources(config)
     rows = conn.execute("SELECT * FROM jobs WHERE status='scored' AND app_dir IS NULL AND score>=? "
                         f"AND source IN ({','.join('?' * len(sources))}) ORDER BY score DESC LIMIT ?",

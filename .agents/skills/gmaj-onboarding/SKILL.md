@@ -50,7 +50,7 @@ Pregunta si tiene un CV (PDF o Word) o puede exportar su perfil de LinkedIn ("M�
 9. **Qué busca** → `profile.preferences`, `answers.salary_expectation`, `answers.availability`
    - Roles e industrias que le gustarían (en sus palabras) y cuáles evitar; nivel (junior/mid/senior/lead).
    - Modalidad: remoto / híbrido / presencial. Si acepta híbrido o presencial: zonas a las que sí iría, zonas a preguntar, zonas que nunca.
-   - Salario: piso (lo mínimo que aceptaría), meta, y cómo responder en mensual/anual/por hora y en USD; mínimo para trabajos con oficina.
+   - Salario → `answers.salary_expectation`: piso (`floor_month`), meta (`target_month`), qué responder (`monthly`, `yearly`, `hourly_usd`, `monthly_usd`, `range_rule`) y mínimo para trabajos con oficina (`office_min_month`).
    - Preaviso, fecha de inicio, horario y zona horaria, ¿puede cubrir horario de EE.UU.?, reubicación, viajes.
    - **Deal-breakers** (lo que nunca aceptaría) y empresas a excluir. ¿La búsqueda es confidencial? (si sí, excluir a su empleador actual).
 10. **Preguntas típicas de formularios** → `answers.conflicts`, `consents`, `references`, `how_did_you_hear`
@@ -65,6 +65,6 @@ Pregunta si tiene un CV (PDF o Word) o puede exportar su perfil de LinkedIn ("M�
     - Plan de suscripción (Claude Pro/Max, ChatGPT Plus/Pro): con planes chicos se reducen `limits.tailor_per_day` (p. ej. 10) para no agotar la cuota.
 
 ## 3. Cierre
-1. `uv run gmaj validate` y resuelve lo que falte de `profile`/`answers`.
+1. `uv run gmaj validate --only profile,answers` y resuelve lo que falte (search/variants se generan después).
 2. Muestra un resumen final (5–10 líneas) y pide confirmación expresa: "¿Todo correcto?".
 3. Sigue con **gmaj-suggest-roles** y luego **gmaj-build-profile**.

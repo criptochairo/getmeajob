@@ -10,11 +10,11 @@ Entrada: `user/profile.yaml`, `user/answers.yaml` (confirmados) y `preferences.c
 ## 1. `user/search.yaml`
 Parte de `templates/user/search.yaml` (ya copiado por `gmaj init`) y de `catalogs/countries/<país>.yaml`:
 - `market`, `currency` (base + tipos de cambio aproximados), fuentes del país (`sources`) y `apply_sources` según los canales donde el usuario tiene cuenta.
-- `salary` desde `answers.salary_expectation` (piso, meta, mínimo con oficina).
+- `salary.floor_month` / `target_month` / `office_min_month` desde `answers.salary_expectation.floor_month` / `target_month` / `office_min_month`.
 - `work_mode`: `remote: accept`; `hybrid`/`onsite`: `reject`, `accept` o `zones` con las zonas que dio el usuario.
 - `eligibility`: frases de rechazo según su autorización de trabajo (p. ej. si puede trabajar en EE.UU., quita las de EE.UU.); `location_ok` con su país/región.
 - `queries.es` / `queries.en`: los títulos de las familias elegidas (máx. ~25 en total).
-- `relevance_keywords`: raíces de esos títulos y palabras del área (10–30), sin palabras genéricas como "manager" sueltas.
+- `relevance_keywords`: palabras **completas** de esos títulos y del área (10–30; el plural se reconoce solo: "analista" cubre "analistas"), sin palabras genéricas como "manager" sueltas.
 - `exclusions`: empresas excluidas (`preferences.excluded_companies`) y `off_target_title_keywords` (áreas que nunca quiere).
 - `scoring.role_fit.tiers`: 40 para las familias `seguro`, 30 `adyacente`, 20 `stretch`, con descripciones concretas; `skills_match.note` con sus habilidades clave; `seniority.note` con su nivel.
 - `sources.greenhouse/lever/ashby`: slugs de `catalogs/ats_boards.yaml` de sus industrias (opcional).

@@ -164,3 +164,37 @@ def test_scrub_flags_patterns(tmp_path):
 def test_user_dir_is_gitignored():
     r = subprocess.run(['git', 'check-ignore', '-q', 'user/profile.yaml'], cwd=paths.ROOT)
     assert r.returncode == 0
+
+
+def test_limit_text_in_successful_run_is_not_a_limit(user_dir, monkeypatch):
+    monkeypatch.setattr(engines, 'binary', lambda e: e)
+    calls = []
+    r = engines.run('tailor', 'x', runner=fake_runner([('Nota: revisé el usage limit del plan', 0)], calls))
+    assert r['code'] == 0 and not r['limit_hit']
+
+
+def test_decimal_percent_backed_by_profile(user_dir):
+    from conftest import load_config
+    profile = user_dir / 'profile.yaml'
+    profile.write_text(profile.read_text(encoding='utf-8') + '\n# logro: 12.5% de ahorro\n', encoding='utf-8')
+    conn = db.connect()
+    scored_job(conn)
+    folder = user_dir / applications.top(conn, load_config())[0]['dir']
+    cv = (user_dir / 'variants/cv_datos_es.md').read_text(encoding='utf-8') + '\n- Ahorro de 12.5% en costos del equipo.'
+    (folder / 'cv.md').write_text(cv, encoding='utf-8')
+    (folder / 'cover.md').write_text('Estimado equipo de Acme: me interesa la vacante de analista de datos con experiencia en SQL para el equipo.', encoding='utf-8')
+    (folder / 'answers.json').write_text('{"cv_language": "es"}', encoding='utf-8')
+    assert check_package.check(folder)['ok'], check_package.check(folder)
+
+
+def test_top_respects_daily_tailor_cap_and_unique_folders(user_dir):
+    from conftest import load_config
+    cfg = load_config()
+    cfg['limits']['tailor_per_day'] = 2
+    conn = db.connect()
+    for i in range(4):
+        scored_job(conn, external_id=str(i), url=f'https://example.com/{i}', company=f'Acme {i}')
+    assert len(applications.top(conn, cfg, limit=10)) == 2
+    assert applications.top(conn, cfg, limit=10) == []
+    dirs = [r[0] for r in conn.execute('SELECT app_dir FROM jobs WHERE app_dir IS NOT NULL')]
+    assert len(set(dirs)) == 2 and all(d.rsplit('_', 1)[1] for d in dirs)

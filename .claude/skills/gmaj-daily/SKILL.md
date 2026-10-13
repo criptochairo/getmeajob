@@ -28,8 +28,8 @@ c. `uv run gmaj prefilter`.
 ## 4. Adaptación y revisión cruzada
 - Score ≥ 75: `uv run gmaj tailor <carpetas> --high`; el resto: `uv run gmaj tailor <carpetas>` (lotes de ~8).
 - `uv run gmaj check <carpetas>`; corrige los FAIL solo con datos del perfil o marca `needs_user`.
-- `uv run gmaj review <carpetas>` (otra llamada, contexto limpio; en modo dual la hace el otro motor). `reject` → `set-status rejected` y mueve la carpeta a `user/applications/_rejected/`. `changes` → aplica solo correcciones respaldadas y vuelve a renderizar el PDF.
-- Las que quedan: `set-status <id> approved`.
+- `uv run gmaj review <carpetas>` (otra llamada, contexto limpio; en modo dual la hace el otro motor). `reject` → `set-status rejected` y mueve la carpeta a `user/applications/_rejected/`. `changes` → aplica solo correcciones respaldadas, vuelve a renderizar el PDF y repite `check` + `review` **una vez**; si aún no sale `approve`, `needs_user` con el motivo.
+- Solo las que tienen `review.json` con `approve` y `check` OK: `set-status <id> approved`.
 
 ## 5. Envío o aprobación
 - **Supervisado** (`autonomy: supervised`): NO envíes. Agrega cada aprobada a `user/inbox/por_aprobar.md` (número, empresa, rol, URL, score, canal, ruta del PDF, 3 respuestas clave, salario que se pondrá). Opcional: llena el formulario hasta antes de enviar solo si el sitio guarda borradores.

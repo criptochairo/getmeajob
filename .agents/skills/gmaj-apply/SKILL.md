@@ -11,5 +11,5 @@ Sigue `prompts/apply.md` al pie de la letra con las carpetas `approved` (`uv run
 - **Canales no soportados** por tu motor (`catalogs/channels.yaml`): no lo intentes; escala a `tareas_humanas.md`.
 - **Mañas por sitio:** `docs/browser-quirks.md` (subida de archivos, texto que se pierde, chips de Paradox, Easy Apply con CV viejo preseleccionado, reCAPTCHA).
 - **Si eres Claude:** usa Claude in Chrome. **Si eres Codex:** usa tu extensión de Chrome o el navegador; si una subida de archivo es rechazada por permisos, escala y anota en el reporte "activar 'Permitir acceso a URLs de archivo' en la extensión".
-- Tras cada envío: `uv run gmaj log-applied ...` y, en supervisado, `uv run gmaj autonomy record` (o `--corrected` si el usuario pidió cambios antes de aprobar).
+- Tras cada envío: `uv run gmaj log-applied ...`. (El conteo de aprobaciones del modo supervisado lo registra solo **gmaj-inbox**.)
 - Si te quedas sin cuota a la mitad: registra lo enviado, deja el resto `approved` para mañana y anótalo en el reporte.

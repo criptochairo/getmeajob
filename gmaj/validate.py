@@ -11,7 +11,7 @@ REQUIRED = {
     'profile': ['personal.full_name', 'personal.email', 'personal.phone', 'personal.location.city', 'personal.location.country',
                 'experience', 'education', 'languages', 'skills', 'cv_policy.pdf_name', 'preferences.roles_wanted'],
     'answers': ['work_authorization.countries_authorized', 'availability.notice_period', 'salary_expectation.currency',
-                'salary_expectation.monthly', 'eeo_voluntary', 'escalate_always'],
+                'salary_expectation.floor_month', 'salary_expectation.monthly', 'eeo_voluntary', 'escalate_always'],
     'search': ['market.country', 'currency.base', 'salary.floor_month', 'work_mode.remote', 'work_mode.hybrid', 'work_mode.onsite',
                'queries', 'relevance_keywords', 'sources', 'scoring.threshold_tailor', 'limits.per_platform_per_day',
                'variants', 'operation.autonomy'],
@@ -44,10 +44,12 @@ def todo_paths(node, prefix=''):
         yield prefix
 
 
-def check(user_dir=None):
+def check(user_dir=None, only=None):
     base = user_dir or paths.user_dir()
     problems, warnings, loaded = [], [], {}
     for name, required in REQUIRED.items():
+        if only and name not in only:
+            continue
         path = base / f'{name}.yaml'
         if not path.exists():
             problems.append(f'{name}.yaml no existe')

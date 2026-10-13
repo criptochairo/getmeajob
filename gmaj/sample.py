@@ -59,4 +59,8 @@ def run(queries, location=None, computrabajo_base=None):
             except Exception as exc:
                 row[name] = f'error: {str(exc)[:60]}'
         results.append(row)
-    return {'location': location, 'window': '7 días', 'results': results}
+    return {'location': location,
+            'notes': {'linkedin': 'publicadas en los últimos 7 días (mínimo; "30+" = 3 páginas llenas)',
+                      'computrabajo': 'primera página de resultados, sin filtro de fecha ("20+" = página llena)',
+                      'himalayas_remote': 'total de vacantes remotas globales que coinciden, sin filtro de fecha'},
+            'results': results}

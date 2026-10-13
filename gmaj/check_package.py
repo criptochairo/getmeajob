@@ -58,9 +58,10 @@ def check(folder, forbidden=None, contact=None, profile_text=None):
             issues.append(f'{name}: unfilled placeholder')
         if name == 'cv.md':
             issues += [f'cv.md: contact missing "{c}"' for c in contact if not has_contact(text, c)]
+        known = {x.replace(',', '.') for x in re.findall(r'\d+(?:[.,]\d+)?', profile_text)}
         for n in numbers(text):
-            core = digits(n)
-            if core and core not in re.sub(r'[^\d\s]', ' ', profile_text).split():
+            core = re.search(r'\d+(?:[.,]\d+)?', n).group().replace(',', '.')
+            if core not in known:
                 issues.append(f'{name}: number "{n}" not found in profile')
         if name == 'cover.md' and len(text.split()) > 260:
             issues.append(f'cover.md: {len(text.split())} words (>250)')

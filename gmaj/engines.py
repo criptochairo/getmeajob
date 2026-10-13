@@ -118,10 +118,8 @@ def run_once(engine, role, prompt, cfg, chrome=False, timeout=None, runner=subpr
         output, code = (proc.stdout or '') + (proc.stderr or ''), proc.returncode
     except subprocess.TimeoutExpired as exc:
         output, code = str(exc.stdout or '') + '\nTIMEOUT', 124
-    tail = output[-4000:]
-    # A limit message in a successful run may just be the model talking about limits; trust it only on failure,
-    # except the explicit "usage limit" banner both CLIs print when they stop.
-    limit_hit = bool(LIMIT_RE.search(tail)) and (code != 0 or 'usage limit' in tail.lower())
+    # A limit message in a successful run may just be the model talking about limits: trust it only on failure.
+    limit_hit = code != 0 and bool(LIMIT_RE.search(output[-4000:]))
     log_usage({'ts': dt.datetime.now().isoformat(timespec='seconds'), 'engine': engine, 'role': role,
                'model': settings.get('model'), 'effort': settings.get('effort'), 'exit': code,
                'seconds': round(time.monotonic() - start), 'limit_hit': limit_hit})

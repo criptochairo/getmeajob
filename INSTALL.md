@@ -19,7 +19,7 @@ Al empezar, di: "Voy a instalar **GetMeAJob 1.0 by Criptochairo**. Son 6 pasos (
    - Solo Claude → `uv run gmaj engines set claude`. Solo Codex → `codex`. Ambos → explica que lo normal es usar uno; `dual` significa dos suscripciones, turnos de navegador y revisión cruzada entre ambos. Solo si lo pide: `dual`.
 4. `uv run gmaj doctor --json` y, para cada `ERR`, explica el arreglo (`fix`) y pide permiso antes de correrlo. Puntos típicos:
    - **Google Chrome** (lo usa la extensión y genera los PDF).
-   - **CLI del motor** (`claude` o `codex`): sirve para las tareas en lote con modelos baratos y la revisión con contexto limpio. Si el usuario no quiere instalarlo, sigue: la corrida diaria lo hará dentro de la sesión (más lento y con más consumo).
+   - **CLI del motor** (`claude` o `codex`) — **obligatorio**: con él corren el scoring, la adaptación y la revisión con contexto limpio (quien adapta nunca revisa). Explica que es el mismo producto que ya usa, en versión de terminal, con su misma cuenta; tras instalarlo, el usuario inicia sesión una vez (`claude` o `codex login`).
 
 ## Paso 3 — Chrome y extensión del navegador
 Sigue `docs/setup-chrome.md` con el usuario, paso a paso:

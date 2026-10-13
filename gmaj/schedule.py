@@ -41,6 +41,7 @@ def install(kind='discover', at='08:30', runner=subprocess.run):
     if os.name == 'nt':
         argument = ' '.join(args_for(kind))
         script = (
+            "$ErrorActionPreference = 'Stop';"
             f"$a = New-ScheduledTaskAction -Execute {ps_quote(python_exe())} -Argument {ps_quote(argument)} -WorkingDirectory {ps_quote(paths.ROOT)};"
             f"$t = New-ScheduledTaskTrigger -Daily -At {ps_quote(f'{hour:02d}:{minute:02d}')};"
             "$s = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Hours 6) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries;"
@@ -48,7 +49,9 @@ def install(kind='discover', at='08:30', runner=subprocess.run):
             f"Register-ScheduledTask -TaskName {ps_quote(TASKS[kind])} -Action $a -Trigger $t -Settings $s -Principal $p -Force | Out-Null"
         )
         result = runner(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', script], capture_output=True, text=True)
-        return result.returncode == 0, (result.stderr or '').strip() or f'Tarea "{TASKS[kind]}" registrada a las {at}'
+        if result.returncode != 0 or not status(kind, runner):
+            return False, (result.stderr or '').strip() or f'No se pudo registrar "{TASKS[kind]}"'
+        return True, f'Tarea "{TASKS[kind]}" registrada a las {at}'
     if sys.platform == 'darwin':
         path = plist_path(kind)
         path.parent.mkdir(parents=True, exist_ok=True)

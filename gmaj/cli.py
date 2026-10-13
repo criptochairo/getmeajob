@@ -36,7 +36,11 @@ def folders(items):
 
 
 def rel(folder):
-    return folder.relative_to(paths.ROOT).as_posix()
+    """Path as the engine (running in the repo root) should see it; absolute when user/ lives elsewhere."""
+    try:
+        return folder.resolve().relative_to(paths.ROOT).as_posix()
+    except ValueError:
+        return folder.resolve().as_posix()
 
 
 # ---------- commands ----------
@@ -118,16 +122,20 @@ def cmd_score(a):
         out(f'imported {score_io.import_scores(conn)} scores')
     else:  # run: export, score every batch with a fresh call of the scoring role, import
         files = score_io.export(conn, a.batch_size, a.desc_chars)
-        results = []
+        results, limit_hit = [], False
         for f in files:
             prompt = engines.prompt_file('score.md', BATCH=rel(f), OUT=rel(f.with_name(f.stem + '.scores.json')))
             r = engines.run('score', prompt, timeout=1800)
             results.append({'batch': f.name, 'engine': r['engine'], 'code': r['code']})
             if r['limit_hit']:
-                out({'limit_hit': True, 'results': results})
-                sys.exit(engines.LIMIT_EXIT)
-        results.append({'imported': score_io.import_scores(conn)})
-        out(results)
+                limit_hit = True
+                break
+        imported = score_io.import_scores(conn)   # keep what was scored even if a later batch failed
+        failed = [x['batch'] for x in results if x['code'] != 0]
+        out({'imported': imported, 'failed_batches': failed, 'limit_hit': limit_hit, 'results': results})
+        if limit_hit:
+            sys.exit(engines.LIMIT_EXIT)
+        sys.exit(1 if failed else 0)
 
 
 def cmd_top(a):
@@ -259,7 +267,7 @@ def cmd_scrub(a):
 
 
 def cmd_validate(a):
-    r = validate.check()
+    r = validate.check(only=a.only.split(',') if a.only else None)
     out(r)
     sys.exit(0 if r['ok'] else 1)
 
@@ -301,7 +309,7 @@ def build():
 
     add('init', cmd_init, 'crea user/ desde las plantillas').add_argument('--no-git', action='store_true')
     add('doctor', cmd_doctor, 'revisa el entorno').add_argument('--json', action='store_true')
-    add('validate', cmd_validate, 'revisa que el perfil esté completo')
+    add('validate', cmd_validate, 'revisa que el perfil esté completo').add_argument('--only', help='p. ej. profile,answers')
     add('update', cmd_update, 'actualiza el motor (git pull) y revisa el perfil')
     add('discover', cmd_discover, 'fetch + prefilter sin LLM (lo corre el programador del SO)')
     sp = add('fetch', cmd_fetch, 'solo descubrir vacantes')
