@@ -59,10 +59,12 @@ Pregunta si tiene un CV (PDF o Word) o puede exportar su perfil de LinkedIn ("M�
     - Referencias (solo con permiso de cada una) o "disponibles a solicitud".
 11. **Datos demográficos voluntarios** (EEO) → `answers.eeo_voluntary`: explica que son opcionales y que por defecto se responde "prefiero no decir".
 12. **Cómo va a operar** → `search.yaml` (lo termina `gmaj-build-profile`) y `engines.yaml`
-    - Canales donde **ya tiene cuenta** (LinkedIn, Indeed, OCC, Computrabajo...) y en cuáles está dispuesto a crearla él mismo.
+    - Si existe `user/onboarding/setup.json` (lo deja el paso 3 de `INSTALL.md`), **no vuelvas a preguntar** canales ni Gmail: muéstralos en una línea para confirmar ("Tienes sesión en LinkedIn y OCC, y Gmail conectado en lectura, ¿correcto?") y pregunta solo lo que falte. Si no existe, pregunta:
+      - Canales donde **ya tiene cuenta** (LinkedIn, Indeed, OCC, Computrabajo...).
+      - ¿Podemos leer su Gmail (solo lectura)? Sirve para detectar entrevistas y rechazos, y para recibir **alertas de LinkedIn por correo** (se crean en gmaj-build-profile), la fuente más estable de vacantes de LinkedIn.
+    - En ambos casos, pregunta en cuáles canales sin cuenta estaría dispuesto a crearla por su cuenta.
     - Explica el **modo supervisado**: las primeras 10 postulaciones esperan su visto bueno; después se le ofrecerá el piloto automático.
     - Hora de la corrida diaria y si la computadora suele estar encendida a esa hora.
-    - ¿Podemos leer su Gmail (solo lectura)? Sirve para detectar entrevistas y rechazos, y para recibir **alertas de LinkedIn por correo** (se crean en gmaj-build-profile), la fuente más estable de vacantes de LinkedIn.
     - Plan de suscripción (Claude Pro/Max, ChatGPT Plus/Pro): con planes chicos se reducen `limits.tailor_per_day` (p. ej. 10) para no agotar la cuota.
 
 ## 3. Cierre

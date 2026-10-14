@@ -9,8 +9,8 @@ Tu asistente de búsqueda de empleo. Encuentra vacantes cada mañana, adapta tu 
 
 ```
 Instala GetMeAJob desde https://github.com/criptochairo/getmeajob :
-pídeme permiso antes de cada paso, clónalo en mi carpeta Documentos/GetMeAJob,
-lee su INSTALL.md y síguelo.
+clónalo en mi carpeta Documentos/GetMeAJob, lee su INSTALL.md y síguelo
+(muéstrame primero la lista de lo que hay que instalar y pídeme una sola autorización).
 ```
 
 3. El agente te guiará: instalar lo necesario, la extensión de Chrome, iniciar sesión en tus portales (tú tecleas tus contraseñas) y una **entrevista** de ~30–45 min para armar tu perfil (puedes subir tu CV o tu PDF de LinkedIn para ir más rápido). Al final te sugiere qué roles buscar, con datos reales de vacantes, y genera tus CVs.
@@ -28,7 +28,7 @@ lee su INSTALL.md y síguelo.
 
 - **Cero datos inventados.** Cada línea de tu CV sale de lo que confirmaste en la entrevista.
 - **Tus datos se quedan en tu computadora**, en la carpeta `user/` (no se sube a GitHub). Ver [docs/privacidad.md](docs/privacidad.md).
-- **Tú decides**: el agente pide permiso para instalar, programar tareas y enviar.
+- **Tú decides**: el agente te muestra la lista de lo que hay que instalar y te pide una sola autorización; también pide permiso para programar tareas y enviar.
 
 ## Riesgos que debes conocer
 

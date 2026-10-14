@@ -1,6 +1,6 @@
 # Preparar Chrome
 
-El agente te guía; esto es la referencia.
+El agente te muestra todo lo que se va a configurar en una sola lista (lo que hace él y lo que te toca a ti), te pide una sola autorización y luego te guía punto por punto. Esto es la referencia.
 
 ## 1. Google Chrome
 - Windows: `winget install --id Google.Chrome -e` o https://www.google.com/chrome/
@@ -11,7 +11,7 @@ Usa tu perfil de Chrome de siempre (ahí están tus sesiones).
 1. Instala **Claude in Chrome** desde la Chrome Web Store (busca "Claude" publicado por Anthropic) y fíjala en la barra.
 2. Inicia sesión con la misma cuenta de Claude Desktop.
 3. En Claude Desktop, en una sesión de Code del proyecto, conecta Chrome cuando lo pida (o escribe `/chrome`).
-4. Permisos por sitio: cuando la extensión pregunte, permite LinkedIn, Indeed, OCC, Computrabajo y los portales de empleo que vayan apareciendo.
+4. Permisos por sitio: el agente abre todos tus portales de una vez; cuando la extensión pregunte, elige **"Permitir siempre"** en LinkedIn, Indeed, OCC, Computrabajo y Gmail. Los portales de empleo nuevos que vayan apareciendo te los pedirá durante las corridas.
 
 ## 2b. Si usas Codex
 1. Instala la extensión de Chrome de Codex/ChatGPT desde la Chrome Web Store e inicia sesión con tu cuenta de ChatGPT.

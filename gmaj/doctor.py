@@ -1,7 +1,7 @@
 """Environment checklist. Each item says what is wrong and the exact command to fix it on this OS.
 
-The agent (INSTALL.md) runs `gmaj doctor --json`, asks the user before each fix, and checks the browser
-extensions itself (Python cannot see them).
+The agent (INSTALL.md) gets one authorization for the whole install list, runs `gmaj doctor --json`
+to confirm, and checks the browser extensions itself (Python cannot see them).
 """
 import importlib.util
 import json
