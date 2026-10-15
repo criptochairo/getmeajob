@@ -29,12 +29,14 @@ c. `uv run gmaj prefilter`.
 - Score ≥ 75: `uv run gmaj tailor <carpetas> --high`; el resto: `uv run gmaj tailor <carpetas>` (lotes de ~8).
 - `uv run gmaj check <carpetas>`; corrige los FAIL solo con datos del perfil o marca `needs_user`.
 - `uv run gmaj review <carpetas>` (otra llamada, contexto limpio; en modo dual la hace el otro motor). `reject` → `set-status rejected` y mueve la carpeta a `user/applications/_rejected/`. `changes` → aplica solo correcciones respaldadas, vuelve a renderizar el PDF y repite `check` + `review` **una vez**; si aún no sale `approve`, `needs_user` con el motivo.
-- Solo las que tienen `review.json` con `approve` y `check` OK: `set-status <id> approved`.
+- Solo las que tienen `review.json` con `approve` y `check` OK pasan al paso 5:
+  - **Supervisado:** `set-status <id> reviewed` (lista para que el usuario la vea). **Nunca** `approved`: ese estado lo pone solo la aprobación del usuario en gmaj-inbox, y gmaj-apply envía lo que esté `approved`.
+  - **Piloto automático:** `set-status <id> approved`.
 
 ## 5. Envío o aprobación
-- **Supervisado** (`autonomy: supervised`): NO envíes. Agrega cada aprobada a `user/inbox/por_aprobar.md` (número, empresa, rol, URL, score, canal, ruta del PDF, 3 respuestas clave, salario que se pondrá). Opcional: llena el formulario hasta antes de enviar solo si el sitio guarda borradores.
+- **Supervisado** (`autonomy: supervised`): NO envíes. Agrega cada una (estado `reviewed`) a `user/inbox/por_aprobar.md` (número, empresa, rol, URL, score, canal, ruta del PDF, 3 respuestas clave, salario que se pondrá). Opcional: llena el formulario hasta antes de enviar solo si el sitio guarda borradores.
 - **Piloto automático**: sigue la skill **gmaj-apply** con las aprobadas, respetando `uv run gmaj cap <canal>` y `uv run gmaj pace`.
-- Modo dual: el turno de navegador lo toma un motor a la vez (`user/state/browser.lock`); los ATS largos (`assign.apply`) los envía ese motor con `uv run gmaj run-role apply --chrome --prompt-file <prompt con prompts/apply.md + carpetas>`; espera a que termine antes de tocar el navegador.
+- Modo dual, **solo en piloto automático** (en supervisado no se envía nada en esta corrida): el turno de navegador lo toma un motor a la vez (`user/state/browser.lock`); los ATS largos (`assign.apply`) los envía ese motor con `uv run gmaj run-role apply --chrome --prompt-file <prompt con prompts/apply.md + carpetas>`; espera a que termine antes de tocar el navegador.
 
 ## 6. Reporte
 Escribe `user/reports/<fecha>.md`: fuentes con errores o 0 resultados (`user/data/fetch_report.json`; si LinkedIn está en pausa por bloqueo — `user/data/linkedin_guest_cooldown.json` — dilo y que las alertas por correo cubren el hueco), nuevas / filtradas / calificadas, carpetas creadas, enviadas, por aprobar, escaladas (con motivo), correos importantes, consumo (`user/logs/usage.jsonl` de hoy). Última línea: "Corrida completa". Cierra todas tus pestañas.

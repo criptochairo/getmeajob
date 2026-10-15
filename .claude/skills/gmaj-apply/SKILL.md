@@ -5,7 +5,10 @@ description: Envía postulaciones ya aprobadas en el navegador del usuario (Link
 
 # Enviar postulaciones aprobadas
 
-Sigue `prompts/apply.md` al pie de la letra con las carpetas `approved` (`uv run gmaj list --status approved --json`), en orden de score.
+Sigue `prompts/apply.md` al pie de la letra, en orden de score, con:
+- **Desde gmaj-inbox:** exactamente las carpetas que el usuario acaba de aprobar, nada más.
+- **Desde la corrida diaria en piloto automático:** las `approved` (`uv run gmaj list --status approved --json`).
+- En modo supervisado nunca envíes una vacante que siga en `reviewed`: esa todavía no la aprobó el usuario.
 
 - **Antes de empezar:** en modo dual crea `user/state/browser.lock` (`{"engine": "<tú>", "since": "<hora>"}`); si ya existe y tiene < 3 h, espera o termina. Bórralo al acabar.
 - **Canales no soportados** por tu motor (`catalogs/channels.yaml`): no lo intentes; escala a `tareas_humanas.md`.

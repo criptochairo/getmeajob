@@ -6,6 +6,7 @@ Carpetas (dentro de `user/`):
 {{FOLDERS}}
 
 Para cada carpeta, con las sesiones de Chrome del usuario:
+0. **Verifica que esté aprobada:** su vacante debe aparecer en `uv run gmaj list --status approved --json` (campo `app_dir`). Si no aparece (p. ej. sigue `reviewed`, que en modo supervisado significa que el usuario todavía no la aprueba), **no la envíes** y anótalo en la tabla final.
 1. Antes de empezar: `uv run gmaj cap <canal>`; si `remaining` es 0, deja la vacante para mañana.
 2. Abre la URL de `job.md` en una pestaña nueva y sigue el botón de aplicar.
 3. Llena solo con `answers.json`, `answers.yaml` y `profile.yaml` (contacto: `personal.email`, `personal.phone`). Adjunta el PDF de la carpeta (idioma `cv_language`); verifica que quedó seleccionado ese archivo y no uno viejo. Carta: `cover.md`. Demográficas: `eeo_voluntary`. Desmarca "seguir a la empresa".
