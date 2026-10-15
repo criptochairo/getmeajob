@@ -104,6 +104,6 @@ La entrevista **confirma y corrige** el borrador bloque por bloque en vez de pre
     - Plan de suscripción (Claude Pro/Max, ChatGPT Plus/Pro): con planes chicos se reducen `limits.tailor_per_day` (p. ej. 10) para no agotar la cuota.
 
 ## 3. Cierre
-1. `uv run gmaj validate --only profile,answers` y resuelve lo que falte (search/variants se generan después).
+1. **Sin pedir permiso**, avisa en una línea ("Reviso que tu perfil esté completo…") y corre `uv run gmaj validate --only profile,answers`: es una revisión local de solo lectura. Si falta algo, pregunta solo eso (search/variants se generan después); si sale bien, dilo en una frase y sigue.
 2. Muestra un resumen final (5–10 líneas) y pide confirmación expresa: "¿Todo correcto?".
 3. Sigue con **gmaj-suggest-roles** y luego **gmaj-build-profile**.
