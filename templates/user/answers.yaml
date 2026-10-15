@@ -1,5 +1,5 @@
 # Respuestas permitidas para formularios. Si una pregunta no tiene respuesta aquí (ni en profile.yaml) → se escala, no se improvisa.
-# Lo llena la entrevista (skill gmaj-onboarding). "prefer_not_to_say" es una respuesta válida en todo lo demográfico.
+# Lo llena la entrevista (skill gmaj-onboarding). En lo demográfico la entrevista pide el dato; "prefer_not_to_say" es válido si el usuario no lo quiere dar.
 schema_version: 1
 
 identity:
@@ -79,7 +79,7 @@ references: []                 # [{name, relation, contact}] solo con permiso de
 
 how_did_you_hear: "Por el canal donde se publicó la vacante (LinkedIn, Indeed, OCC...)"
 
-eeo_voluntary:
+eeo_voluntary:                 # la entrevista los pide; queda prefer_not_to_say solo si el usuario no quiere darlo
   gender: prefer_not_to_say
   race_ethnicity: prefer_not_to_say
   veteran: prefer_not_to_say

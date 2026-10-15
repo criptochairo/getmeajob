@@ -18,7 +18,7 @@ Objetivo: llenar `user/profile.yaml` y `user/answers.yaml` con hechos **confirma
 - Cada 3–4 bloques, muestra un resumen corto de lo guardado y pregunta si algo está mal.
 
 ## 0. Aviso de privacidad (antes de la primera pregunta)
-Explica en 4 líneas: todo se guarda solo en su computadora (`user/`), nada se sube a GitHub; los datos sensibles (edad, género, pronombres, etnia, discapacidad) son opcionales y "prefiero no decir" siempre es válido; la herramienta solo usará lo que confirme; puede pedir ver o borrar cualquier dato. Pide su OK para empezar.
+Explica en 4 líneas: todo se guarda solo en su computadora (`user/`), nada se sube a GitHub; más adelante le pediremos algunos datos personales que piden los formularios (edad, género, pronombres, etnia, discapacidad): la mayoría de la gente los da sin problema, y en cada uno puede elegir "prefiero no decir"; la herramienta solo usará lo que confirme; puede pedir ver o borrar cualquier dato. Pide su OK para empezar.
 
 ## 0.5 Edad y etapa (antes del bloque 1)
 - Pregunta si tiene 18 años o más. **GetMeAJob es solo para mayores de 18.** Si no, explícalo con amabilidad (los menores necesitan permisos y condiciones especiales que la herramienta no puede verificar), sugiere la bolsa de trabajo de su escuela o el servicio de empleo de su país, y **detén la entrevista** sin guardar más datos.
@@ -91,7 +91,9 @@ La entrevista **confirma y corrige** el borrador bloque por bloque en vez de pre
     - Cargos públicos: pregúntalo en palabras sencillas, sin términos legales, y di por qué se pregunta. Ejemplo: "Algunos formularios, sobre todo de bancos y financieras, preguntan esto: ¿tú o alguien de tu familia cercana (pareja, papás, hijos, hermanos) trabaja o trabajó en el último año en un puesto alto de gobierno? Por ejemplo, diputado, senador, presidente municipal, juez, secretario o director en una dependencia, o un mando del ejército. Trabajar en gobierno en un puesto normal no cuenta. Casi siempre la respuesta es no." Si dice que sí: ¿quién es (parentesco, no nombre) y qué cargo? → `government_official_relative`. Si el cargo es suyo → `politically_exposed_person: true`. Si duda, guarda `escalate`.
     - ¿Acepta mensajes SMS de reclutadores? ¿Que guarden su solicitud para otras vacantes? ¿Verificación de antecedentes?
     - Referencias (solo con permiso de cada una) o "disponibles a solicitud".
-11. **Datos demográficos voluntarios** (EEO) → `answers.eeo_voluntary`: explica que son opcionales y que por defecto se responde "prefiero no decir".
+11. **Datos demográficos de formularios** (EEO) → `answers.eeo_voluntary`: pídelos de forma directa y natural, en un solo mensaje. Explica en una frase que muchas empresas, sobre todo de EE.UU., los piden para sus estadísticas de diversidad, que no afectan la evaluación y que en cada uno puede responder "prefiero no decir". Ejemplo: "Para los formularios que lo piden: ¿con qué género te identificas?, ¿cómo describirías tu origen étnico?, ¿tienes alguna discapacidad?, ¿has servido en las fuerzas armadas? Si alguno prefieres no darlo, dime y en ese pondremos 'prefiero no decir'."
+    - Guarda cada respuesta con sus palabras (`gender`, `race_ethnicity`, `disability`, `veteran`); al llenar un formulario se elige la opción más cercana. Lo que no quiera dar o no conteste queda `prefer_not_to_say`.
+    - Si ya dio género o pronombres en el bloque 1, solo confírmalos ("¿uso lo mismo que me dijiste antes?").
 12. **Cómo va a operar** → `search.yaml` (lo termina `gmaj-build-profile`) y `engines.yaml`
     - Si existe `user/onboarding/setup.json` (lo deja el paso 3 de `INSTALL.md`), **no vuelvas a preguntar** canales ni Gmail: muéstralos en una línea para confirmar ("Tienes sesión en LinkedIn y OCC, y Gmail conectado en lectura, ¿correcto?") y pregunta solo lo que falte. Si no existe, pregunta:
       - Canales donde **ya tiene cuenta** (LinkedIn, Indeed, OCC, Computrabajo...).
