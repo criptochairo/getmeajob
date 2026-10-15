@@ -186,6 +186,35 @@ def cmd_render(a):
     print(render_cv.render(a.src, a.out))
 
 
+LANGUAGE_NAMES = {'es': 'español', 'en': 'inglés', 'pt': 'portugués', 'fr': 'francés', 'de': 'alemán'}
+
+
+def cvs_message():
+    """CVs and cover letters grouped by family (A, B, C...) as Markdown links with absolute paths, ready to show the user."""
+    families = (config.profile().get('preferences') or {}).get('chosen_role_families') or []
+    names = {f.get('id'): f.get('name') or f.get('id') for f in families}
+    order = [f.get('id') for f in families]
+    variants = config.search().get('variants') or []
+    groups = sorted({v.get('family') for v in variants}, key=lambda f: order.index(f) if f in order else len(order))
+    lines = []
+    for letter, family in zip('ABCDEFGHIJKLMNOPQRSTUVWXYZ', groups):
+        lines.append(f'**{letter} · {names.get(family, family)}**')
+        for v in (v for v in variants if v.get('family') == family):
+            lang = LANGUAGE_NAMES.get(v.get('language'), v.get('language'))
+            for kind, key, ext in (('CV', 'cv', '.pdf'), ('Carta', 'cover', '.md')):
+                if not v.get(key):
+                    continue
+                path = paths.user('variants', v[key] + ext).resolve()
+                link = f'[{path.name}](<{path.as_posix()}>)' if path.exists() else f'{path.name} (falta generar el PDF)'
+                lines.append(f'- {kind} en {lang}: {link}')
+        lines.append('')
+    return '\n'.join(lines).strip() or 'Todavía no hay CVs en search.yaml variants.'
+
+
+def cmd_cvs(a):
+    print(cvs_message())
+
+
 def cmd_pace(a):
     print(pace.pause(config.search().get('limits') or {}))
 
@@ -350,6 +379,7 @@ def build():
     add('review', cmd_review, 'revisión cruzada con contexto limpio').add_argument('folders', nargs='+')
     add('mail', cmd_mail, 'triage de correo (solo lectura)')
     add('check', cmd_check, 'verificación sin IA de paquetes').add_argument('folders', nargs='+')
+    add('cvs', cmd_cvs, 'lista de CVs y cartas por grupo, con rutas absolutas, para mostrar al usuario')
     sp = add('render', cmd_render, 'Markdown -> PDF')
     sp.add_argument('src')
     sp.add_argument('out', nargs='?')

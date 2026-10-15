@@ -22,3 +22,11 @@ def test_gmaj_without_command_shows_welcome(capsys):
     cli.main([])
     out = capsys.readouterr().out
     assert 'LOS PASOS' in out and 'uv run gmaj --help' in out
+
+
+def test_cvs_message_groups_by_letter_with_absolute_links(user_dir):
+    (user_dir / 'variants' / 'cv_datos_es.pdf').write_bytes(b'%PDF-1.4')
+    message = cli.cvs_message()
+    assert message.startswith('**A · ')
+    pdf = (user_dir / 'variants' / 'cv_datos_es.pdf').resolve().as_posix()
+    assert f'- CV en español: [cv_datos_es.pdf](<{pdf}>)' in message
