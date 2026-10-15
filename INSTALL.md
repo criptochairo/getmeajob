@@ -16,7 +16,7 @@ Muestra la pantalla de bienvenida **tal cual**, dentro de un bloque de código p
    > - ⬇️ Claude Code en terminal (`claude`) — el mismo Claude que ya usas, con tu misma cuenta
    > - ⬇️ Descargar GetMeAJob en `Documentos/GetMeAJob` y sus librerías de Python
    >
-   > Voy a instalar lo que falta y descargar GetMeAJob en `Documentos/GetMeAJob`. Tarda unos 5 minutos y te voy avisando. ¿Está bien, o quieres cambiar algo (p. ej. la carpeta)?
+   > Voy a instalar lo que falta y descargar GetMeAJob en `Documentos/GetMeAJob`. Tarda unos 5 minutos y te voy avisando. Si la app te muestra un cuadro de permiso por cada comando, elige "permitir siempre" (o aprobar la sesión) para que no te pregunte uno por uno. ¿Está bien, o quieres cambiar algo (p. ej. la carpeta)?
 
    - Carpeta propuesta: `%USERPROFILE%\Documents\GetMeAJob` o `~/Documents/GetMeAJob`; el usuario puede elegir otra.
    - CLI del motor: incluye el del producto en el que estás (Claude → `claude`; Codex → `codex`). Si el usuario tiene ambos y quiere `dual`, se agrega después en el paso 2.
@@ -27,12 +27,12 @@ Muestra la pantalla de bienvenida **tal cual**, dentro de un bloque de código p
    - CLI: Claude → Windows `powershell -c "irm https://claude.ai/install.ps1 | iex"`, macOS `curl -fsSL https://claude.ai/install.sh | bash`; Codex → `npm install -g @openai/codex` (en Windows requiere Node: `winget install --id OpenJS.NodeJS.LTS -e`) o `brew install codex`.
    - `git clone https://github.com/criptochairo/getmeajob.git "<carpeta>"` (si ya existe el clon: `git pull`), luego dentro de la carpeta `uv sync` y `uv run gmaj init` (crea `user/`, privado y fuera de git).
    - Si algo falla, explica el error en una frase y sigue con lo demás; al final reporta qué quedó pendiente.
-4. Aviso de la app: Claude Desktop o Codex pueden mostrar su propio cuadro de aprobación por cada comando (eso no lo controla este guion). Antes de empezar, dile al usuario que puede elegir "permitir siempre" / aprobar la sesión para que no se le pregunte uno por uno. Si el sandbox bloquea la red (Codex), pide esa aprobación una vez.
+4. Aviso de la app: Claude Desktop o Codex pueden mostrar su propio cuadro de aprobación por cada comando (eso no lo controla este guion); el aviso de "permitir siempre" ya va en el mensaje del punto 2. Si el sandbox bloquea la red (Codex), pide esa aprobación una vez.
 5. A partir de aquí trabaja dentro de la carpeta; lee `AGENTS.md`.
 
 ## Paso 2 — Motor y verificación (`gmaj doctor`)
 1. **Motor:** confirma con el usuario:
-   - Solo Claude → `uv run gmaj engines set claude`. Solo Codex → `codex`. Ambos → explica que lo normal es usar uno; `dual` significa dos suscripciones, turnos de navegador y revisión cruzada entre ambos. Solo si lo pide: `dual` (y, si falta el segundo CLI, instálalo: ya va dentro de lo que confirmó).
+   - Solo Claude → `uv run gmaj engines set claude`. Solo Codex → `uv run gmaj engines set codex`. Ambos → explica que lo normal es usar uno; `dual` significa dos suscripciones, turnos de navegador y revisión cruzada entre ambos. Solo si lo pide: `dual` (y, si falta el segundo CLI, instálalo: ya va dentro de lo que confirmó).
 2. `uv run gmaj doctor --json`. Debe salir sin `ERR`; si queda alguno, corre su `fix` sin volver a preguntar (ya está confirmado), salvo que sea algo que el usuario no aprobó en la lista.
 3. El usuario inicia sesión una vez en el CLI del motor (`claude` o `codex login`); él teclea sus datos. Explica que con ese CLI corren el scoring, la adaptación y la revisión con contexto limpio (quien adapta nunca revisa).
 
