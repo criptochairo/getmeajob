@@ -30,12 +30,13 @@
   1. Instalar lo necesario (una sola autorización)          ~5 min
   2. Elegir motor (Claude o Codex) y verificar              ~2 min
   3. Chrome: extensión e inicio de sesión en tus portales   ~5 min
-  4. Entrevista para armar tu perfil                    ~30-45 min
-     (más rápido si tienes tu CV o tu PDF de LinkedIn)
+  4. Entrevista para armar tu perfil                    ~15-45 min
+     (~15 min en modo rápido: confirmas un resumen de tu CV
+      de un solo jalón; o revisas empleo por empleo)
   5. Roles sugeridos y revisión de tus CVs              ~10-15 min
   6. Programar la búsqueda diaria y cierre                  ~3 min
                                                 ------------------
-                                        Total: ~1 hora, una sola vez
+                                     Total: ~40-75 min, una sola vez
 
   DESPUÉS: unos minutos al día para aprobar tus postulaciones
   (di "pendientes"). Puedes pausar en cualquier paso y retomar

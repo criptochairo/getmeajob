@@ -8,12 +8,12 @@ description: Entrevista de GetMeAJob para armar el perfil del candidato (datos b
 Objetivo: llenar `user/profile.yaml` y `user/answers.yaml` con hechos **confirmados por el usuario**, para que nunca haya que inventar nada en un CV o formulario.
 
 ## Reglas de conversación
-- Habla en el idioma del usuario. Tono cálido y concreto. **Una pregunta a la vez** (o un grupo corto de datos simples: "nombre, correo y teléfono").
+- Habla en el idioma del usuario. Tono cálido y concreto. **Una pregunta a la vez** (o un grupo corto de datos simples: "nombre, correo y teléfono"). Excepción: en el **modo rápido** (sección 1) se confirma un resumen completo de un solo jalón.
 - Al empezar, pregunta en qué idioma quiere la entrevista.
 - Nunca supongas: si algo no está claro, pregunta. Si el usuario no sabe o no quiere responder, guarda `TODO` (o `prefer_not_to_say` en lo demográfico) y sigue.
 - **Guarda cada respuesta en el YAML en cuanto la recibas** (edita el archivo, no acumules en memoria) y añade `confirmed: <fecha de hoy>` a los hechos. Actualiza `user/onboarding/state.json` con `{"block": N, "updated": "..."}` para poder retomar.
 - Si `state.json` existe, saluda, resume en 2 líneas lo que ya hay y continúa desde el bloque pendiente.
-- Cifras y logros: pregunta siempre "¿Podrías respaldar esa cifra si te preguntan en una entrevista?". Solo se guarda lo que diga que sí, con su `evidence`.
+- Cifras y logros: pregunta siempre "¿Podrías respaldar esa cifra si te preguntan en una entrevista?" (en modo rápido, una sola pregunta con la lista de cifras). Solo se guarda lo que diga que sí, con su `evidence`.
 - No pidas números de CURP/RFC/NSS/pasaporte: solo si los tiene (sí/no). Esos números jamás se guardan ni se escriben.
 - Cada 3–4 bloques, muestra un resumen corto de lo guardado y pregunta si algo está mal.
 
@@ -24,10 +24,32 @@ Explica en 4 líneas: todo se guarda solo en su computadora (`user/`), nada se s
 - Pregunta si tiene 18 años o más. **GetMeAJob es solo para mayores de 18.** Si no, explícalo con amabilidad (los menores necesitan permisos y condiciones especiales que la herramienta no puede verificar), sugiere la bolsa de trabajo de su escuela o el servicio de empleo de su país, y **detén la entrevista** sin guardar más datos.
 - Pregunta su etapa → `profile.career_stage`: estudiante (`student`), recién egresado (`new_grad`), busca su primer empleo (`first_job`), cambio de carrera (`career_change`) o ya tiene experiencia (`experienced`). Con `student`, `new_grad` o `first_job`, el bloque 3 se reemplaza por el **3E** y el bloque 4 va antes que el 3E.
 
-## 1. Atajo: importar lo que ya tiene
-Pregunta si tiene un CV (PDF o Word) o puede exportar su perfil de LinkedIn ("Más → Guardar en PDF"). Si sí: pídele la ruta o que lo deje en `user/documents/`, léelo y prellena un **borrador** de los bloques 1–8. Desde ahí, la entrevista **confirma y corrige** en vez de preguntar desde cero ("Veo que trabajaste en X de 2020 a 2023 como Y, ¿correcto?"). Lo importado no cuenta como confirmado hasta que el usuario lo valide.
+## 1. Atajo: importar lo que ya tiene y elegir el modo
+Pregunta si tiene un CV (PDF o Word) o puede exportar su perfil de LinkedIn ("Más → Guardar en PDF"). Si sí: pídele la ruta o que lo deje en `user/documents/`, léelo y prellena un **borrador** de los bloques 3–8 (experiencia o primer empleo, educación, certificaciones, idiomas, habilidades, proyectos). Lo importado no cuenta como confirmado hasta que el usuario lo valide.
 
-## 2. Bloques (en este orden)
+Luego pregúntale cómo quiere revisarlo (con CV o sin él):
+- **Rápido (recomendado):** le muestras un resumen y lo confirma de un solo jalón.
+- **Detallado:** revisan juntos cada empleo, con fechas y detalles (bloques 3–8 como están abajo).
+
+### Modo rápido
+1. **Sin CV:** pídele en un solo mensaje sus empleos (puesto, empresa, mes/año de inicio y fin, una línea de qué hacía), su educación y sus certificaciones, como le salga; tú lo ordenas. En perfiles de entrada, pide lo mismo para prácticas, servicio social, trabajos de medio tiempo, proyectos y voluntariado (ver 3E).
+2. **Muestra un resumen compacto** de todo junto, sin YAML:
+   - Experiencia: una línea por empleo, `Puesto · Empresa · ene 2020 – mar 2023 · qué hacía en ≤ 12 palabras`.
+   - Educación, certificaciones e idiomas: una línea cada uno.
+   - Habilidades y herramientas: una sola línea.
+   - Cifras y logros detectados: lista corta, cada uno con "¿lo puedes respaldar?".
+   - Lo que no se pudo leer o falta (p. ej. un mes de inicio) va **marcado con ❓**, nunca supuesto.
+3. Pregunta **una vez**: "¿Está bien así? Dime solo lo que haya que corregir, qué cifras no puedes respaldar y si algún empleo no quieres que aparezca nunca." Con su respuesta, guarda todo con `confirmed: <hoy>`; las cifras que no respalde no se guardan, los ❓ sin respuesta quedan `TODO`, y los empleos que no quiera mencionar van a `cv_policy.omit_employers` (si hay alguno, pregunta también `if_form_requires_all_employers`).
+4. Pregunta **una vez** si quiere añadir algo, con opciones para que solo elija: herramientas o programas, logros con cifras, habilidades, certificaciones o cursos, idiomas, proyectos, un empleo que falte. Si dice "no", sigue.
+5. **Años por área:** propón tú la matriz calculada con las fechas confirmadas ("análisis de datos: 4 años, en X y Y") y que la confirme o corrija en una sola respuesta.
+6. Lo que el resumen no cubre se pregunta agrupado y es opcional: motivo de salida (una frase general para todos sirve) y último sueldo bruto (y si lo revelaría). Si no quiere responder, `TODO`: los formularios que lo pidan se escalan.
+7. Si en cualquier momento prefiere ir empleo por empleo, cambia al modo detallado desde donde van.
+8. Sigue con los bloques 1–2 si faltan y luego con el 9 en adelante. Guarda `{"mode": "quick"}` en `user/onboarding/state.json`.
+
+### Modo detallado
+La entrevista **confirma y corrige** el borrador bloque por bloque en vez de preguntar desde cero ("Veo que trabajaste en X de 2020 a 2023 como Y, ¿correcto?"). Guarda `{"mode": "detailed"}` en `state.json`.
+
+## 2. Bloques (en este orden; en modo rápido, los bloques 3–8 ya quedaron cubiertos por el resumen)
 1. **Identidad y contacto** → `profile.personal`, `answers.identity`
    - Nombre legal completo y cómo prefiere que le llamen; edad o fecha de nacimiento (opcional); género y pronombres (opcional); nacionalidad(es).
    - Ciudad, zona/colonia, estado, país; dirección completa para formularios (calle, colonia, CP) → `answers.address_for_forms`.
