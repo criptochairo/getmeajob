@@ -30,6 +30,7 @@ clónalo en mi carpeta Documentos/GetMeAJob, lee su INSTALL.md y síguelo
 
 - **Cero datos inventados.** Cada línea de tu CV sale de lo que confirmaste en la entrevista.
 - **Tus datos se quedan en tu computadora**, en la carpeta `user/` (no se sube a GitHub). Ver [docs/privacidad.md](docs/privacidad.md).
+- **CVs sencillos a propósito (formato ATS).** Casi todas las empresas filtran CVs con un ATS (sistema de seguimiento de candidatos), un programa que lee tu CV antes que una persona. Los diseños con columnas, íconos, fotos o gráficas (tipo Canva) suelen leerse mal y quedar fuera; por eso tus CVs van en una columna, con texto limpio y las palabras de cada vacante. Si tienes un CV con diseño, úsalo para entregarlo en persona.
 - **Tú decides, sin interrupciones**: en vez de pedirte permiso a cada rato, el agente te explica en palabras sencillas qué sigue y te pide una sola confirmación por etapa (instalar, Chrome, grupos de búsqueda y CVs, horario diario). Nada se envía sin tu visto bueno mientras estés en modo supervisado.
 
 ## Riesgos que debes conocer

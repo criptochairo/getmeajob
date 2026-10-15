@@ -25,6 +25,8 @@
     el piloto automático.
   - Sirve si ya tienes experiencia o si buscas tu primer empleo
     (para mayores de 18 años).
+  - Tus CVs serán sencillos a propósito: formato ATS, el que leen
+    sin errores los sistemas que filtran CVs en los portales.
 
   LOS PASOS                                           TIEMPO APROX.
   1. Instalar lo necesario (una sola autorización)          ~5 min
