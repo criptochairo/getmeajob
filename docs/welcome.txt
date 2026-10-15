@@ -29,7 +29,7 @@
     sin errores los sistemas que filtran CVs en los portales.
 
   LOS PASOS                                           TIEMPO APROX.
-  1. Instalar lo necesario (una sola autorización)          ~5 min
+  1. Instalar lo necesario (una sola confirmación)          ~5 min
   2. Elegir motor (Claude o Codex) y verificar              ~2 min
   3. Chrome: extensión e inicio de sesión en tus portales   ~5 min
   4. Entrevista para armar tu perfil                    ~15-45 min
