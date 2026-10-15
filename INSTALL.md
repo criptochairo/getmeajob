@@ -2,7 +2,8 @@
 
 Lo sigue el agente cuando el usuario pega el bloque de instalación del README. Habla con el usuario en su idioma y explica cada paso en una frase. Pide autorización explícita **una sola vez para toda la instalación** (paso 1), **una sola vez para toda la configuración de Chrome** (paso 3) y, aparte, antes de registrar tareas programadas y enviar postulaciones. No pidas permiso por cada programa, comando, extensión o sitio. Nunca pidas ni teclees contraseñas: los inicios de sesión los hace el usuario.
 
-Al empezar, di: "Voy a instalar **GetMeAJob 1.0 by Criptochairo**. Son 6 pasos (~10 min de setup + ~30–45 min de entrevista). Puedes pausar cuando quieras y retomamos donde quedamos."
+## Paso 0 — Bienvenida (antes de revisar o instalar nada)
+Muestra la pantalla de bienvenida **tal cual**, dentro de un bloque de código para que el arte se vea alineado: el contenido de `docs/welcome.txt` (si todavía no está clonado, léelo de `https://raw.githubusercontent.com/criptochairo/getmeajob/main/docs/welcome.txt`). No la resumas ni la traduzcas, salvo que el usuario hable otro idioma. Después pregunta: "¿Empezamos con el paso 1?". Si el usuario tiene dudas, respóndelas antes de seguir. Más adelante puede volver a verla con `uv run gmaj welcome`.
 
 ## Paso 1 — Revisar qué falta y autorizar todo de una vez
 1. Revisa en silencio, sin pedir permiso (solo lectura): sistema (Windows o macOS), `git --version`, `uv --version` (también `~/.local/bin/uv`), si hay Google Chrome, `claude --version` y `codex --version`, y si la carpeta destino ya tiene un clon.
@@ -74,7 +75,8 @@ Explica: cada mañana se descubren vacantes sin IA (~30 min, gratis), y una hora
 3. Tarea de la app, en la carpeta del proyecto, con la instrucción **"Ejecuta la skill gmaj-daily (corrida desatendida)."**, diaria a `run_time`:
    - **Claude Desktop:** pestaña Code → Routines → New routine → Local (o pídelo en una sesión: "programa una tarea local diaria a las 9:30 en esta carpeta que ejecute la skill gmaj-daily"). Activa "Keep computer awake" en Settings → This computer. Haz **Run now** con el usuario y elige "always allow" en cada permiso, para que las siguientes corridas no se detengan.
    - **App de Codex:** crea una tarea programada (Scheduled) en este proyecto con esa instrucción; modo de permisos `workspace-write` con acceso a la red para el navegador si la app lo pide. Haz una corrida manual para aprobar permisos.
-   - **Modo avanzado (sin app abierta):** `uv run gmaj schedule install --kind daily --time <run_time>` corre `gmaj run-daily` con el CLI del motor.4. Explica el **modo supervisado**: las primeras ~10 postulaciones esperan su visto bueno en `user/inbox/por_aprobar.md`; basta con abrir el proyecto y decir "pendientes".
+   - **Modo avanzado (sin app abierta):** `uv run gmaj schedule install --kind daily --time <run_time>` corre `gmaj run-daily` con el CLI del motor.
+4. Explica el **modo supervisado**: las primeras ~10 postulaciones esperan su visto bueno en `user/inbox/por_aprobar.md`; basta con abrir el proyecto y decir "pendientes".
 
 ## Paso 6 — Cierre
 Resume en 5 líneas qué quedó listo y cómo seguir:

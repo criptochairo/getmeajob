@@ -289,6 +289,10 @@ def cmd_autonomy(a):
         out(tools.autonomy_state())
 
 
+def cmd_welcome(a):
+    print((paths.ROOT / 'docs' / 'welcome.txt').read_text(encoding='utf-8'))
+
+
 def cmd_update(a):
     r = subprocess.run(['git', 'pull', '--ff-only'], cwd=paths.ROOT)
     tools.sync_skills()
@@ -300,13 +304,14 @@ def cmd_update(a):
 
 def build():
     p = argparse.ArgumentParser(prog='gmaj', description='GetMeAJob 1.0 by Criptochairo')
-    s = p.add_subparsers(dest='command', required=True)
+    s = p.add_subparsers(dest='command')
 
     def add(name, func, help_text):
         sp = s.add_parser(name, help=help_text)
         sp.set_defaults(func=func)
         return sp
 
+    add('welcome', cmd_welcome, 'pantalla de bienvenida: qué hace, pasos y tiempos')
     add('init', cmd_init, 'crea user/ desde las plantillas').add_argument('--no-git', action='store_true')
     add('doctor', cmd_doctor, 'revisa el entorno').add_argument('--json', action='store_true')
     add('validate', cmd_validate, 'revisa que el perfil esté completo').add_argument('--only', help='p. ej. profile,answers')
@@ -390,6 +395,10 @@ def main(argv=None):
             pass
     parser = build()
     args = parser.parse_args(argv)
+    if args.command is None:
+        cmd_welcome(args)
+        print('Comandos: uv run gmaj --help')
+        return
     if args.command == 'engines' and args.action == 'set' and not args.mode:
         parser.error('engines set requiere un modo: claude | codex | dual')
     if args.command == 'autonomy' and args.action == 'set' and not args.mode:
