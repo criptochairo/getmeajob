@@ -87,7 +87,8 @@ La entrevista **confirma y corrige** el borrador bloque por bloque en vez de pre
    - Preaviso, fecha de inicio, horario y zona horaria, ¿puede cubrir horario de EE.UU.?, reubicación, viajes.
    - **Deal-breakers** (lo que nunca aceptaría) y empresas a excluir. ¿La búsqueda es confidencial? (si sí, excluir a su empleador actual).
 10. **Preguntas típicas de formularios** → `answers.conflicts`, `consents`, `references`, `how_did_you_hear`
-    - ¿Conoce gente en empresas a las que aplicaría? ¿Familiares en gobierno o es persona políticamente expuesta?
+    - ¿Conoce a alguien que trabaje en empresas donde le gustaría entrar? → `known_employees_at`, `relatives_at_employer`
+    - Cargos públicos: pregúntalo en palabras sencillas, sin términos legales, y di por qué se pregunta. Ejemplo: "Algunos formularios, sobre todo de bancos y financieras, preguntan esto: ¿tú o alguien de tu familia cercana (pareja, papás, hijos, hermanos) trabaja o trabajó en el último año en un puesto alto de gobierno? Por ejemplo, diputado, senador, presidente municipal, juez, secretario o director en una dependencia, o un mando del ejército. Trabajar en gobierno en un puesto normal no cuenta. Casi siempre la respuesta es no." Si dice que sí: ¿quién es (parentesco, no nombre) y qué cargo? → `government_official_relative`. Si el cargo es suyo → `politically_exposed_person: true`. Si duda, guarda `escalate`.
     - ¿Acepta mensajes SMS de reclutadores? ¿Que guarden su solicitud para otras vacantes? ¿Verificación de antecedentes?
     - Referencias (solo con permiso de cada una) o "disponibles a solicitud".
 11. **Datos demográficos voluntarios** (EEO) → `answers.eeo_voluntary`: explica que son opcionales y que por defecto se responde "prefiero no decir".

@@ -63,8 +63,8 @@ conflicts:
   previously_worked_at_affiliates: "No, salvo lo que diga profile.yaml"
   known_employees_at: {}       # {empresa: "nombre / relación"}
   relatives_at_employer: false
-  government_official_relative: false
-  politically_exposed_person: false
+  government_official_relative: false   # false | {relation: "hermano", position: "presidente municipal"} | escalate (familia cercana, último año)
+  politically_exposed_person: false     # true si el propio candidato tuvo un cargo público alto en el último año; escalate si duda
   referred_by: null
 
 consents:
