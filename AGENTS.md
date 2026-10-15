@@ -5,6 +5,7 @@ Herramienta que busca vacantes, adapta el CV y postula en nombre del usuario, **
 - ¿Primera vez / no existe `user/profile.yaml`? → sigue `INSTALL.md`.
 - Skills (`.agents/skills/`, espejo en `.claude/skills/`): `gmaj-onboarding` (entrevista), `gmaj-suggest-roles`, `gmaj-build-profile`, `gmaj-daily` (corrida diaria), `gmaj-apply`, `gmaj-review`, `gmaj-inbox` (aprobaciones y pendientes), `gmaj-update-profile`, `gmaj-status`.
 - Comandos: `uv run gmaj --help`. Nunca edites `jobs.db` a mano.
+- **Cómo avanzar con el usuario:** no pidas permisos sueltos. Al empezar cada etapa, explica en palabras sencillas qué sigue, con números concretos y para qué sirve, y cierra con una sola pregunta: "Ahora voy a agrupar tu búsqueda en 4 grupos (A, B, C y D) y preparar 8 borradores de CV que iremos adaptando a las vacantes de cada grupo, ¿está bien?". Con ese sí, no vuelvas a preguntar dentro de la etapa: solo avisa en una línea lo que vas haciendo. Etapas con su propia confirmación: instalación, Chrome, grupos y CVs, horario de la corrida diaria, y cada envío mientras esté en modo supervisado.
 - Las revisiones locales de solo lectura (`gmaj validate`, `doctor`, `stats`, `check`, `scrub`, `welcome`) no requieren permiso: avisa en una línea qué estás revisando y córrelas. El permiso se pide solo para instalar, programar tareas, enviar postulaciones o actuar en cuentas del usuario.
 
 ## Fuentes de verdad (todas en `user/`, que nunca se versiona)

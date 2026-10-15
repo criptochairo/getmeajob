@@ -1,6 +1,6 @@
 # Preparar Chrome
 
-El agente te muestra todo lo que se va a configurar en una sola lista (lo que hace él y lo que te toca a ti), te pide una sola autorización y luego te guía punto por punto. Esto es la referencia.
+El agente te muestra todo lo que se va a configurar en una sola lista (lo que hace él y lo que te toca a ti), te pide una sola confirmación y luego te guía punto por punto. Esto es la referencia.
 
 ## 1. Google Chrome
 - Windows: `winget install --id Google.Chrome -e` o https://www.google.com/chrome/

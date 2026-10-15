@@ -18,7 +18,7 @@ Objetivo: llenar `user/profile.yaml` y `user/answers.yaml` con hechos **confirma
 - Cada 3–4 bloques, muestra un resumen corto de lo guardado y pregunta si algo está mal.
 
 ## 0. Aviso de privacidad (antes de la primera pregunta)
-Explica en 4 líneas: todo se guarda solo en su computadora (`user/`), nada se sube a GitHub; más adelante le pediremos algunos datos personales que piden los formularios (edad, género, pronombres, etnia, discapacidad): la mayoría de la gente los da sin problema, y en cada uno puede elegir "prefiero no decir"; la herramienta solo usará lo que confirme; puede pedir ver o borrar cualquier dato. Pide su OK para empezar.
+Explica en 4 líneas: todo se guarda solo en su computadora (`user/`), nada se sube a GitHub; más adelante le pediremos algunos datos personales que piden los formularios (edad, género, pronombres, etnia, discapacidad): la mayoría de la gente los da sin problema, y en cada uno puede elegir "prefiero no decir"; la herramienta solo usará lo que confirme; puede pedir ver o borrar cualquier dato. Cierra anunciando lo que sigue: "Empezamos con unas preguntas rápidas y luego armamos tu experiencia; te voy guiando bloque por bloque y puedes pausar cuando quieras. ¿Va?"
 
 ## 0.5 Edad y etapa (antes del bloque 1)
 - Pregunta si tiene 18 años o más. **GetMeAJob es solo para mayores de 18.** Si no, explícalo con amabilidad (los menores necesitan permisos y condiciones especiales que la herramienta no puede verificar), sugiere la bolsa de trabajo de su escuela o el servicio de empleo de su país, y **detén la entrevista** sin guardar más datos.
@@ -105,5 +105,5 @@ La entrevista **confirma y corrige** el borrador bloque por bloque en vez de pre
 
 ## 3. Cierre
 1. **Sin pedir permiso**, avisa en una línea ("Reviso que tu perfil esté completo…") y corre `uv run gmaj validate --only profile,answers`: es una revisión local de solo lectura. Si falta algo, pregunta solo eso (search/variants se generan después); si sale bien, dilo en una frase y sigue.
-2. Muestra un resumen final (5–10 líneas) y pide confirmación expresa: "¿Todo correcto?".
+2. Muestra un resumen final (5–10 líneas) y, en el mismo mensaje, anuncia lo que sigue: "Este es tu perfil. Ahora voy a buscar qué tipos de empleo te convienen, con datos reales de vacantes de esta semana. Si ves algo que corregir, dímelo; si no, sigo. ¿Va?". Su sí confirma el perfil (`confirmed`) y arranca el paso 3.
 3. Sigue con **gmaj-suggest-roles** y luego **gmaj-build-profile**.

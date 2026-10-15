@@ -10,7 +10,7 @@ Tu asistente de búsqueda de empleo. Encuentra vacantes cada mañana, adapta tu 
 ```
 Instala GetMeAJob desde https://github.com/criptochairo/getmeajob :
 clónalo en mi carpeta Documentos/GetMeAJob, lee su INSTALL.md y síguelo
-(muéstrame primero la lista de lo que hay que instalar y pídeme una sola autorización).
+(muéstrame primero la lista de lo que hay que instalar y pídeme una sola confirmación).
 ```
 
 3. Primero verás una pantalla de bienvenida con lo que hace la herramienta, los pasos y cuánto toma cada uno (~40–75 min en total, una sola vez; puedes volver a verla con `uv run gmaj welcome`). Luego el agente te guiará: instalar lo necesario, la extensión de Chrome, iniciar sesión en tus portales (tú tecleas tus contraseñas) y una **entrevista** para armar tu perfil: ~15 min en modo rápido (confirmas de un jalón un resumen de tu CV o tu PDF de LinkedIn y solo agregas lo que falte) o ~30–45 min si prefieres revisar empleo por empleo. Al final te sugiere qué roles buscar, con datos reales de vacantes, y genera tus CVs.
@@ -30,7 +30,7 @@ clónalo en mi carpeta Documentos/GetMeAJob, lee su INSTALL.md y síguelo
 
 - **Cero datos inventados.** Cada línea de tu CV sale de lo que confirmaste en la entrevista.
 - **Tus datos se quedan en tu computadora**, en la carpeta `user/` (no se sube a GitHub). Ver [docs/privacidad.md](docs/privacidad.md).
-- **Tú decides**: el agente te muestra la lista de lo que hay que instalar y te pide una sola autorización; también pide permiso para programar tareas y enviar.
+- **Tú decides, sin interrupciones**: en vez de pedirte permiso a cada rato, el agente te explica en palabras sencillas qué sigue y te pide una sola confirmación por etapa (instalar, Chrome, grupos de búsqueda y CVs, horario diario). Nada se envía sin tu visto bueno mientras estés en modo supervisado.
 
 ## Riesgos que debes conocer
 
