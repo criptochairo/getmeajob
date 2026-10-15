@@ -10,7 +10,8 @@ Lo que no se puede probar con tests automáticos. Marca cada punto en una cuenta
 
 ## Tareas programadas
 - [ ] Claude Desktop → Routines → Local: "Run now" + "always allow"; al día siguiente corrió sola y **pudo usar Claude in Chrome**.
-- [ ] App de Codex → tarea programada: corrió sola y pudo usar la extensión de Chrome / el navegador.- [ ] `gmaj schedule install` (Windows y macOS) corre `gmaj discover` y deja `user/data/discover_done.json`.
+- [ ] App de Codex → tarea programada: corrió sola y pudo usar la extensión de Chrome / el navegador.
+- [ ] `gmaj schedule install` (Windows y macOS) corre `gmaj discover` y deja `user/data/discover_done.json`.
 - [ ] Recuperación: con la PC dormida a la hora programada, corre al despertar.
 - Si alguna tarea de app NO puede usar el navegador → documentar el modo CLI (`gmaj schedule install --kind daily`) como camino recomendado para ese motor.
 
