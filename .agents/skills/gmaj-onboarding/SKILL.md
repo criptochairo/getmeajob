@@ -1,6 +1,6 @@
 ---
 name: gmaj-onboarding
-description: Entrevista de GetMeAJob para armar el perfil del candidato (datos básicos, experiencia, educación, certificaciones, habilidades, preferencias y respuestas típicas de formularios). Úsala al instalar GetMeAJob, cuando user/profile.yaml esté vacío o incompleto, o cuando el usuario diga "armemos mi perfil" / "sigamos con la entrevista". No la uses para cambios puntuales (eso es gmaj-update-profile).
+description: Entrevista de GetMeAJob para armar el perfil del candidato (datos básicos, experiencia o primer empleo, educación, certificaciones, habilidades, preferencias y respuestas típicas de formularios). Úsala al instalar GetMeAJob, cuando user/profile.yaml esté vacío o incompleto, o cuando el usuario diga "armemos mi perfil" / "sigamos con la entrevista". No la uses para cambios puntuales (eso es gmaj-update-profile).
 ---
 
 # Entrevista de perfil
@@ -19,6 +19,10 @@ Objetivo: llenar `user/profile.yaml` y `user/answers.yaml` con hechos **confirma
 
 ## 0. Aviso de privacidad (antes de la primera pregunta)
 Explica en 4 líneas: todo se guarda solo en su computadora (`user/`), nada se sube a GitHub; los datos sensibles (edad, género, pronombres, etnia, discapacidad) son opcionales y "prefiero no decir" siempre es válido; la herramienta solo usará lo que confirme; puede pedir ver o borrar cualquier dato. Pide su OK para empezar.
+
+## 0.5 Edad y etapa (antes del bloque 1)
+- Pregunta si tiene 18 años o más. **GetMeAJob es solo para mayores de 18.** Si no, explícalo con amabilidad (los menores necesitan permisos y condiciones especiales que la herramienta no puede verificar), sugiere la bolsa de trabajo de su escuela o el servicio de empleo de su país, y **detén la entrevista** sin guardar más datos.
+- Pregunta su etapa → `profile.career_stage`: estudiante (`student`), recién egresado (`new_grad`), busca su primer empleo (`first_job`), cambio de carrera (`career_change`) o ya tiene experiencia (`experienced`). Con `student`, `new_grad` o `first_job`, el bloque 3 se reemplaza por el **3E** y el bloque 4 va antes que el 3E.
 
 ## 1. Atajo: importar lo que ya tiene
 Pregunta si tiene un CV (PDF o Word) o puede exportar su perfil de LinkedIn ("Más → Guardar en PDF"). Si sí: pídele la ruta o que lo deje en `user/documents/`, léelo y prellena un **borrador** de los bloques 1–8. Desde ahí, la entrevista **confirma y corrige** en vez de preguntar desde cero ("Veo que trabajaste en X de 2020 a 2023 como Y, ¿correcto?"). Lo importado no cuenta como confirmado hasta que el usuario lo valide.
@@ -40,15 +44,22 @@ Pregunta si tiene un CV (PDF o Word) o puede exportar su perfil de LinkedIn ("M�
    - Herramientas/tecnologías; motivo de salida (cómo quiere expresarlo en formularios).
    - Último sueldo bruto mensual (opcional; algunos formularios lo exigen) y si está dispuesto a revelarlo → `answers.salary_expectation.disclose_last_salary`.
    - ¿Hay algún empleo que **no** quiera mencionar nunca? → `cv_policy.omit_employers`; y si un formulario exige "todos los empleos", ¿escalar, incluirlo u omitirlo? → `cv_policy.if_form_requires_all_employers`.
-4. **Educación** → `profile.education`: grado, carrera, institución, años, estado (titulado/trunco/en curso), cédula o licencia (sí/no), promedio, honores.
+   **3E. Primer empleo (solo perfiles de entrada).** Explica que casi todo el mundo tiene experiencia aunque no sea un empleo formal, y que solo se usa lo que confirme. Recorre, una a una:
+   - Prácticas profesionales (`engagement: practicum`) y servicio social (`social_service`) → `experience`, con lo que hizo y herramientas.
+   - Trabajos de medio tiempo, de verano, en el negocio familiar o por su cuenta (`part_time`, `family_business`, `informal`) → `experience`. Cuentan aunque no sean del área: muestran responsabilidad y trato con clientes.
+   - Proyectos escolares, personales, tesis aplicada, hackathons, concursos → `projects` (qué hizo **la persona**, no el equipo; resultados solo si los puede respaldar).
+   - Voluntariado, sociedad de alumnos, equipos deportivos, clubes → `volunteering` o `education.activities`.
+   - Si de verdad no hay nada de esto, no pasa nada: el CV se arma con educación y habilidades, y se lo dices sin juzgar.
+4. **Educación** → `profile.education`: grado, carrera, institución, años, estado (titulado `completed` / egresado o pasante sin titular `coursework_completed` / en curso `in_progress` / trunco `incomplete`), cédula o licencia (sí/no), promedio, honores. Perfiles de entrada, además: fecha esperada de egreso, horario de clases si sigue estudiando, materias relacionadas con lo que busca, tesis, becas y actividades.
 5. **Certificaciones, cursos y licencias** → `profile.certifications`: nombre, emisor, fecha, vencimiento, ID de credencial.
 6. **Idiomas** → `profile.languages`: nivel (y CEFR si lo sabe), certificados (TOEFL, etc.).
 7. **Habilidades y años por área** → `profile.skills`, `profile.years_by_domain`
    - Técnicas, herramientas, blandas, de dominio.
-   - Matriz de años: para cada área relevante, ¿cuántos años y dónde? Explica que los formularios preguntan "¿cuántos años de experiencia en X?" y que se responderá exactamente esto (o "no / menos de N").
+   - Matriz de años: para cada área relevante, ¿cuántos años y dónde? Explica que los formularios preguntan "¿cuántos años de experiencia en X?" y que se responderá exactamente esto (o "no / menos de N"). Perfiles de entrada: cuenta solo prácticas y empleos (no proyectos escolares); lo normal es 0 o "menos de 1 año", y está bien.
 8. **Proyectos, voluntariado, publicaciones, premios** (opcional, rápido).
 9. **Qué busca** → `profile.preferences`, `answers.salary_expectation`, `answers.availability`
-   - Roles e industrias que le gustarían (en sus palabras) y cuáles evitar; nivel (junior/mid/senior/lead).
+   - Roles e industrias que le gustarían (en sus palabras) y cuáles evitar; nivel (entry/junior/mid/senior/lead).
+   - Perfiles de entrada: ¿acepta prácticas, becas o programas de trainee? → `preferences.accepts_internships`. Si sí, ¿cuál es el apoyo económico mínimo que aceptaría? → `answers.salary_expectation.internship_floor_month` (puede ser null). Explica que en un primer empleo abrir híbrido o presencial en zonas cercanas multiplica las opciones: casi todo lo remoto pide experiencia.
    - Modalidad: remoto / híbrido / presencial. Si acepta híbrido o presencial: zonas a las que sí iría, zonas a preguntar, zonas que nunca.
    - Salario → `answers.salary_expectation`: piso (`floor_month`), meta (`target_month`), qué responder (`monthly`, `yearly`, `hourly_usd`, `monthly_usd`, `range_rule`) y mínimo para trabajos con oficina (`office_min_month`).
    - Preaviso, fecha de inicio, horario y zona horaria, ¿puede cubrir horario de EE.UU.?, reubicación, viajes.

@@ -16,6 +16,7 @@ salary:
   floor_month: null              # piso absoluto (moneda base, mensual bruto)
   target_month: null
   office_min_month: null         # mínimo para híbrido/presencial (opcional)
+  internship_floor_month: null   # piso para prácticas/becas (solo con entry_level.enabled; null = sin piso)
   unknown_salary: keep
 
 work_mode:
@@ -83,6 +84,12 @@ exclusions:
   companies: []
   off_target_title_keywords: []  # títulos que nunca son del objetivo (se descartan sin gastar scoring)
   title_keywords: ["intern", "internship", "becario", "pasantía", "practicante", "trainee"]
+
+entry_level:                     # perfiles sin experiencia (profile.career_stage student / new_grad / first_job)
+  enabled: false
+  max_years_required: 2          # se descartan sin gastar scoring las vacantes que piden más años de experiencia
+  internship_keywords: ["intern", "internship", "becario", "becaria", "pasantía", "practicante", "trainee", "prácticas profesionales"]
+                                 # con enabled: true, estos títulos no se excluyen y usan salary.internship_floor_month
 
 scoring:                         # rúbrica 0-100; prompts/score.md la aplica junto con generated/candidate_brief.md
   role_fit: {weight: 40, tiers: []}   # [{score: 40, match: "..."}]

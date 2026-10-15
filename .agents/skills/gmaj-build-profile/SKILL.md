@@ -19,16 +19,26 @@ Parte de `templates/user/search.yaml` (ya copiado por `gmaj init`) y de `catalog
 - `scoring.role_fit.tiers`: 40 para las familias `seguro`, 30 `adyacente`, 20 `stretch`, con descripciones concretas; `skills_match.note` con sus habilidades clave; `seniority.note` con su nivel.
 - `sources.greenhouse/lever/ashby`: slugs de `catalogs/ats_boards.yaml` de sus industrias (opcional).
 - `limits.start_date` = hoy; `operation.autonomy: supervised`.
+- **Perfil de entrada** (`profile.career_stage` student / new_grad / first_job):
+  - `entry_level.enabled: true`; `max_years_required: 2` (súbelo solo si el usuario lo pide).
+  - `exclusions.title_keywords: []` si `preferences.accepts_internships`; si no, deja las de prácticas.
+  - `salary.internship_floor_month` desde `answers.salary_expectation.internship_floor_month`.
+  - `off_target_title_keywords` incluye niveles que no le tocan: "senior", "sr", "lead", "líder", "gerente", "manager", "director", "head", "principal", "staff".
+  - `queries`: añade variantes "junior", "trainee", "sin experiencia", "recién egresado" / "entry level", "graduate" de sus familias.
+  - LinkedIn: en cada `passes[].filter` agrega `&f_E=1,2` (Internship + Entry level); en las alertas por correo, también. Computrabajo, OCC e Indeed: usa sus filtros de "sin experiencia" al barrerlos.
+  - Si solo acepta remoto, avísale que casi todo lo remoto pide experiencia y ofrece abrir híbrido o presencial por zonas.
+  - `scoring.seniority.note`: "entrada: sin experiencia / recién egresado / junior".
 
 ## 2. CV maestros y variantes (`user/variants/`)
 - Un CV por **familia × idioma** que use (español del mercado y, si su inglés es B2+, inglés): `cv_<familia>_<idioma>.md`, y su carta `cover_<familia>_<idioma>.md`. Regístralos en `search.yaml variants`.
 - Formato (compatible con `gmaj render`): `# Nombre`, línea en negritas con el titular, línea de contacto (`ciudad · correo · teléfono · LinkedIn`), `## Perfil`/`## Summary`, `## Experiencia`/`## Experience` con `**Puesto** - Empresa · Modalidad · fechas` y viñetas `- `, luego Educación, Certificaciones, Idiomas, Habilidades. Una columna, ≤ 2 páginas.
 - Omite `cv_policy.omit_employers`. Cifras solo las de `achievements` confirmados.
+- **Perfil de entrada:** una página. Orden: `## Perfil`, `## Educación` (con promedio, materias relevantes, tesis o becas si los hay), `## Proyectos`, `## Prácticas y experiencia` (si hay; prácticas, servicio social y trabajos de medio tiempo con su tipo), `## Voluntariado y actividades`, `## Habilidades`, `## Idiomas`. Los proyectos usan `**Proyecto** - contexto · fechas` y viñetas de lo que hizo la persona. Si la educación no está terminada: "Estudiante de…" / "Pasante de…" con fecha esperada de egreso. La carta habla de lo aprendido y de proyectos concretos, sin prometer experiencia.
 - Cartas: ≤ 250 palabras, con marcadores `{{company}}`, `{{role}}`, `{{why_company}}`, `{{job_keywords}}`; sin datos personales sensibles.
 - Renderiza cada CV: `uv run gmaj render user/variants/<archivo>.md`.
 
 ## 3. `user/generated/candidate_brief.md`
-≤ 250 palabras para el scoring: quién es (años, áreas, nivel), familias objetivo con etiqueta, dónde puede trabajar (y dónde no), idiomas con nivel, licencias/títulos que tiene y que NO tiene, piso y meta (en moneda base y USD/mes y USD/h), modalidad aceptada, y la matriz de años por área.
+≤ 250 palabras para el scoring: etapa (`career_stage`; si es de entrada, dilo en la primera línea, con estado de los estudios y si acepta prácticas), quién es (años, áreas, nivel; en perfiles de entrada: carrera, proyectos y prácticas), familias objetivo con etiqueta, dónde puede trabajar (y dónde no), idiomas con nivel, licencias/títulos que tiene y que NO tiene, piso y meta (en moneda base y USD/mes y USD/h), modalidad aceptada, y la matriz de años por área.
 
 ## 4. Revisión cruzada (contexto limpio)
 Pide la revisión a otra instancia: escribe la lista de archivos en un prompt y córrelo con `uv run gmaj run-role review --prompt-file <archivo>` (o un subagente distinto si eres Claude): "Compara cada variante y carta con user/profile.yaml; lista afirmaciones no respaldadas (cifras, años, 'diario', 'experto', resultados de equipo atribuidos a la persona) en user/generated/variants_review.json". Corrige lo que señale.

@@ -16,6 +16,7 @@ Herramienta que busca vacantes, adapta el CV y postula en nombre del usuario, **
 ## Integridad (no negociable)
 - Cada afirmación del CV/carta/formulario se traza a un campo de `profile.yaml`/`answers.yaml`. Se puede seleccionar, reordenar, traducir y reformular; nunca exagerar cifras, títulos, fechas ni años.
 - Nunca afirmar autorización de trabajo, visa, residencia, licencias o títulos que no estén en los archivos.
+- Perfiles de entrada (`career_stage` student / new_grad / first_job): proyectos, servicio social y voluntariado son reales y se muestran, pero nunca como empleo; sin título terminado no se escribe "Licenciado/Ingeniero/titulado"; los años de experiencia se responden con la verdad (0 / menos de 1). GetMeAJob es solo para mayores de 18 años.
 - Nunca crear cuentas con contraseñas, resolver CAPTCHAs difíciles, aceptar términos inusuales, iniciar entrevistas en video/voz o con IA, ni escribir números de identificación oficial: se escala.
 - Las contraseñas y los inicios de sesión los teclea siempre el usuario.
 - Quien adapta un paquete nunca lo aprueba: la revisión es otra llamada con contexto limpio (`uv run gmaj review`).

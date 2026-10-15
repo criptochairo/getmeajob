@@ -58,7 +58,33 @@ def actual_work_mode(job):
     return job.get('work_mode', 'unknown')
 
 
-def office_rule(job, mode, salary, config):
+# "3+ años de experiencia", "minimum 2 years of experience", "2-3 years experience", "experiencia mínima de 2 años".
+# Matched on db.normalize() text (no accents or punctuation); the lowest number of a range counts.
+YEARS_REQUIRED = re.compile(
+    r'\b(?:(\d{1,2})\s+(?:(?:a|to|y)\s+)?(?:\d{1,2}\s+)?(?:anos?|years?|yrs)\s+(?:de\s+|of\s+)?(?:experiencia|experience)'
+    r'|(?:experiencia|experience)\s+(?:minima\s+|minimum\s+)?(?:de\s+|of\s+)?(\d{1,2})\s+(?:anos?|years?))\b')
+# Company boasts ("contamos con más de 20 años de experiencia") are not requirements.
+COMPANY_BOAST = re.compile(r'(contamos|tenemos|nuestra|nuestro|empresa|we have|our|company|with over|trayectoria)\W+(?:\w+\W+){0,4}$')
+
+
+def entry_level(config):
+    return (config.get('entry_level') or {}).get('enabled', False)
+
+
+def is_internship(job, config):
+    terms = (config.get('entry_level') or {}).get('internship_keywords', [])
+    return entry_level(config) and any(phrase(job.get('title', ''), t) for t in terms)
+
+
+def years_required(text):
+    """Highest explicit years-of-experience requirement in the posting (None if none)."""
+    text = db.normalize(text)
+    found = [int(m.group(1) or m.group(2)) for m in YEARS_REQUIRED.finditer(text)
+             if int(m.group(1) or m.group(2)) <= 15 and not COMPANY_BOAST.search(text[max(0, m.start() - 60):m.start()])]
+    return max(found) if found else None
+
+
+def office_rule(job, mode, salary, config, internship=False):
     """Hybrid/on-site policy: accept | reject | zones (commute zones ok / ask / reject). None = passes."""
     wm = config.get('work_mode', {})
     policy = wm.get(mode, 'reject')
@@ -66,7 +92,7 @@ def office_rule(job, mode, salary, config):
     if policy == 'reject':
         return 'discarded', f'{mode} work not accepted'
     office_min = (config.get('salary') or {}).get('office_min_month')
-    if office_min and salary is not None and salary < office_min:
+    if office_min and not internship and salary is not None and salary < office_min:
         return 'discarded', f'{mode} salary {salary:.2f} {cur}/month below office minimum'
     if policy == 'accept':
         return None
@@ -93,9 +119,15 @@ def evaluate(job, config):
     for term in exclusions.get('off_target_title_keywords', []):
         if phrase(job.get('title', ''), term):
             return 'discarded', f'Off-target title: {term}'
+    internship = is_internship(job, config)
     for term in exclusions.get('title_keywords', []):
-        if phrase(job.get('title', ''), term):
+        if phrase(job.get('title', ''), term) and not internship:
             return 'discarded', f'Excluded title: {term}'
+    if entry_level(config):
+        limit = (config.get('entry_level') or {}).get('max_years_required', 2)
+        years = years_required(' '.join(str(job.get(k) or '') for k in ('title', 'description')))
+        if years is not None and years > limit:
+            return 'discarded', f'Requires {years} years of experience (entry-level limit {limit})'
     mode = job.get('work_mode', 'unknown')
     eligibility = config.get('eligibility') or {}
     text = ' '.join(str(job.get(k) or '') for k in ('title', 'location', 'description'))
@@ -116,11 +148,12 @@ def evaluate(job, config):
         return 'discarded', f'Location outside allowed regions: {location[:60]}'
     salary = monthly_amount(job, config)
     cur = base_currency(config)
-    floor = (config.get('salary') or {}).get('floor_month')
+    # Internships pay a stipend ("apoyo económico"): they get their own floor (null = no floor).
+    floor = (config.get('salary') or {}).get('internship_floor_month' if internship else 'floor_month')
     if floor and salary is not None and salary < floor:
-        return 'discarded', f'Salary {salary:.2f} {cur}/month below floor'
+        return 'discarded', f'Salary {salary:.2f} {cur}/month below {"internship " if internship else ""}floor'
     if mode in ('hybrid', 'onsite'):
-        decision = office_rule(job, mode, salary, config)
+        decision = office_rule(job, mode, salary, config, internship)
         if decision:
             return decision
     return 'filtered', 'Passed hard filters' + ('; salary unknown/unconvertible' if salary is None else f'; {salary:.2f} {cur}/month')

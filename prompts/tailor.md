@@ -15,6 +15,9 @@ Para cada carpeta (dentro de `user/`):
    - Contacto, fechas, empresas y cifras exactamente como en profile.yaml. Nada de `cv_policy.omit_employers` ni `forbidden_strings`. Ningún dato nuevo.
 4. Escribe `cover.md` desde el `cover` de la misma familia e idioma: llena `{{company}}`, `{{role}}`, `{{job_keywords}}` y escribe `{{why_company}}` (1–2 frases concretas tomadas del anuncio, sin inventar datos de la empresa). ≤ 250 palabras.
 5. Escribe `answers.json`: `{"variant": "...", "cv_language": "..", "screening": [{"question": "...", "answer": "...", "source": "answers.yaml:<campo> | profile.yaml:<campo>"}], "escalate": []}` con las respuestas que el anuncio anticipa (autorización, salario, preaviso, idiomas, años, modalidad). Para híbrido/presencial usa `salary_expectation.office_min_month`. Lo que requiera escalar (video, assessment, licencia, pregunta sin respuesta) va en `escalate`.
+   - **Perfil de entrada** (`profile.career_stage` student / new_grad / first_job): "¿cuántos años de experiencia en X?" se responde con `years_by_domain` o "0" / "menos de 1 año"; "último salario" → "No aplica" si no hay empleos con sueldo; referencias académicas solo si están en `answers.references`.
 6. Genera el PDF: `uv run gmaj render <carpeta>/cv.md "<carpeta>/<cv_policy.pdf_name con {full_name}>"`.
+
+Perfil de entrada: mantén el orden de la variante (Perfil → Educación → Proyectos/Prácticas → Experiencia → Habilidades → Idiomas), una página. Proyectos, servicio social y voluntariado van en sus propias secciones, nunca como empleos. Con educación en curso o sin titular escribe "Estudiante de…" / "Pasante de…", nunca "Licenciado/Ingeniero". La carta destaca proyectos y aprendizajes concretos del perfil; no promete experiencia.
 
 No toques nada fuera de esas carpetas. Al final imprime una línea por carpeta: carpeta | variante | idioma | completo/ligero | escalamientos.

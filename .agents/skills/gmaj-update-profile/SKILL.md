@@ -10,5 +10,6 @@ description: Cambios puntuales al perfil de GetMeAJob - nuevo empleo, certificac
 3. Regenera lo que dependa:
    - Hechos de experiencia, educación, certificaciones o habilidades → actualiza las variantes afectadas y `generated/candidate_brief.md`, vuelve a renderizar los PDFs y pide la revisión cruzada (como en `gmaj-build-profile` paso 4) y la aprobación del usuario.
    - Familias de rol → corre **gmaj-suggest-roles** / **gmaj-build-profile**.
+   - Cambio de etapa (`career_stage`: se tituló, consiguió su primer empleo, terminó las prácticas) → actualiza `education.status` o `experience` y corre **gmaj-build-profile** completo: cambian `entry_level`, filtros, consultas, CV y brief. Al dejar de ser perfil de entrada, `entry_level.enabled: false` y vuelven las exclusiones de prácticas.
    - Salario, modalidad, zonas, exclusiones, canales → solo `search.yaml` (y `answers.yaml`); `uv run gmaj prefilter` aplica a lo nuevo.
 4. `uv run gmaj validate` y resume qué cambió.

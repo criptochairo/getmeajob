@@ -211,3 +211,44 @@ families:
     keywords: ["ia", "ai", "anotación", "etiquetado", "evaluación", "modelos de lenguaje", "llm", "data labeling"]
     industries: ["inteligencia artificial", "software", "tecnología", "investigación"]
     adjacent: ["analista-datos", "traduccion-idiomas"]
+
+  # --- Nivel de entrada (sin experiencia, recién egresados, primer empleo). entry_level: true ---
+  - id: programas-trainee
+    name: "Programas de trainee, becarios y prácticas"
+    entry_level: true
+    titles: {es: ["programa de trainees", "becario", "practicante profesional", "trainee", "programa jóvenes talento"], en: ["graduate program", "trainee program", "intern", "internship", "graduate trainee"]}
+    keywords: ["trainee", "becario", "becaria", "practicante", "prácticas", "intern", "internship", "graduate", "talento"]
+    industries: ["banca", "consumo masivo", "consultoría", "manufactura", "tecnología"]
+    adjacent: ["analista-junior", "auxiliar-administrativo"]
+
+  - id: auxiliar-administrativo
+    name: "Auxiliar administrativo y de oficina"
+    entry_level: true
+    titles: {es: ["auxiliar administrativo", "asistente administrativo", "recepcionista", "capturista de datos", "auxiliar de oficina"], en: ["administrative assistant", "office assistant", "data entry clerk", "receptionist", "administrative clerk"]}
+    keywords: ["auxiliar", "asistente", "administrativo", "recepcionista", "capturista", "oficina", "administrative", "clerk"]
+    industries: ["servicios", "salud", "educación", "inmobiliario", "despachos"]
+    adjacent: ["atencion-cliente", "programas-trainee"]
+
+  - id: ventas-entrada
+    name: "Ventas de nivel de entrada"
+    entry_level: true
+    titles: {es: ["asesor de ventas", "ejecutivo de ventas junior", "vendedor de piso", "promotor", "asesor comercial"], en: ["sales associate", "junior sales representative", "retail sales associate", "sales development representative", "brand promoter"]}
+    keywords: ["ventas", "vendedor", "asesor", "promotor", "comercial", "sales", "associate"]
+    industries: ["retail", "telecomunicaciones", "automotriz", "seguros", "consumo masivo"]
+    adjacent: ["atencion-cliente", "ventas-b2b"]
+
+  - id: analista-junior
+    name: "Analista y asistente junior"
+    entry_level: true
+    titles: {es: ["analista junior", "analista jr", "auxiliar contable", "asistente de investigación", "asistente de análisis"], en: ["junior analyst", "analyst trainee", "junior accountant", "research assistant", "entry level analyst"]}
+    keywords: ["junior", "jr", "analista", "auxiliar", "asistente", "analyst", "assistant", "entry level"]
+    industries: ["finanzas", "consultoría", "retail", "investigación", "gobierno"]
+    adjacent: ["analista-datos", "finanzas-contabilidad", "programas-trainee"]
+
+  - id: soporte-nivel-1
+    name: "Soporte técnico nivel 1"
+    entry_level: true
+    titles: {es: ["soporte técnico nivel 1", "técnico de soporte junior", "mesa de ayuda", "help desk junior", "técnico en sistemas"], en: ["help desk technician", "tier 1 support", "junior it support", "it support specialist", "desktop support technician"]}
+    keywords: ["soporte", "técnico", "mesa de ayuda", "help desk", "sistemas", "support", "it"]
+    industries: ["tecnología", "telecomunicaciones", "educación", "salud"]
+    adjacent: ["soporte-ti", "atencion-cliente"]

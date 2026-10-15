@@ -3,6 +3,10 @@
 # Un valor "TODO" significa "pendiente": nunca se usa.
 schema_version: 1
 
+career_stage: ""             # student | new_grad | first_job | career_change | experienced
+                             # student/new_grad/first_job = perfil de entrada: `experience` puede ir vacío y el CV
+                             # se arma con educación, proyectos, prácticas y voluntariado (ver gmaj-build-profile)
+
 personal:
   full_name: ""            # nombre legal completo, como aparece en documentos
   preferred_name: ""       # cómo le gusta que le llamen (opcional)
@@ -31,7 +35,8 @@ experience: []
 #   via: ""                        # agencia / outsourcing, si aplica
 #   location: ""
 #   work_mode: remote | hybrid | onsite
-#   engagement: employee | contractor | freelance | internship
+#   engagement: employee | contractor | freelance | internship | practicum | social_service | part_time | family_business | informal
+#                                  # practicum = prácticas profesionales; social_service = servicio social; informal = por su cuenta
 #   start: "AAAA-MM"
 #   end: "AAAA-MM" | present
 #   responsibilities: []
@@ -48,7 +53,13 @@ education: []
 #   institution: ""
 #   start: "AAAA"
 #   end: "AAAA"
-#   status: completed | in_progress | incomplete
+#   status: completed | coursework_completed | in_progress | incomplete   # coursework_completed = egresado/pasante, sin titular
+#   expected_end: "AAAA-MM"           # si está en curso: fecha esperada de egreso
+#   schedule: ""                      # si sigue estudiando: horario de clases (para disponibilidad)
+#   relevant_coursework: []          # materias relacionadas con los roles que busca
+#   thesis: ""                        # tema de tesis o proyecto terminal
+#   activities: []                   # sociedad de alumnos, equipos, concursos, clubes: [{text, role, confirmed}]
+#   scholarships: []                 # becas académicas: [{name, issuer, year}]
 #   license: {has_license: false, number_on_file: false}   # cédula profesional / licencia: el número nunca se escribe sin escalar
 #   gpa: ""                        # promedio, si lo sabe
 #   honors: ""
@@ -69,8 +80,19 @@ skills:
 years_by_domain: []           # respuestas honestas a "¿cuántos años de experiencia en X?"
 # - {domain: "", years: 0, evidence: "empresa/puesto donde lo hizo", confirmed: ""}
 
-projects: []                  # [{name, description, start, end, url, confirmed}]
-volunteering: []
+projects: []
+# - name: ""                       # proyecto escolar, personal, hackathon, tesis aplicada...
+#   context: school | personal | hackathon | freelance | open_source
+#   description: ""
+#   role: ""                       # qué hizo la persona (no el equipo)
+#   start: "AAAA-MM"
+#   end: "AAAA-MM"
+#   responsibilities: []
+#   achievements: []               # [{text, evidence, confirmed}]
+#   tools: []
+#   url: ""
+#   confirmed: "AAAA-MM-DD"
+volunteering: []              # mismo formato que projects, con `organization`
 publications: []
 awards: []
 
@@ -78,7 +100,8 @@ preferences:                  # lo que el usuario busca (insumo para search.yaml
   roles_wanted: []            # en sus palabras
   industries_wanted: []
   industries_avoid: []
-  seniority: ""               # junior / mid / senior / lead / manager
+  seniority: ""               # entry / junior / mid / senior / lead / manager (entry = sin experiencia o primer empleo)
+  accepts_internships: false  # perfiles de entrada: ¿acepta prácticas/becas/trainee?
   work_modes: []              # remote / hybrid / onsite
   contract_types: []          # nómina / honorarios / contractor USD / freelance
   relocation: ""

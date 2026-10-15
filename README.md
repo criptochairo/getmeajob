@@ -15,6 +15,8 @@ clónalo en mi carpeta Documentos/GetMeAJob, lee su INSTALL.md y síguelo
 
 3. El agente te guiará: instalar lo necesario, la extensión de Chrome, iniciar sesión en tus portales (tú tecleas tus contraseñas) y una **entrevista** de ~30–45 min para armar tu perfil (puedes subir tu CV o tu PDF de LinkedIn para ir más rápido). Al final te sugiere qué roles buscar, con datos reales de vacantes, y genera tus CVs.
 
+¿Recién egresado o buscas tu primer empleo? También funciona: la entrevista rescata tus prácticas, servicio social, proyectos escolares y voluntariado (sin hacerlos pasar por empleos), busca vacantes de nivel de entrada y prácticas, y descarta las que piden más años de los que tienes. Es para mayores de 18 años.
+
 ## Cómo funciona
 
 | Cuándo | Qué pasa |

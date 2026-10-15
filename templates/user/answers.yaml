@@ -4,7 +4,7 @@ schema_version: 1
 
 identity:
   date_of_birth: ""            # opcional; algunos formularios en México lo piden
-  age: null
+  age: null                    # GetMeAJob requiere 18 años o más (la entrevista lo confirma)
   gender: ""                   # como el usuario quiera responderlo, o prefer_not_to_say
   pronouns: ""
   nationalities: []
@@ -39,7 +39,8 @@ salary_expectation:
   monthly_usd: null
   range_rule: ""               # cómo responder si piden rango
   office_min_month: null       # expectativa para híbrido/presencial (si la acepta)
-  last_gross_month: null       # último sueldo bruto mensual (opcional)
+  internship_floor_month: null # piso para prácticas/becas con apoyo económico (null = sin piso; solo perfiles de entrada)
+  last_gross_month: null       # último sueldo bruto mensual (opcional; sin empleos previos se responde "No aplica")
   disclose_last_salary: escalate   # yes | no | escalate
 
 address_for_forms:

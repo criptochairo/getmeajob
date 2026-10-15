@@ -1,0 +1,87 @@
+# Persona FICTICIA de nivel de entrada (recién egresada, sin empleos formales). Ningún dato real.
+schema_version: 1
+career_stage: new_grad
+personal:
+  full_name: "Beto Muestra Ruiz"
+  preferred_name: "Beto"
+  pronouns: ""
+  email: "beto.muestra@example.com"
+  phone: "55 0000 0000"
+  location: {city: "Ciudad de México", area: "Iztapalapa", state: "CDMX", country: "México"}
+  links: {linkedin: "", portfolio: "", github: "https://github.com/beto-muestra", other: []}
+headline: {es: "Pasante de Ingeniería en Sistemas | Python y SQL", en: "Computer Systems Engineering graduate | Python and SQL"}
+summary_facts:
+  - {text: "Proyecto de titulación: sistema de inventario para una tienda escolar", confirmed: "2026-10-14"}
+experience:
+  - id: muestra-servicio-social
+    title: "Servicio social en soporte técnico"
+    company: "Universidad Ficticia"
+    location: "Ciudad de México"
+    work_mode: onsite
+    engagement: social_service
+    start: "2025-08"
+    end: "2026-02"
+    responsibilities: ["Atención a usuarios del laboratorio de cómputo", "Instalación de software en 30 equipos"]
+    achievements: []
+    tools: ["Windows", "Linux"]
+    exit_reason: "Terminó el servicio social"
+    omit_from_cv: false
+    confirmed: "2026-10-14"
+education:
+  - degree: "Ingeniería en Sistemas Computacionales"
+    field: "Sistemas"
+    institution: "Universidad Ficticia"
+    start: "2022"
+    end: "2026"
+    status: coursework_completed
+    expected_end: "2027-03"
+    relevant_coursework: ["Bases de datos", "Programación orientada a objetos"]
+    thesis: "Sistema de inventario para una tienda escolar"
+    activities: [{text: "Equipo de programación competitiva", role: "integrante", confirmed: "2026-10-14"}]
+    scholarships: []
+    license: {has_license: false, number_on_file: false}
+    gpa: "9.1"
+    honors: ""
+    confirmed: "2026-10-14"
+certifications: []
+languages:
+  - {language: "Español", level: "Nativo", cefr: "C2", certificate: ""}
+  - {language: "Inglés", level: "Intermedio", cefr: "B1", certificate: ""}
+skills: {technical: ["Python", "SQL"], tools: ["Git", "Excel"], soft: ["trabajo en equipo"], domain: []}
+years_by_domain:
+  - {domain: "soporte técnico", years: 0.5, evidence: "servicio social", confirmed: "2026-10-14"}
+projects:
+  - name: "Sistema de inventario"
+    context: school
+    description: "Aplicación web de inventario para la tienda de la facultad"
+    role: "Diseñó la base de datos y programó el backend"
+    start: "2025-09"
+    end: "2026-05"
+    responsibilities: ["Modelo de datos en PostgreSQL", "API en Python"]
+    achievements: []
+    tools: ["Python", "PostgreSQL"]
+    url: ""
+    confirmed: "2026-10-14"
+volunteering: []
+publications: []
+awards: []
+preferences:
+  roles_wanted: ["desarrollador junior", "soporte técnico"]
+  industries_wanted: []
+  industries_avoid: []
+  seniority: entry
+  accepts_internships: true
+  work_modes: [remote, hybrid, onsite]
+  contract_types: ["nómina"]
+  relocation: "No"
+  travel: "No"
+  dealbreakers: []
+  excluded_companies: []
+  confidential_search: false
+  chosen_role_families: [{id: soporte-nivel-1, name: "Soporte técnico nivel 1", label: seguro}]
+cv_policy:
+  omit_employers: []
+  if_form_requires_all_employers: escalate
+  forbidden_strings: []
+  page_size: Letter
+  pdf_name: "CV {full_name}.pdf"

@@ -1,5 +1,6 @@
 """Check that user/ is complete enough for the daily run. No third-party schema library: a list of required paths."""
 import re
+from datetime import date
 
 import yaml
 
@@ -18,6 +19,25 @@ REQUIRED = {
     'engines': ['mode'],
 }
 TODO = re.compile(r'\bTODO\b')
+CAREER_STAGES = ('student', 'new_grad', 'first_job', 'career_change', 'experienced')
+ENTRY_STAGES = ('student', 'new_grad', 'first_job')   # experience may be empty; education carries the CV
+MIN_AGE = 18
+
+
+def is_entry_level(profile):
+    return (profile or {}).get('career_stage') in ENTRY_STAGES
+
+
+def age(identity, today=None):
+    """Age from answers.identity (date_of_birth AAAA-MM-DD wins over age); None if unknown."""
+    today = today or date.today()
+    born = str((identity or {}).get('date_of_birth') or '')
+    match = re.match(r'(\d{4})-(\d{2})-(\d{2})', born)
+    if match:
+        y, m, d = map(int, match.groups())
+        return today.year - y - ((today.month, today.day) < (m, d))
+    value = (identity or {}).get('age')
+    return int(value) if isinstance(value, (int, float)) or str(value or '').isdigit() else None
 
 
 def lookup(tree, dotted):
@@ -62,9 +82,23 @@ def check(user_dir=None, only=None):
         loaded[name] = data
         if data.get('schema_version') != SCHEMA_VERSION:
             warnings.append(f'{name}.yaml: schema_version {data.get("schema_version")!r} (esperado {SCHEMA_VERSION}); corre `gmaj update`')
+        if name == 'profile' and is_entry_level(data):
+            required = [p for p in required if p != 'experience']
         problems += [f'{name}.yaml: falta {p}' for p in required if empty(lookup(data, p))]
         warnings += [f'{name}.yaml: {p} sigue en TODO (no se usará)' for p in todo_paths(data)]
+    profile = loaded.get('profile') or {}
+    stage = profile.get('career_stage')
+    if 'profile' in loaded and stage not in (None, '', *CAREER_STAGES):
+        problems.append(f'profile.yaml: career_stage debe ser uno de {", ".join(CAREER_STAGES)}')
+    if is_entry_level(profile) and not any(profile.get(k) for k in ('experience', 'projects', 'volunteering')):
+        warnings.append('profile.yaml: perfil de entrada sin experiencia, proyectos ni voluntariado: el CV solo tendrá educación')
+    years = age((loaded.get('answers') or {}).get('identity'))
+    if years is not None and years < MIN_AGE:
+        problems.append(f'GetMeAJob requiere {MIN_AGE} años o más (answers.yaml identity indica {years})')
     search = loaded.get('search') or {}
+    entry = search.get('entry_level') or {}
+    if 'profile' in loaded and 'search' in loaded and is_entry_level(profile) and not entry.get('enabled'):
+        warnings.append('search.yaml: entry_level.enabled es false pero el perfil es de entrada; corre gmaj-build-profile')
     for variant in search.get('variants') or []:
         for key in ('cv', 'cover'):
             if variant.get(key) and not (base / 'variants' / f"{variant[key]}.md").exists():
