@@ -30,8 +30,10 @@ def denylist():
 
 
 def files():
-    listed = subprocess.run(['git', 'ls-files', '--cached', '--others', '--exclude-standard'], cwd=paths.ROOT,
-                            capture_output=True, text=True, encoding='utf-8').stdout.splitlines()
+    # -z: without it git quotes and escapes non-ASCII names ("CV Jos\303\251.md") and they would be skipped.
+    listed = subprocess.run(['git', 'ls-files', '-z', '--cached', '--others', '--exclude-standard'], cwd=paths.ROOT,
+                            capture_output=True, text=True, encoding='utf-8').stdout.split('\0')
+    listed = [f for f in listed if f]
     return [paths.ROOT / f for f in listed]
 
 

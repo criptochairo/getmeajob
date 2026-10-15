@@ -89,9 +89,10 @@ def test_years_filter_off_for_experienced_profiles():
 def test_claim_limits_and_issues(user_dir):
     use_entry_profile(user_dir)
     limits = check_package.claim_limits(yaml.safe_load(ENTRY_PROFILE.read_text(encoding='utf-8')))
-    assert limits == {'max_years': 1, 'degree': False, 'coursework': True, 'license': False}
-    ok = 'Pasante de Ingeniería en Sistemas con 1 año de experiencia en soporte.'
+    assert limits == {'max_years': 0.5, 'degree': False, 'coursework': True, 'license': False}
+    ok = 'Pasante de Ingeniería en Sistemas con servicio social en soporte técnico.'
     assert check_package.claim_issues('cv.md', ok, limits) == []
+    assert check_package.claim_issues('cv.md', 'Con 1 año de experiencia en soporte.', limits)
     bad = 'Ingeniero titulado con 3 años de experiencia y cédula profesional.'
     issues = ' '.join(check_package.claim_issues('cv.md', bad, limits))
     assert '3 years' in issues and 'titulado' in issues and 'cédula profesional' in issues

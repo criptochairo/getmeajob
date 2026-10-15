@@ -69,8 +69,8 @@ def connect(path=None):
     CREATE TABLE IF NOT EXISTS events (
       job_id TEXT NOT NULL REFERENCES jobs(id), ts TEXT NOT NULL,
       status TEXT NOT NULL CHECK(status IN ({states})), note TEXT);
-    CREATE UNIQUE INDEX IF NOT EXISTS jobs_company_title ON jobs(company_key,title_key)
-      WHERE company_key != '' AND title_key != '';
+    DROP INDEX IF EXISTS jobs_company_title;
+    CREATE INDEX IF NOT EXISTS jobs_company_title_key ON jobs(company_key,title_key);
     CREATE INDEX IF NOT EXISTS jobs_status ON jobs(status);
     CREATE INDEX IF NOT EXISTS jobs_url ON jobs(url);
     """)
@@ -95,7 +95,10 @@ def insert_job(conn, job):
     job.setdefault('salary_period', 'unknown')
     job.setdefault('language', 'en')
     columns = FIELDS + ['company_key', 'title_key']
-    values = [job.get(k) for k in FIELDS] + [normalize(job.get('company')), title_key(job.get('title'))]
+    company, title = normalize(job.get('company')), title_key(job.get('title'))
+    if company and title and is_repost(conn, company, title, job.get('location')):
+        return False
+    values = [job.get(k) for k in FIELDS] + [company, title]
     with conn:
         cur = conn.execute(f"INSERT OR IGNORE INTO jobs ({','.join(columns)}) VALUES ({','.join('?' for _ in columns)})", values)
         if not cur.rowcount:
@@ -103,12 +106,20 @@ def insert_job(conn, job):
         conn.execute('INSERT INTO events VALUES (?,?,?,?)', (job['id'], now(), 'new', 'Fetched from ' + job['source']))
     return True
 
+def is_repost(conn, company, title, location):
+    """Same company and title already stored in the same place, or one that already passed the filters.
+    Copies elsewhere that are still unfiltered (or discarded) are kept: a US-only "Data Analyst" must not hide
+    the Mexico one. prefilter.run removes the duplicates that survive the filters."""
+    rows = conn.execute('SELECT status,location FROM jobs WHERE company_key=? AND title_key=?', (company, title)).fetchall()
+    return any(r['status'] not in ('new', 'discarded') or normalize(r['location']) == normalize(location) for r in rows)
+
+
 def set_status(conn, ident, status, note=None, app_dir=None, agent=None, **extra):
     if status not in STATES:
         raise ValueError(f'Invalid status: {status}')
     if agent is not None and agent not in AGENTS:
         raise ValueError('Invalid agent')
-    if set(extra) - {'filter_reason', 'score', 'score_reason'}:
+    if set(extra) - {'filter_reason', 'score', 'score_reason', 'work_mode'}:
         raise ValueError('Invalid update fields')
     updates = {'status': status, 'updated_at': now(), **extra}
     if app_dir is not None:
@@ -122,3 +133,8 @@ def set_status(conn, ident, status, note=None, app_dir=None, agent=None, **extra
         conn.execute('UPDATE jobs SET ' + ','.join(f'{k}=?' for k in updates) + ' WHERE id=?', [*updates.values(), ident])
         if old['status'] != status:
             conn.execute('INSERT INTO events VALUES (?,?,?,?)', (ident, now(), status, note))
+        if status == 'discarded' and old['status'] not in ('new', 'discarded'):
+            # The copy that won the dedupe fell later (e.g. hybrid once checked in the browser): give its twins
+            # another chance; prefilter.run re-evaluates them as new.
+            conn.execute("UPDATE jobs SET status='new', updated_at=? WHERE status='discarded' AND filter_reason LIKE ?",
+                         (now(), f'Duplicate of {ident[:8]}%'))

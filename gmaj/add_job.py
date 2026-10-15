@@ -39,6 +39,7 @@ def insert(conn, items, config):
             raise ValueError(f"{source}: item without url: {item.get('title')}")
         record = job(source, item['title'], item.get('company', ''), url, external_id=item.get('external_id'),
                      location=location, description=item.get('description', ''),
-                     remote=item.get('mode') == 'remote', mode=item.get('mode'), date=item.get('date'))
+                     remote=item.get('mode') == 'remote', mode=item.get('mode'), date=item.get('date'),
+                     text=item.get('description', ''))
         counts['inserted'] += db.insert_job(conn, record)
     return counts

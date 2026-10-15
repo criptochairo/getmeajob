@@ -146,6 +146,8 @@ def evaluate(job, config):
     allowed = eligibility.get('location_ok', [])
     if allowed and location.strip() and not any(phrase(location, p) for p in allowed) and not accepts:
         return 'discarded', f'Location outside allowed regions: {location[:60]}'
+    if mode == 'remote' and (config.get('work_mode') or {}).get('remote', 'accept') == 'reject':
+        return 'discarded', 'remote work not accepted'
     salary = monthly_amount(job, config)
     cur = base_currency(config)
     # Internships pay a stipend ("apoyo económico"): they get their own floor (null = no floor).
@@ -163,6 +165,12 @@ def run(conn, config):
     counts = {}
     for row in conn.execute("SELECT * FROM jobs WHERE status='new'").fetchall():
         status, reason = evaluate(dict(row), config)
-        db.set_status(conn, row['id'], status, note=reason, filter_reason=reason)
+        if status != 'discarded' and row['company_key'] and row['title_key']:
+            twin = conn.execute("SELECT id FROM jobs WHERE company_key=? AND title_key=? AND id!=? AND status NOT IN ('new','discarded')",
+                                (row['company_key'], row['title_key'], row['id'])).fetchone()
+            if twin:
+                status, reason = 'discarded', f'Duplicate of {twin["id"][:8]} (same company and title)'
+        # Keep the mode read from the text (boards flag hybrid roles as remote): scoring and job.md use it.
+        db.set_status(conn, row['id'], status, note=reason, filter_reason=reason, work_mode=actual_work_mode(dict(row)))
         counts[status] = counts.get(status, 0) + 1
     return counts

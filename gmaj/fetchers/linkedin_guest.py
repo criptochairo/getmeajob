@@ -73,7 +73,6 @@ def fetch(config, client):
                           **dict(parse_qsl(spec.get('filter', '')))}
                 try:
                     html = client.get(client.options['url'], params=params).text
-                    strikes = 0
                 except Exception as exc:
                     client.error(f'{query}/{location}/page {page}', exc)
                     if blocked(exc):
@@ -104,14 +103,23 @@ def fetch(config, client):
                     except Exception as exc:
                         client.error(card['external_id'], exc)
                         if blocked(exc):
-                            break   # la búsqueda siguiente la decide el contador de bloqueos
+                            # Un bloqueo en el detalle cuenta igual que uno en la búsqueda.
+                            strikes += 1
+                            if strikes >= max_blocks:
+                                client.error('remaining queries', f'Skipped after {strikes} consecutive blocks')
+                                cooldown.start(SOURCE, f'{strikes} bloqueos seguidos en la búsqueda diaria',
+                                               float(client.options.get('cooldown_hours', cooldown.DEFAULT_HOURS)))
+                                return
+                            time.sleep(pause)
+                            break
                         continue
+                    strikes = 0   # solo un detalle que responde reinicia el contador
                     desc = detail.select_one('.show-more-less-html__markup')
                     if desc is None:
                         client.error(card['external_id'], 'Description missing; skipping incomplete posting')
                         continue
                     date = detail.select_one('time')
-                    mode = 'hybrid' if re.search(r'hybrid', desc.get_text().lower()) else None
+                    mode = 'hybrid' if re.search(r'\bhybrid\b', desc.get_text().lower()) else None
                     yield job('linkedin_guest', **card, description=str(desc), remote=True, mode=mode,
                               date=date.get('datetime') if date else None, text=str(desc))
                 # Página siguiente solo si esta vino llena y todo era nuevo (si no, ya alcanzamos lo conocido).
