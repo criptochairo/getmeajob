@@ -6,8 +6,8 @@ import logging
 import subprocess
 import sys
 
-from . import add_job, applications, check_package, config, db, doctor, engines, pace, paths, pipeline, prefilter
-from . import render_cv, sample, schedule, score_io, scrub, tools, validate
+from . import add_job, applications, browser, check_package, config, db, doctor, engines, pace, paths, pipeline, prefilter
+from . import render_cv, sample, schedule, score_io, scrub, tools, update, validate
 
 
 def out(value):
@@ -45,8 +45,19 @@ def rel(folder):
 
 # ---------- commands ----------
 
+def self_update(a, command):
+    """Pull the latest engine before a scheduled run; if code changed, rerun this command on the new code."""
+    if getattr(a, 'no_update', False):
+        return
+    r = update.auto()
+    print(r['message'], flush=True)
+    if r['status'] == 'updated':
+        sys.exit(subprocess.run([sys.executable, '-m', 'gmaj', *command, '--no-update'], cwd=paths.ROOT).returncode)
+
+
 def cmd_discover(a):
     """Fetch + prefilter without LLM. This is what the OS scheduler runs every morning."""
+    self_update(a, ['discover'])
     setup_logging()
     cfg = config.search()
     conn = connect()
@@ -251,13 +262,15 @@ def cmd_run_role(a):
 
 def cmd_run_daily(a):
     """CLI/headless mode (advanced): discovery, then the orchestrator role with the gmaj-daily skill and the browser."""
+    self_update(a, ['run-daily'] + (['--skip-discover'] if a.skip_discover else []))
     if not a.skip_discover:
-        subprocess.run([sys.executable, '-m', 'gmaj', 'discover'], cwd=paths.ROOT)
+        subprocess.run([sys.executable, '-m', 'gmaj', 'discover', '--no-update'], cwd=paths.ROOT)
+    chrome = browser.ensure_chrome(engines.load().get('chrome_profile') or '')
     prompt = engines.prompt_file('daily.md', DATE=dt.date.today().isoformat())
     r = engines.run('orchestrate', prompt, chrome=True, timeout=6 * 3600)
     log = paths.user('logs', f'daily_{dt.date.today().isoformat()}.log')
     log.parent.mkdir(parents=True, exist_ok=True)
-    log.write_text(r['output'], encoding='utf-8')
+    log.write_text(f'--- chrome: {chrome}\n' + r['output'], encoding='utf-8')
     sys.exit(engines.LIMIT_EXIT if r['limit_hit'] else r['code'])
 
 
@@ -323,6 +336,9 @@ def cmd_welcome(a):
 
 
 def cmd_update(a):
+    if a.auto:   # hook de inicio de sesión: una línea, nunca falla
+        print(update.auto()['message'])
+        return
     r = subprocess.run(['git', 'pull', '--ff-only'], cwd=paths.ROOT)
     tools.sync_skills()
     v = validate.check()
@@ -344,8 +360,10 @@ def build():
     add('init', cmd_init, 'crea user/ desde las plantillas').add_argument('--no-git', action='store_true')
     add('doctor', cmd_doctor, 'revisa el entorno').add_argument('--json', action='store_true')
     add('validate', cmd_validate, 'revisa que el perfil esté completo').add_argument('--only', help='p. ej. profile,answers')
-    add('update', cmd_update, 'actualiza el motor (git pull) y revisa el perfil')
-    add('discover', cmd_discover, 'fetch + prefilter sin LLM (lo corre el programador del SO)')
+    add('update', cmd_update, 'actualiza el motor (git pull) y revisa el perfil').add_argument(
+        '--auto', action='store_true', help='modo silencioso y seguro para el inicio de cada sesión')
+    add('discover', cmd_discover, 'fetch + prefilter sin LLM (lo corre el programador del SO)').add_argument(
+        '--no-update', action='store_true', help='no hacer git pull antes')
     sp = add('fetch', cmd_fetch, 'solo descubrir vacantes')
     sp.add_argument('--source', choices=pipeline.SOURCES)
     add('prefilter', cmd_prefilter, 'filtros duros')
@@ -399,7 +417,9 @@ def build():
     sp.add_argument('--prompt-file')
     sp.add_argument('--chrome', action='store_true')
     sp.add_argument('--timeout', type=positive)
-    add('run-daily', cmd_run_daily, 'corrida completa por CLI (modo avanzado)').add_argument('--skip-discover', action='store_true')
+    sp = add('run-daily', cmd_run_daily, 'corrida completa por CLI (modo avanzado)')
+    sp.add_argument('--skip-discover', action='store_true')
+    sp.add_argument('--no-update', action='store_true', help='no hacer git pull antes')
     sp = add('schedule', cmd_schedule, 'programa la tarea diaria en el SO')
     sp.add_argument('action', choices=['install', 'remove', 'status'])
     sp.add_argument('--kind', choices=['discover', 'daily'], default='discover')

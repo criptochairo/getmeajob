@@ -11,7 +11,7 @@ def compensation(pay):
     return dict(text=pay.get('scrapeableCompensationSalarySummary') or pay.get('compensationTierSummary', ''))
 
 def fetch(config, client):
-    for slug in config['sources']['ashby']:
+    for slug in client.live_slugs(config['sources']['ashby']):
         try:
             data = client.get(f'https://api.ashbyhq.com/posting-api/job-board/{slug}', params={'includeCompensation': 'true'}).json()
             for item in data.get('jobs', []):

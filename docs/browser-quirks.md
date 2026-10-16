@@ -20,9 +20,9 @@ Aprendidas operando el sistema a diario. Aplican a Claude in Chrome y a la exten
 - Al editar el perfil, el formulario de "agregar puesto" cambia el titular por defecto: deja el titular actual.
 
 ## Indeed
-- Descubrimiento: `gmaj collector indeed` (lee el JSON `mosaic-provider-jobcards` de `/jobs` con `fetch` dentro de la pestaña). Tras ~28 búsquedas seguidas responde 429: el colector espera 3–5 s y reintenta a 60/120 s.
+- Descubrimiento: `gmaj collector indeed` (lee el JSON `mosaic-provider-jobcards` de `/jobs` con `fetch` dentro de la pestaña). Con pausas fijas cortas responde 429 tras pocas búsquedas: el colector va a ritmo humano (orden aleatorio, 8–18 s entre búsquedas, descanso de 45–90 s cada 6–9, backoff con jitter) y corta tras 2 bloqueos seguidos (`blocked: true`). Tarda ~15–20 min con 25 búsquedas: la pestaña debe quedar en primer plano (en segundo plano Chrome la congela). Avance en `window.__indeed_progress`.
 - `/viewjob` por `fetch` da 403: lee la oferta navegando la pestaña.
-- En smartapply, "Postularse ahora" abre fuera del grupo de pestañas: quita `target` y haz clic por JS. Hay copias ocultas de "Continuar": usa la de ancho > 0. Un reCAPTCHA visible al final → escalar.
+- En smartapply, "Postularse ahora" abre fuera del grupo de pestañas: quita `target` y haz clic por JS. Hay copias ocultas de "Continuar": usa la de ancho > 0. Un reCAPTCHA visible al final → escalar y dejar la pestaña abierta para el usuario.
 
 ## OCC (México)
 - Búsquedas (`/empleos/de-<q>/tipo-home-office-remoto/`) y ofertas (`/empleo/oferta/<id>/`) funcionan con `fetch` dentro de la pestaña con sesión; fuera del navegador responden 403: no lo evadas. Colector: `gmaj collector occ`.

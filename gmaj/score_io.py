@@ -8,6 +8,8 @@ import shutil
 
 from . import db, paths
 
+HARD_REQ_CAP = 40   # score máximo cuando el scorer marca hard_req_mismatch
+
 
 def batch_dir():
     return paths.data('score_batches')
@@ -40,6 +42,8 @@ def import_scores(conn):
             if not row or row['status'] != 'filtered':
                 continue  # discarded since export by a newer prefilter rule
             score = max(0, min(100, int(item['score'])))
+            if item.get('hard_req_mismatch') is True:
+                score = min(score, HARD_REQ_CAP)   # requisito duro que el candidato no cumple (prompts/score.md)
             db.set_status(conn, item['id'], 'scored', item.get('reason', ''), score=score, score_reason=item.get('reason', ''))
             total += 1
         for f in (path, path.with_name(path.name.replace('.scores', ''))):

@@ -1,7 +1,7 @@
 from .common import job, relevant
 
 def fetch(config, client):
-    for slug in config['sources']['greenhouse']:
+    for slug in client.live_slugs(config['sources']['greenhouse']):
         try:
             data = client.get(f'https://boards-api.greenhouse.io/v1/boards/{slug}/jobs', params={'content': 'true'}).json()
             for item in data.get('jobs', []):

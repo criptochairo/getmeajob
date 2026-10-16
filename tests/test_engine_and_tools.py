@@ -91,6 +91,17 @@ def test_top_is_idempotent(user_dir):
     assert again.get('existing') and again['dir'] == first[0]['dir']
 
 
+
+def test_top_skips_company_already_applied(user_dir):
+    from conftest import load_config
+    conn = db.connect()
+    first = scored_job(conn)
+    db.set_status(conn, first, 'applied', 'sent')
+    again = scored_job(conn, source='computrabajo', external_id='10', url='https://example.com/10', title='Data Analyst', company='ACME ')
+    assert applications.top(conn, load_config()) == []
+    assert conn.execute('SELECT status FROM jobs WHERE id=?', (again,)).fetchone()['status'] == 'rejected'
+
+
 def test_check_package_uses_profile_contact_and_forbidden(user_dir):
     from conftest import load_config
     conn = db.connect()

@@ -1,6 +1,6 @@
 # Scoring de un lote de vacantes
 
-Califica de 0 a 100 cada vacante de `{{BATCH}}` para el candidato descrito en `user/generated/candidate_brief.md`, con la rúbrica `scoring` de `user/search.yaml`. Escribe **solo** `{{OUT}}`: un arreglo JSON `[{"id": "...", "score": 0, "reason": "≤ 20 palabras"}]` con **todas** las vacantes del lote, en el mismo orden. No escribas ningún otro archivo ni leas nada más.
+Califica de 0 a 100 cada vacante de `{{BATCH}}` para el candidato descrito en `user/generated/candidate_brief.md`, con la rúbrica `scoring` de `user/search.yaml`. Escribe **solo** `{{OUT}}`: un arreglo JSON `[{"id": "...", "score": 0, "reason": "≤ 20 palabras", "hard_req_mismatch": false}]` con **todas** las vacantes del lote, en el mismo orden. No escribas ningún otro archivo ni leas nada más.
 
 ## Rúbrica (suma, máximo 100)
 - **Rol (0–40):** según `scoring.role_fit.tiers`. Un título que no corresponde a ninguna familia de rol del candidato vale 0–5.
@@ -17,6 +17,9 @@ Califica de 0 a 100 cada vacante de `{{BATCH}}` para el candidato descrito en `u
 - −15 por cada requisito explícito de años que no cumple (compara con la matriz de años del brief).
 - −20 si es híbrido/presencial fuera de las zonas aceptadas.
 - Resultado mínimo 0.
+
+## Tope por requisito duro
+Si el anuncio **exige** algo que el brief dice que el candidato no tiene (licencia, colegiatura o título; software o certificación indispensable; nivel director/VP/head/socio), pon `"hard_req_mismatch": true`, empieza `reason` con `hard_req: <qué>` y el score no pasa de 40 (el motor lo topa de todos modos). Pedir más años de experiencia **no** activa el tope: eso ya lo pondera la penalización por años.
 
 ## Perfil de entrada (el brief dice etapa `student`, `new_grad` o `first_job`)
 - **Rol:** juzga el encaje por carrera, materias, proyectos, prácticas y habilidades del brief, no por empleos previos.

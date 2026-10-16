@@ -159,6 +159,10 @@ languages_allowed:
 - en
 exclusions:
   companies: []
+  hard_requirements:
+    required_tools: [tableau]
+    required_credentials: ["cpa required", "re:licensed (?:[a-z]+ ){0,2}in"]
+    overqualified_phrases: ["no experience needed"]
   off_target_title_keywords:
   - sales
   - ventas

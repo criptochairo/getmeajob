@@ -26,6 +26,13 @@ from gmaj.fetchers.linkedin_guest import parse_cards
     ({'description': 'No visa sponsorship. Must reside in the United States'}, 'discarded'),
     ({'title': 'International Data Specialist'}, 'filtered'),
     ({'salary_min': 24000, 'salary_currency': 'USD', 'salary_period': 'year'}, 'filtered'),
+    ({'description': 'Experience with Tableau is required'}, 'discarded'),
+    ({'description': 'Our team uses Tableau internally'}, 'filtered'),
+    ({'description': 'CPA required'}, 'discarded'),
+    ({'description': 'Must be licensed in New York'}, 'discarded'),
+    ({'description': 'No experience needed, we train you'}, 'discarded'),
+    ({'description': 'Minimum of 10 years of experience'}, 'filtered'),   # years never discard outside entry_level
+    ({'description': '10-15 years of experience in analytics'}, 'filtered'),
 ])
 def test_rules(changes, expected):
     job = dict(title='Data Analyst', company='Example', work_mode='remote', description='', location='', salary_min=None)

@@ -105,21 +105,39 @@ class Client:
         self.session.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
         self.last_request = 0
         self.errors = []
+        self.slowdown = 0.0   # freno adaptativo: segundos extra entre peticiones tras un 429 (ver throttle)
 
     def error(self, context, error):
         message = f'{self.source}: {context}: {error}'
         self.errors.append(message)
         LOG.warning(message)
 
+    def throttle(self, hit_429):
+        """Freno adaptativo, solo si la fuente define adaptive_step_seconds: cada 429 duplica el retraso extra
+        (hasta adaptive_max_seconds) y cada éxito lo reduce ×adaptive_decay. Un ritmo fijo vuelve a chocar con
+        el límite una y otra vez; LinkedIn guest, por ejemplo, tolera ~1 petición/min sostenida."""
+        step = float(self.options.get('adaptive_step_seconds', 0))
+        if not step:
+            return
+        if hit_429:
+            self.slowdown = min(float(self.options.get('adaptive_max_seconds', 120)), max(step, self.slowdown * 2))
+            LOG.info('%s: freno adaptativo +%.0f s entre peticiones', self.source, self.slowdown)
+        else:
+            self.slowdown *= float(self.options.get('adaptive_decay', 0.9))
+
     def get(self, url, **kwargs):
         # 429: espera progresiva (Retry-After si viene; si no, backoff_429 s × intento) antes de rendirse.
         attempts = 1 + int(self.options.get('retries_429', 1))
         for attempt in range(attempts):
-            delay = float(self.options.get('delay_seconds', 0.4)) + random.uniform(0, float(self.options.get('delay_jitter', 0)))
+            delay = float(self.options.get('delay_seconds', 0.4)) + random.uniform(0, float(self.options.get('delay_jitter', 0))) + self.slowdown
             time.sleep(max(0, delay - (time.monotonic() - self.last_request)))
             self.last_request = time.monotonic()
             try:
                 response = self.session.get(url, timeout=(10, 25), **kwargs)
+                if response.status_code == 429:
+                    self.throttle(True)
+                elif response.status_code < 400:
+                    self.throttle(False)
                 if response.status_code == 404:
                     response.raise_for_status()
                 if response.status_code == 429 or response.status_code >= 500:
@@ -137,6 +155,16 @@ class Client:
                     time.sleep(wait)
                 else:
                     time.sleep(1)
+
+    def live_slugs(self, slugs):
+        """Salta las bolsas que ya dieron 404 (user/data/invalid_boards.txt); borra la línea para reintentar una."""
+        path = paths.data('invalid_boards.txt')
+        dead = set(path.read_text(encoding='utf-8').splitlines()) if path.exists() else set()
+        for slug in slugs:
+            if f'{self.source}/{slug}' in dead:
+                LOG.info('%s: salto %s (404 antes; ver invalid_boards.txt)', self.source, slug)
+                continue
+            yield slug
 
     def invalid_board(self, slug):
         path = paths.data('invalid_boards.txt')

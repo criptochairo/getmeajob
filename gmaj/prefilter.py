@@ -84,6 +84,38 @@ def years_required(text):
     return max(found) if found else None
 
 
+REQUIRED_MARKER = r'(?:required|must|experience (?:with|in)|proficien\w*|requerid\w*|indispensable|obligatori\w*|dominio)'
+
+
+def matches(text, term):
+    """Plain phrase, or a regex when prefixed with "re:" (matched on db.normalize() text: lowercase, no accents)."""
+    if term.startswith('re:'):
+        return bool(re.search(r'(?<!\w)' + term[3:].strip().replace(' ', r'\s+') + r'(?!\w)', text))
+    return phrase(text, term)
+
+
+def hard_requirement(job, config):
+    """Requirements the candidate can't meet, read without an LLM (exclusions.hard_requirements). None = passes.
+
+    Years of experience are deliberately NOT a hard filter here: scoring weighs them, because many postings
+    ask for more years than they really need (entry_level.max_years_required is the opt-in exception).
+    """
+    cfg = (config.get('exclusions') or {}).get('hard_requirements') or {}
+    text = db.normalize(' '.join(str(job.get(k) or '') for k in ('title', 'description')))
+    for tool in cfg.get('required_tools', []):
+        t = re.escape(db.normalize(tool)).replace(r'\ ', r'\s+')
+        # Only when the posting demands it: "we use Yardi internally" is not a requirement.
+        if re.search(r'\b' + REQUIRED_MARKER + r'.{0,60}\b' + t + r'\b|\b' + t + r'\b.{0,60}\b' + REQUIRED_MARKER, text, re.S):
+            return f'Requires a tool the candidate lacks: {tool}'
+    for term in cfg.get('required_credentials', []):
+        if matches(text, term):
+            return f'Requires a license/degree the candidate lacks: {term}'
+    for term in cfg.get('overqualified_phrases', []):
+        if matches(text, term):
+            return f'Role below the candidate level: {term}'
+    return None
+
+
 def office_rule(job, mode, salary, config, internship=False):
     """Hybrid/on-site policy: accept | reject | zones (commute zones ok / ask / reject). None = passes."""
     wm = config.get('work_mode', {})
@@ -123,6 +155,9 @@ def evaluate(job, config):
     for term in exclusions.get('title_keywords', []):
         if phrase(job.get('title', ''), term) and not internship:
             return 'discarded', f'Excluded title: {term}'
+    reason = hard_requirement(job, config)
+    if reason:
+        return 'discarded', reason
     if entry_level(config):
         limit = (config.get('entry_level') or {}).get('max_years_required', 2)
         years = years_required(' '.join(str(job.get(k) or '') for k in ('title', 'description')))

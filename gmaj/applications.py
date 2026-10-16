@@ -50,9 +50,28 @@ def top(conn, config, min_score=None, limit=10):
         return []
     sources = apply_sources(config)
     rows = conn.execute("SELECT * FROM jobs WHERE status='scored' AND app_dir IS NULL AND score>=? "
-                        f"AND source IN ({','.join('?' * len(sources))}) ORDER BY score DESC LIMIT ?",
-                        (min_score, *sources, limit)).fetchall()
-    return [create(conn, r) for r in rows]
+                        f"AND source IN ({','.join('?' * len(sources))}) ORDER BY score DESC",
+                        (min_score, *sources)).fetchall()
+    created = []
+    for r in rows:
+        if len(created) >= limit:
+            break
+        prior = already_applied(conn, r)
+        if prior:
+            db.set_status(conn, r['id'], 'rejected', note=f"ya hay una postulación a {r['company']} ({prior['source']}, {prior['id'][:8]})")
+            continue
+        created.append(create(conn, r))
+    conn.commit()
+    return created
+
+
+def already_applied(conn, row):
+    """Same company already applied/approved (the posting often reappears on another board with another title):
+    applying again mid-process looks careless to the recruiter."""
+    if not row['company_key']:
+        return None
+    return conn.execute("SELECT id, source FROM jobs WHERE id<>? AND company_key=? AND status IN ('applied','approved') LIMIT 1",
+                        (row['id'], row['company_key'])).fetchone()
 
 
 def one(conn, job_id):

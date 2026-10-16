@@ -104,3 +104,30 @@ def test_himalayas_page_limit_and_local_filter(monkeypatch):
     jobs = list(himalayas.fetch(config, client))
     assert pages == [1, 2]
     assert len(jobs) == 2
+
+
+def test_adaptive_throttle_doubles_on_429_and_decays():
+    client = Client('linkedin_guest', {'adaptive_step_seconds': 30, 'adaptive_max_seconds': 120, 'adaptive_decay': 0.5})
+    for expected in (30, 60, 120, 120):
+        client.throttle(True)
+        assert client.slowdown == expected
+    client.throttle(False)
+    assert client.slowdown == 60
+    plain = Client('himalayas')
+    plain.throttle(True)
+    assert plain.slowdown == 0
+
+
+def test_invalid_board_is_skipped_next_run(user_dir, monkeypatch):
+    config = load_config()
+    (user_dir / 'data').mkdir(exist_ok=True)
+    (user_dir / 'data/invalid_boards.txt').write_text('greenhouse/bad\n', encoding='utf-8')
+    client = Client('greenhouse')
+    calls = []
+    def get(url, **kwargs):
+        calls.append(url)
+        return Response({'jobs': []})
+    monkeypatch.setattr(client, 'get', get)
+    config['sources']['greenhouse'] = ['bad', 'good']
+    list(greenhouse.fetch(config, client))
+    assert len(calls) == 1 and '/good/' in calls[0]

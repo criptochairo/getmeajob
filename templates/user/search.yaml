@@ -65,6 +65,9 @@ sources:
     delay_jitter: 4
     retries_429: 1
     backoff_429: 60
+    adaptive_step_seconds: 30     # freno adaptativo: cada 429 duplica la espera extra (30→60→120 s); cada éxito la baja 10%
+    adaptive_max_seconds: 120
+    adaptive_decay: 0.9
     pause_on_block_seconds: 300
     max_consecutive_blocks: 3
     cooldown_hours: 6             # tras rendirse, nadie vuelve a llamar a LinkedIn en este tiempo (también el conteo de mercado)
@@ -84,6 +87,11 @@ exclusions:
   companies: []
   off_target_title_keywords: []  # títulos que nunca son del objetivo (se descartan sin gastar scoring)
   title_keywords: ["intern", "internship", "becario", "pasantía", "practicante", "trainee"]
+  # Para títulos por encima de tu nivel ("director", "head of", "vp") usa off_target_title_keywords.
+  hard_requirements:             # requisitos que no cumples: se descartan sin gastar scoring (los años de experiencia NO, esos los pondera el scoring)
+    required_tools: []           # software que no manejas; solo descarta si el anuncio lo exige ("required", "indispensable"...), no si solo lo menciona
+    required_credentials: []     # licencias/títulos que no tienes, p. ej. "cpa required" o "re:admitted to the (?:[a-z]+ ){0,3}bar" (prefijo re: = regex, minúsculas sin acentos)
+    overqualified_phrases: []    # frases de puestos muy por debajo de tu nivel; vacío = verlos también
 
 entry_level:                     # perfiles sin experiencia (profile.career_stage student / new_grad / first_job)
   enabled: false

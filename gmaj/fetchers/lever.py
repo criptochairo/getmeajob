@@ -1,7 +1,7 @@
 from .common import job, relevant
 
 def fetch(config, client):
-    for slug in config['sources']['lever']:
+    for slug in client.live_slugs(config['sources']['lever']):
         try:
             data = client.get(f'https://api.lever.co/v0/postings/{slug}', params={'mode': 'json'}).json()
             for item in data:

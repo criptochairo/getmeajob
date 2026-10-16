@@ -27,3 +27,4 @@ roles:
 
 claude_permission_mode: auto
 codex_sandbox: workspace-write
+chrome_profile: ""           # carpeta del perfil de Chrome con la extensión ("Default", "Profile 1"...); la corrida diaria abre Chrome si está cerrado

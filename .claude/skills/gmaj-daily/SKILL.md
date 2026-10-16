@@ -15,7 +15,7 @@ Reglas: `AGENTS.md`. Si la corrida es desatendida, **no hagas preguntas**: todo 
 
 ## 1. Descubrimiento extra
 a. **Correo** (si hay conector/plugin de Gmail): `uv run gmaj mail` (o sigue `prompts/mail_triage.md` en la sesión). Si existe `user/data/mail_leads.json`: `uv run gmaj add-jobs user/data/mail_leads.json`.
-b. **OCC / Indeed** (solo si están en `search.yaml sources` con `browser: true`): en una pestaña nueva del sitio con sesión iniciada, pega el resultado de `uv run gmaj collector occ` (o `indeed`) en la herramienta de JavaScript; espera consultando `window.__occ_done` / `window.__indeed_done` (≤ 10 s por consulta); lee las páginas; arma el JSON para `uv run gmaj add-jobs <archivo>`. Ver `docs/browser-quirks.md`. Cierra la pestaña.
+b. **OCC / Indeed** (solo si están en `search.yaml sources` con `browser: true`): en una pestaña nueva del sitio con sesión iniciada, pega el resultado de `uv run gmaj collector occ` (o `indeed`) en la herramienta de JavaScript; espera consultando `window.__occ_done` / `window.__indeed_done` (≤ 10 s por consulta); lee las páginas; arma el JSON para `uv run gmaj add-jobs <archivo>`. Indeed tarda ~15–20 min por su ritmo humano: deja esa pestaña en primer plano (en segundo plano Chrome la congela), sigue el avance en `window.__indeed_progress` y mientras haz trabajo sin navegador (scoring). Si termina con `blocked: true`, inserta lo parcial, anótalo en el reporte y no lo relances ese día. Ver `docs/browser-quirks.md`. Cierra la pestaña. **Verificaciones** (Cloudflare "verifica que eres humano", CAPTCHA): nunca las saltes ni intentes resolverlas; deja esa pestaña abierta para el usuario, anota la URL en el reporte y en `user/inbox/tareas_humanas.md`, y sigue.
 c. `uv run gmaj prefilter`.
 
 ## 2. Scoring

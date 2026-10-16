@@ -8,12 +8,20 @@ window.__indeed_done = null;
 (async () => {
   const QUERIES = __QUERIES__;
   const LOCATIONS = __LOCATIONS__;
+  // Ritmo humano (con pausas fijas de 3-5 s Indeed respondía 429 tras ~5 búsquedas): orden aleatorio, 8-18 s entre
+  // búsquedas, descanso de 45-90 s cada 6-9, backoff con jitter ante 429 y corte tras 2 búsquedas bloqueadas seguidas
+  // (devuelve lo parcial con blocked: true; no insistir hasta el día siguiente). Avance en window.__indeed_progress.
+  const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+  const between = (a, b) => a + Math.random() * (b - a);
+  const pairs = QUERIES.flatMap(q => LOCATIONS.map(l => [q, l]));
+  for (let i = pairs.length - 1; i > 0; i--) { const k = Math.floor(Math.random() * (i + 1)); [pairs[i], pairs[k]] = [pairs[k], pairs[i]]; }
   const results = async (q, l) => {
     let r;
-    for (let attempt = 0; attempt < 3; attempt++) {   // 429 tras ~28 búsquedas seguidas (2026-10-12): esperar 60/120 s y reintentar
+    for (let attempt = 0; attempt < 3; attempt++) {
       r = await fetch(`/jobs?q=${encodeURIComponent(q)}&l=${encodeURIComponent(l)}&fromage=3`, {credentials: 'include'});
-      if (r.status !== 429) break;
-      await new Promise(res => setTimeout(res, 60000 * (attempt + 1)));
+      if (r.status !== 429 || attempt === 2) break;
+      const retryAfter = parseInt(r.headers.get('Retry-After') || '0') * 1000;
+      await sleep(Math.max(retryAfter, 90000 * 2 ** attempt) + between(0, 30000));   // ~90-120 s, luego ~180-210 s
     }
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const h = await r.text();
@@ -24,10 +32,18 @@ window.__indeed_done = null;
     return JSON.parse(h.slice(s, h.indexOf(';\n', s))).metaData.mosaicProviderJobCardsModel.results || [];
   };
   const found = new Map(), errors = [];
-  for (const q of QUERIES) for (const l of LOCATIONS) {
-    try { for (const j of await results(q, l)) if (!found.has(j.jobkey)) found.set(j.jobkey, j); }
-    catch (e) { errors.push(`${q}/${l}: ${e.message}`); }
-    await new Promise(r => setTimeout(r, 3000 + Math.random() * 2000));
+  let done = 0, blockedRun = 0, blocked = false, nextRest = Math.floor(between(6, 10));
+  for (const [q, l] of pairs) {
+    try { for (const j of await results(q, l)) if (!found.has(j.jobkey)) found.set(j.jobkey, j); blockedRun = 0; }
+    catch (e) {
+      errors.push(`${q}/${l}: ${e.message}`);
+      // 403 por fetch (con la página abriendo normal) también es bloqueo: cortar en vez de repetir decenas de veces.
+      if (/HTTP 4(29|03)|sin mosaic/.test(e.message) && ++blockedRun >= 2) { blocked = true; break; }
+    }
+    window.__indeed_progress = {done: ++done, total: pairs.length, found: found.size};
+    if (done === pairs.length) break;
+    if (done >= nextRest) { await sleep(between(45000, 90000)); nextRest = done + Math.floor(between(6, 10)); }
+    else await sleep(between(8000, 18000));
   }
   const strip = (s) => (s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   const legal = new RegExp(__RELEVANT__, 'i');
@@ -41,7 +57,7 @@ window.__indeed_done = null;
     const sal = j.salarySnippet?.text || '';
     const monthly = /por mes/.test(sal) ? parseInt((sal.match(/[\d,]+/g) || []).pop()?.replace(/,/g, '') || '0') : null;
     if (monthly !== null && monthly > 0 && monthly < __FLOOR__) continue;   // tope del rango publicado bajo el piso
-    jobs.push({source: 'indeed', external_id: j.jobkey, url: `https://mx.indeed.com/viewjob?jk=${j.jobkey}`, title: j.title,
+    jobs.push({source: 'indeed', external_id: j.jobkey, url: `${location.origin}/viewjob?jk=${j.jobkey}`, title: j.title,
                company: j.company || '', location: j.formattedLocation || '', mode,
                description: (sal ? `Sueldo: ${sal}. ` : '') + `Modalidad Indeed: ${remoteAttr || mode || 'sin dato (verificar)'}. ` + strip(j.snippet).slice(0, 700)});
   }
@@ -52,5 +68,5 @@ window.__indeed_done = null;
   for (let k = 0; k < full.length; k += 700) parts.push(full.slice(k, k + 700));
   window.__indeed_page = (n) => JSON.stringify(pages[n] || null);
   window.__indeed_json = (n) => parts[n] ?? null;
-  window.__indeed_done = {searched: found.size, kept: jobs.length, pages: pages.length, json_parts: parts.length, errors: errors.slice(0, 5)};
+  window.__indeed_done = {queries: `${done}/${pairs.length}`, blocked, searched: found.size, kept: jobs.length, pages: pages.length, json_parts: parts.length, errors: errors.slice(0, 5)};
 })(); 'started'
