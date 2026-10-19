@@ -155,3 +155,13 @@ def test_salary_in_other_base_currency():
                salary_currency='USD', salary_period='month')
     assert prefilter.evaluate(job, config)[0] == 'discarded'
     assert prefilter.evaluate({**job, 'salary_min': 1200}, config)[0] == 'filtered'
+
+
+def test_remote_abroad_passes_unless_disabled():
+    config = load_config()
+    job = dict(title='Data Analyst', company='X', work_mode='remote', description='', location='San Francisco, CA', salary_min=None)
+    assert prefilter.evaluate(job, config)[0] == 'filtered'   # contractors from abroad are usually welcome
+    assert prefilter.evaluate({**job, 'work_mode': 'unknown'}, config)[0] == 'discarded'
+    assert prefilter.evaluate({**job, 'description': 'Must reside in the United States'}, config)[0] == 'discarded'
+    config['eligibility']['remote_abroad_ok'] = False
+    assert prefilter.evaluate(job, config)[0] == 'discarded'

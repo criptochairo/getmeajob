@@ -10,7 +10,7 @@ Califica de 0 a 100 cada vacante de `{{BATCH}}` para el candidato descrito en `u
 - **Seniority (0–5):** 5 si encaja con el nivel del candidato; 0 si exige ser director/VP o muchos más años.
 
 ## Penalizaciones (restar y decirlo en `reason`)
-- −40 si el puesto está atado a un país o ciudad donde el candidato no puede trabajar (salvo worldwide/anywhere/su región).
+- −40 si el puesto está atado a un país o ciudad donde el candidato no puede trabajar (salvo worldwide/anywhere/su región). Un puesto **remoto** listado en otro país ("Remote (US)", "Remote – Canada") no se penaliza por ubicación si el brief dice que acepta trabajar como contratista internacional: solo cuenta si el texto exige explícitamente residencia o autorización allá.
 - −40 si exige una licencia, colegiatura o título que el brief dice que no tiene.
 - −30 si exige residencia o autorización de trabajo que el candidato no tiene (ver brief).
 - −20 si exige un idioma que el candidato no habla al nivel pedido.

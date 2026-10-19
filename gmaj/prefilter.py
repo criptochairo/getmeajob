@@ -176,10 +176,13 @@ def evaluate(job, config):
             continue
         if not accepts:
             return 'discarded', f'Eligibility restriction: {term}'
-    # Remote roles pinned to another country (e.g. LinkedIn "Remote" in Bogotá/São Paulo/US) usually require residence there.
+    # A foreign location only disqualifies remote roles when the user can't work as an international
+    # contractor: "Remote (US)" or LinkedIn "Remote" in Bogotá usually take contractors from abroad.
+    # Explicit residence/authorization requirements are already caught by reject_phrases above.
     location = job.get('location') or ''
     allowed = eligibility.get('location_ok', [])
-    if allowed and location.strip() and not any(phrase(location, p) for p in allowed) and not accepts:
+    remote_abroad = mode == 'remote' and eligibility.get('remote_abroad_ok', True)
+    if allowed and not remote_abroad and location.strip() and not any(phrase(location, p) for p in allowed) and not accepts:
         return 'discarded', f'Location outside allowed regions: {location[:60]}'
     if mode == 'remote' and (config.get('work_mode') or {}).get('remote', 'accept') == 'reject':
         return 'discarded', 'remote work not accepted'

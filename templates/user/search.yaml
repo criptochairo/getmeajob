@@ -38,6 +38,7 @@ eligibility:
     - "security clearance"
     - "eu work permit required"
   accept_phrases: ["latam", "latin america", "mexico", "méxico", "anywhere", "worldwide", "americas", "contractor"]
+  remote_abroad_ok: true         # remotos listados en otro país ("Remote (US)") pasan: suelen aceptar contratistas internacionales
   location_ok: ["mexico", "méxico", "latam", "latin america", "latinoamerica", "americas", "worldwide", "anywhere", "global", "remote", "remoto"]
 
 queries: {es: [], en: []}        # títulos a buscar, por idioma (salen de las familias de rol elegidas)

@@ -100,7 +100,7 @@ def test_scrub_lists_non_ascii_file_names(monkeypatch):
 def test_same_batch_keeps_the_eligible_copy_and_dedupes_after_filtering(tmp_path):
     conn = db.connect(tmp_path / 'jobs.db')
     base = dict(source='linkedin_guest', title='Data Analyst', company='Acme', work_mode='remote', description='')
-    db.insert_job(conn, {**base, 'external_id': '1', 'url': 'https://x/1', 'location': 'New York, United States'})
+    db.insert_job(conn, {**base, 'external_id': '1', 'url': 'https://x/1', 'location': 'New York, United States', 'work_mode': 'unknown'})
     db.insert_job(conn, {**base, 'external_id': '2', 'url': 'https://x/2', 'location': 'Mexico City, Mexico'})
     db.insert_job(conn, {**base, 'external_id': '3', 'url': 'https://x/3', 'location': 'Remote - LATAM'})
     prefilter.run(conn, load_config())

@@ -14,7 +14,7 @@ Parte de `templates/user/search.yaml` (ya copiado por `gmaj init`) y de `catalog
 - `market`, `currency` (base + tipos de cambio aproximados), fuentes del país (`sources`) y `apply_sources` según los canales donde el usuario tiene cuenta.
 - `salary.floor_month` / `target_month` / `office_min_month` desde `answers.salary_expectation.floor_month` / `target_month` / `office_min_month`.
 - `work_mode`: `remote: accept`; `hybrid`/`onsite`: `reject`, `accept` o `zones` con las zonas que dio el usuario.
-- `eligibility`: frases de rechazo según su autorización de trabajo (p. ej. si puede trabajar en EE.UU., quita las de EE.UU.); `location_ok` con su país/región.
+- `eligibility`: frases de rechazo según su autorización de trabajo (p. ej. si puede trabajar en EE.UU., quita las de EE.UU.); `location_ok` con su país/región; `remote_abroad_ok: true` salvo que el usuario no acepte trabajar como contratista internacional (`answers.engagement.contractor_ok: false`).
 - `queries.es` / `queries.en`: los títulos de las familias elegidas (máx. ~25 en total).
 - `relevance_keywords`: palabras **completas** de esos títulos y del área (10–30; el plural se reconoce solo: "analista" cubre "analistas"), sin palabras genéricas como "manager" sueltas.
 - `exclusions`: empresas excluidas (`preferences.excluded_companies`) y `off_target_title_keywords` (áreas que nunca quiere).
@@ -40,7 +40,7 @@ Parte de `templates/user/search.yaml` (ya copiado por `gmaj init`) y de `catalog
 - Renderiza cada CV: `uv run gmaj render user/variants/<archivo>.md`.
 
 ## 3. `user/generated/candidate_brief.md`
-≤ 250 palabras para el scoring: etapa (`career_stage`; si es de entrada, dilo en la primera línea, con estado de los estudios y si acepta prácticas), quién es (años, áreas, nivel; en perfiles de entrada: carrera, proyectos y prácticas), familias objetivo con etiqueta, dónde puede trabajar (y dónde no), idiomas con nivel, licencias/títulos que tiene y que NO tiene, piso y meta (en moneda base y USD/mes y USD/h), modalidad aceptada, y la matriz de años por área.
+≤ 250 palabras para el scoring: etapa (`career_stage`; si es de entrada, dilo en la primera línea, con estado de los estudios y si acepta prácticas), quién es (años, áreas, nivel; en perfiles de entrada: carrera, proyectos y prácticas), familias objetivo con etiqueta, dónde puede trabajar (y dónde no; si acepta remotos de otros países como contratista internacional, dilo), idiomas con nivel, licencias/títulos que tiene y que NO tiene, piso y meta (en moneda base y USD/mes y USD/h), modalidad aceptada, y la matriz de años por área.
 
 ## 4. Revisión cruzada (contexto limpio)
 Pide la revisión a otra instancia: escribe la lista de archivos en un prompt y córrelo con `uv run gmaj run-role review --prompt-file <archivo>` (o un subagente distinto si eres Claude): "Compara cada variante y carta con user/profile.yaml; lista afirmaciones no respaldadas (cifras, años, 'diario', 'experto', resultados de equipo atribuidos a la persona) en user/generated/variants_review.json". Corrige lo que señale.
