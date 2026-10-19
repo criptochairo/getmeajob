@@ -10,6 +10,7 @@
 - **La corrida diaria abre Chrome** si está cerrado (`chrome_profile` en `engines.yaml`), para que la extensión conecte.
 - **Indeed a ritmo humano:** orden aleatorio, pausas con jitter, descansos, backoff con `Retry-After`, corte tras 2 bloqueos (`blocked: true`) y avance en `window.__indeed_progress`. Los enlaces usan el dominio de Indeed del usuario (antes siempre `mx.`).
 - **Verificaciones anti-bot/CAPTCHA:** nunca se saltan ni se intentan resolver; la pestaña se queda abierta para el usuario.
+- **Pestañas que esperan al usuario se quedan abiertas:** iniciar sesión, crear cuenta, grabar video/audio, assessment o verificación. Solo se cierran las de postulaciones enviadas o descartadas, o cuando el usuario lo pide.
 - **Triage de correo:** no escala recordatorios de vacantes ya descartadas ni duplica pendientes.
 - **Remotos listados en otro país** ("Remote (US)", LinkedIn "Remote" en Bogotá) ya no se descartan por ubicación ni se penalizan en el scoring: suelen aceptar contratistas internacionales. Solo cae la vacante si exige explícitamente residencia o autorización allá. Se desactiva con `eligibility.remote_abroad_ok: false`.
 

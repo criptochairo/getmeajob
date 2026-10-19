@@ -48,7 +48,7 @@ Cualquier afirmación no respaldada obliga a `changes` o `reject`. Idioma distin
 ## Envío y navegador
 - Un canal a la vez, con pausas humanas (`uv run gmaj pace`) y el tope diario (`uv run gmaj cap <canal>`).
 - En modo `dual`, Claude y Codex comparten el mismo Chrome: **nunca a la vez**. Se turnan con `user/state/browser.lock` (crear al empezar con motor y hora; borrar al terminar; si tiene más de 3 h, se considera abandonado).
-- Cada agente abre pestañas nuevas, cierra las de cada vacante al terminarla y no deja ninguna suya abierta. **Excepción:** la pestaña de una verificación anti-bot o CAPTCHA (Cloudflare "verifica que eres humano", reCAPTCHA, hCaptcha, Indeed...) se deja ABIERTA para el usuario (nunca se salta ni se intenta resolver), con la URL en `user/inbox/tareas_humanas.md`; el agente sigue con lo demás. Mañas por sitio: `docs/browser-quirks.md`.
+- Cada agente abre pestañas nuevas y cierra las de una vacante solo cuando la postulación queda **enviada o descartada**, o cuando el usuario lo pide. Si la vacante espera una acción del usuario —iniciar sesión, crear una cuenta, grabar video/audio, assessment o una verificación anti-bot/CAPTCHA (Cloudflare "verifica que eres humano", reCAPTCHA, hCaptcha, Indeed...)— esa pestaña se deja ABIERTA donde se quedó, con la URL en `user/inbox/tareas_humanas.md`; el agente sigue con lo demás. Las verificaciones nunca se saltan ni se intentan resolver. Al terminar, no deja abiertas otras pestañas suyas. Mañas por sitio: `docs/browser-quirks.md`.
 - Si `catalogs/channels.yaml` marca un canal como `unsupported` para tu motor, esa vacante va a `tareas_humanas.md`.
 
 ## Ahorro de tokens
