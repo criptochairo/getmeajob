@@ -165,3 +165,54 @@ def test_remote_abroad_passes_unless_disabled():
     assert prefilter.evaluate({**job, 'description': 'Must reside in the United States'}, config)[0] == 'discarded'
     config['eligibility']['remote_abroad_ok'] = False
     assert prefilter.evaluate(job, config)[0] == 'discarded'
+
+
+FAMILY = {'name': 'automation_ai', 'title_keywords': ['automation', 'ai'], 'unless_title_has': ['legal'],
+          'floor_month': 2000, 'target_month': 2500, 'currency': 'USD'}   # converted with currency.rates
+
+
+def family_status(title, salary_min=None, families=(FAMILY,)):
+    config = load_config()
+    config['salary']['role_families'] = list(families)
+    job = dict(title=title, company='Example', work_mode='remote', description='', location='', salary_min=salary_min,
+               salary_currency='MXN', salary_period='month')
+    return prefilter.evaluate(job, config)
+
+
+def test_family_floor_discards_below_and_names_family():
+    floor = prefilter.family_amount(FAMILY, 'floor_month', load_config())
+    status, reason = family_status('AI Automation Specialist', floor - 1)
+    assert status == 'discarded' and 'automation_ai' in reason
+
+
+def test_family_floor_passes_above_and_unknown_salary():
+    floor = prefilter.family_amount(FAMILY, 'floor_month', load_config())
+    assert family_status('AI Automation Specialist', floor + 1)[0] == 'filtered'
+    assert family_status('AI Automation Specialist')[0] == 'filtered'
+
+
+def test_unless_title_has_falls_back_to_general_floor():
+    general = load_config()['salary']['floor_month']
+    assert family_status('Legal Automation Specialist', general + 1)[0] == 'filtered'
+    assert family_status('Legal Automation Specialist', general - 1)[0] == 'discarded'
+
+
+def test_no_families_keeps_general_floor():
+    assert family_status('AI Automation Specialist', load_config()['salary']['floor_month'] + 1, families=())[0] == 'filtered'
+
+
+def test_family_amount_needs_a_rate():
+    assert prefilter.family_amount({**FAMILY, 'currency': 'XXX'}, 'floor_month', load_config()) is None
+
+
+def test_job_md_gets_salary_family_line(user_dir):
+    import yaml
+    from gmaj import applications, paths
+    search = yaml.safe_load((user_dir / 'search.yaml').read_text(encoding='utf-8'))
+    search['salary']['role_families'] = [FAMILY]
+    (user_dir / 'search.yaml').write_text(yaml.safe_dump(search), encoding='utf-8')
+    conn = db.connect()
+    db.insert_job(conn, dict(source='t', external_id='1', url='u', title='AI Automation Specialist', company='Example', description='x'))
+    row = conn.execute('SELECT * FROM jobs').fetchone()
+    info = applications.create(conn, row)
+    assert 'salary_family: automation_ai' in (paths.user(info['dir']) / 'job.md').read_text(encoding='utf-8')

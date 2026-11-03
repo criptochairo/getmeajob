@@ -13,6 +13,7 @@
 - **Pestañas que esperan al usuario se quedan abiertas:** iniciar sesión, crear cuenta, grabar video/audio, assessment o verificación. Solo se cierran las de postulaciones enviadas o descartadas, o cuando el usuario lo pide.
 - **Triage de correo:** no escala recordatorios de vacantes ya descartadas ni duplica pendientes.
 - **Remotos listados en otro país** ("Remote (US)", LinkedIn "Remote" en Bogotá) ya no se descartan por ubicación ni se penalizan en el scoring: suelen aceptar contratistas internacionales. Solo cae la vacante si exige explícitamente residencia o autorización allá. Se desactiva con `eligibility.remote_abroad_ok: false`.
+- **Familias de rol con piso y meta propios** (`salary.role_families`, opcional): los títulos que coinciden con una familia usan su piso en lugar de `floor_month` (el descarte nombra la familia; las prácticas conservan su piso). `job.md` trae `salary_family` y los prompts de adaptación/envío responden la meta de la familia. Regla genérica nueva: si el anuncio publica un rango cuyo tope supera la expectativa, se responde el punto medio del rango, nunca por debajo del piso.
 
 ## 1.0.0 — 2026-10
 - Primera versión pública, extraída de una instancia personal en uso diario.

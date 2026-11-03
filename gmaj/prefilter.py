@@ -25,6 +25,27 @@ def monthly_amount(job, config):
     return float(amount) * factor * period if factor is not None and period is not None else None
 
 
+def role_family(title, config):
+    """First salary.role_families entry whose title_keywords match the title and none of unless_title_has, else None."""
+    for fam in (config.get('salary') or {}).get('role_families') or []:
+        if any(phrase(title or '', t) for t in fam.get('title_keywords') or []) and \
+                not any(phrase(title or '', t) for t in fam.get('unless_title_has') or []):
+            return fam
+    return None
+
+
+def family_amount(fam, key, config):
+    """Family floor_month/target_month in the base currency per month (family `currency` converted with currency.rates)."""
+    amount = fam.get(key)
+    if not amount:
+        return None
+    currency = (fam.get('currency') or base_currency(config)).upper()
+    if currency == base_currency(config):
+        return float(amount)
+    rate = {k.upper(): v for k, v in ((config.get('currency') or {}).get('rates') or {}).items()}.get(currency)
+    return float(amount) * rate if rate is not None else None
+
+
 FOREIGN_MARKERS = {
     # Matched after accent stripping, so avoid words shared with Spanish (beneficios, regulatorio...).
     'pt': ['você', 'vagas', 'qualificações', 'conhecimento', 'atuação', 'desejável', 'estágio', 'não'],
@@ -189,9 +210,16 @@ def evaluate(job, config):
     salary = monthly_amount(job, config)
     cur = base_currency(config)
     # Internships pay a stipend ("apoyo económico"): they get their own floor (null = no floor).
+    # Role families (salary.role_families) replace the general floor for matching titles; internships keep their own floor.
+    family = None if internship else role_family(job.get('title'), config)
     floor = (config.get('salary') or {}).get('internship_floor_month' if internship else 'floor_month')
+    if family and family_amount(family, 'floor_month', config):
+        floor = family_amount(family, 'floor_month', config)
+    else:
+        family = None
     if floor and salary is not None and salary < floor:
-        return 'discarded', f'Salary {salary:.2f} {cur}/month below {"internship " if internship else ""}floor'
+        label = 'internship ' if internship else (f'{family["name"]} family ' if family else '')
+        return 'discarded', f'Salary {salary:.2f} {cur}/month below {label}floor' + (f' ({floor:.0f})' if family else '')
     if mode in ('hybrid', 'onsite'):
         decision = office_rule(job, mode, salary, config, internship)
         if decision:

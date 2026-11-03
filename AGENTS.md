@@ -46,6 +46,7 @@ Compara `job.md`, `cv.md`, `cover.md`, `answers.json` con `profile.yaml`/`answer
 Cualquier afirmación no respaldada obliga a `changes` o `reject`. Idioma distinto de `cv_language` → `changes` con "IDIOMA INCORRECTO". No reescribas los documentos.
 
 ## Envío y navegador
+- Expectativa salarial: la de `answers.json`; si `job.md` trae `salary_family`, la meta de esa familia de rol (`salary.role_families`). Si el anuncio publica un rango cuyo tope la supera, se responde el punto medio del rango (misma moneda y periodo); nunca por debajo del piso aplicable.
 - Un canal a la vez, con pausas humanas (`uv run gmaj pace`) y el tope diario (`uv run gmaj cap <canal>`).
 - En modo `dual`, Claude y Codex comparten el mismo Chrome: **nunca a la vez**. Se turnan con `user/state/browser.lock` (crear al empezar con motor y hora; borrar al terminar; si tiene más de 3 h, se considera abandonado).
 - Cada agente abre pestañas nuevas y cierra las de una vacante solo cuando la postulación queda **enviada o descartada**, o cuando el usuario lo pide. Si la vacante espera una acción del usuario —iniciar sesión, crear una cuenta, grabar video/audio, assessment o una verificación anti-bot/CAPTCHA (Cloudflare "verifica que eres humano", reCAPTCHA, hCaptcha, Indeed...)— esa pestaña se deja ABIERTA donde se quedó, con la URL en `user/inbox/tareas_humanas.md`; el agente sigue con lo demás. Las verificaciones nunca se saltan ni se intentan resolver. Al terminar, no deja abiertas otras pestañas suyas. Mañas por sitio: `docs/browser-quirks.md`.

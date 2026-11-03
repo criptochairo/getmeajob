@@ -2,7 +2,8 @@
 import datetime as dt
 import re
 
-from . import db, paths
+from . import config, db, paths
+from .prefilter import family_amount, role_family
 from .cv_language import cv_language
 
 
@@ -18,11 +19,23 @@ def create(conn, row):
                 'score': row['score'], 'cv_language': lang, 'existing': True}
     folder = paths.applications(f"{dt.date.today():%Y-%m-%d}_{slug(row['company'], 20)}_{slug(row['title'])}_{row['id'][:6]}")
     folder.mkdir(parents=True, exist_ok=True)
+    fam_line = ''
+    try:
+        search = config.search()
+        fam = role_family(row['title'], search)
+        if fam and family_amount(fam, 'floor_month', search):
+            cur = (search.get('currency') or {}).get('base', 'MXN').upper()
+            target = family_amount(fam, 'target_month', search)
+            fam_line = (f"- salary_family: {fam['name']} (piso {family_amount(fam, 'floor_month', search):,.0f} {cur}/mes"
+                        + (f"; sin rango publicado responder {target:,.0f} {cur}/mes" if target else '')
+                        + "; con rango publicado más alto, su punto medio)\n")
+    except config.MissingUserFile:
+        pass
     salary = ' '.join(str(x) for x in (row['salary_min'], row['salary_max'], row['salary_currency'], row['salary_period']) if x)
     (folder / 'job.md').write_text(
         f"# {row['title']} — {row['company']}\n\n"
         f"- id: {row['id']}\n- url: {row['url']}\n- source: {row['source']}\n- location: {row['location']}\n"
-        f"- work_mode: {row['work_mode']}\n- salary: {salary or 'no publicado'}\n"
+        f"- work_mode: {row['work_mode']}\n- salary: {salary or 'no publicado'}\n{fam_line}"
         f"- cv_language: {lang} ({lang_reason})  <- CV, carta y respuestas DEBEN ir en este idioma\n"
         f"- score: {row['score']} — {row['score_reason']}\n\n## Description\n\n{row['description'] or ''}\n",
         encoding='utf-8')

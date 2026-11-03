@@ -18,6 +18,17 @@ salary:
   office_min_month: null         # mínimo para híbrido/presencial (opcional)
   internship_floor_month: null   # piso para prácticas/becas (solo con entry_level.enabled; null = sin piso)
   unknown_salary: keep
+  # Opcional: familias de rol con piso/meta propios (reemplazan floor_month para esos títulos;
+  # las prácticas conservan internship_floor_month). Cantidades mensuales brutas en la moneda base,
+  # o en `currency` (debe existir en currency.rates). Un título entra si contiene algún title_keywords
+  # y ningún unless_title_has.
+  # role_families:
+  #   - name: automation_ai
+  #     title_keywords: [automation, ai, workflow, crm, rpa, no-code]
+  #     unless_title_has: [legal, paralegal]
+  #     floor_month: 0           # tu piso para esta familia
+  #     target_month: 0          # lo que responderás si no hay rango publicado
+  #     currency: USD            # opcional; por defecto la moneda base
 
 work_mode:
   remote: accept
