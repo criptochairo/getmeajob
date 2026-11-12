@@ -5,6 +5,8 @@ description: Cambios puntuales al perfil de GetMeAJob - nuevo empleo, certificac
 
 # Actualizar el perfil
 
+Antes de leer o escribir archivos ejecuta `uv run gmaj paths`: toda ruta `user/…` de esta skill está dentro del `user_dir` que devuelve (puede no ser la carpeta `user/` de este repo).
+
 1. Aclara el cambio con preguntas cortas y, antes de tocar nada, anuncia en una frase lo que vas a cambiar y qué se actualiza con eso ("Voy a agregar tu certificación de Scrum y actualizar tus 4 CVs con ella; luego te los muestro. ¿Va?"). Con ese sí no vuelvas a preguntar hasta mostrar el resultado. Aplica las mismas reglas de la entrevista (`gmaj-onboarding`): hechos confirmados, cifras respaldables, `confirmed: <hoy>`.
 2. Edita `user/profile.yaml` / `user/answers.yaml` / `user/search.yaml` según corresponda. Si `user/` es un repo git local, haz commit con un mensaje claro (permite deshacer).
 3. Regenera lo que dependa:

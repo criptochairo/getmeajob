@@ -118,3 +118,19 @@ def log_submission(conn, folder, status, channel, note='', agent='claude'):
         stream.write(f"\nstatus: {status}\nchannel: {channel}\ntime: {stamp}\nnote: {note}\n")
     db.set_status(conn, job_id_of(folder), status, note=f'{channel} {note}'[:200], agent=agent)
     return folder
+
+
+def resume(conn):
+    """Recover interrupted preparation and approved submissions deferred by caps/quotas."""
+    rows = conn.execute("SELECT * FROM jobs WHERE app_dir IS NOT NULL AND status IN ('scored','tailored','reviewed','approved') ORDER BY CASE status WHEN 'approved' THEN 0 ELSE 1 END, score DESC").fetchall()
+    result = []
+    for row in rows:
+        folder = paths.user(row['app_dir'])
+        from . import approval
+        try:
+            binding = approval.validated(folder)
+            action = 'send' if row['status'] == 'approved' and row['approval_hash'] == binding else 'approval'
+        except (ValueError, OSError):
+            action = 'check_review' if all((folder / f).exists() for f in ('job.md', 'cv.md', 'cover.md', 'answers.json')) else 'tailor'
+        result.append({'id': row['id'], 'dir': row['app_dir'], 'status': row['status'], 'next': action})
+    return result

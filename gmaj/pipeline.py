@@ -3,7 +3,7 @@ import importlib
 import json
 from collections import Counter
 
-from . import db, paths
+from . import config as configuration, db, paths
 from .fetchers.common import Client
 
 SOURCES = ('remotive', 'remoteok', 'weworkremotely', 'himalayas', 'workingnomads',
@@ -11,13 +11,11 @@ SOURCES = ('remotive', 'remoteok', 'weworkremotely', 'himalayas', 'workingnomads
 
 
 def enabled(config, source):
-    options = (config.get('sources') or {}).get(source)
-    if not options:
-        return False
-    return not isinstance(options, dict) or bool(options.get('enabled', False))
+    return source in configuration.active_sources(config)
 
 
 def fetch(conn, config, selected=None):
+    config = {**config, 'sources': configuration.active_sources(config)}
     report = {'ts': db.now(), 'sources': {}}
     paths.data().mkdir(parents=True, exist_ok=True)
     for source in SOURCES:

@@ -5,9 +5,12 @@ description: Envía postulaciones ya aprobadas en el navegador del usuario (Link
 
 # Enviar postulaciones aprobadas
 
+Antes de leer o escribir archivos ejecuta `uv run gmaj paths`: toda ruta `user/…` de esta skill está dentro del `user_dir` que devuelve (puede no ser la carpeta `user/` de este repo).
+
 Sigue `prompts/apply.md` al pie de la letra, en orden de score, con:
-- **Desde gmaj-inbox:** exactamente las carpetas que el usuario acaba de aprobar, nada más.
-- **Desde la corrida diaria en piloto automático:** las `approved` (`uv run gmaj list --status approved --json`).
+- **Desde gmaj-inbox:** exactamente las carpetas que el usuario acaba de aprobar, o las `needs_user` cuya tarea humana acaba de resolver, nada más.
+- **Desde la corrida diaria en piloto automático:** las que `uv run gmaj resume` devuelve con `next: send`.
+- Antes de enviar cada una: `uv run gmaj before-send <carpeta>` (lo exige `prompts/apply.md`); si falla, no la envíes: necesita `check` + `review` + aprobación otra vez.
 - En modo supervisado nunca envíes una vacante que siga en `reviewed`: esa todavía no la aprobó el usuario.
 
 - **Antes de empezar:** en modo dual crea `user/state/browser.lock` (`{"engine": "<tú>", "since": "<hora>"}`); si ya existe y tiene < 3 h, espera o termina. Bórralo al acabar.
@@ -15,4 +18,4 @@ Sigue `prompts/apply.md` al pie de la letra, en orden de score, con:
 - **Mañas por sitio:** `docs/browser-quirks.md` (subida de archivos, texto que se pierde, chips de Paradox, Easy Apply con CV viejo preseleccionado, reCAPTCHA).
 - **Si eres Claude:** usa Claude in Chrome. **Si eres Codex:** usa tu extensión de Chrome o el navegador; si una subida de archivo es rechazada por permisos, escala y anota en el reporte "activar 'Permitir acceso a URLs de archivo' en la extensión".
 - Tras cada envío: `uv run gmaj log-applied ...`. (El conteo de aprobaciones del modo supervisado lo registra solo **gmaj-inbox**.)
-- Si te quedas sin cuota a la mitad: registra lo enviado, deja el resto `approved` para mañana y anótalo en el reporte.
+- Si te quedas sin cuota a la mitad: registra lo enviado, deja el resto `approved` para mañana (las retoma `uv run gmaj resume`) y anótalo en el reporte.

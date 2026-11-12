@@ -6,9 +6,16 @@ import os
 import shutil
 import subprocess
 import sys
+import warnings
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import markdown
+from bs4 import BeautifulSoup, NavigableString, Tag, XMLParsedAsHTMLWarning
+
+# Chrome/Edge may exit successfully without printing with scriptEnabled=false.
+# The sanitizer and CSP default-src 'none' already block scripts.
+DISABLE_SCRIPTS = False
 
 CANDIDATES = {
     'win32': [r'%PROGRAMFILES%\Google\Chrome\Application\chrome.exe', r'%PROGRAMFILES(X86)%\Google\Chrome\Application\chrome.exe',
@@ -58,6 +65,37 @@ def page_size():
         return 'Letter'
 
 
+def sanitize_html(body):
+    """Keep only passive CV markup; never allow embedded resources or CSS."""
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', XMLParsedAsHTMLWarning)
+        soup = BeautifulSoup(body, 'html.parser')
+    allowed = {'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li',
+               'strong', 'em', 'b', 'i', 'a', 'br', 'hr', 'table', 'thead',
+               'tbody', 'tfoot', 'tr', 'th', 'td', 'code', 'pre', 'blockquote',
+               'sub', 'sup', 'u', 's', 'del'}
+    for node in list(soup.descendants):
+        if not isinstance(node, Tag) and type(node) is not NavigableString:
+            node.extract()
+    for tag in list(soup.find_all(True)):
+        if tag.parent is None:  # A parent was already decomposed.
+            continue
+        if tag.name in {'script', 'style', 'iframe', 'object', 'embed', 'svg', 'math', 'template'}:
+            tag.decompose()
+        elif tag.name not in allowed:
+            tag.unwrap()
+        else:
+            href = tag.get('href') if tag.name == 'a' else None
+            tag.attrs = {}
+            if href:
+                try:
+                    if href.startswith('#') or urlsplit(href).scheme.lower() in {'http', 'https', 'mailto'}:
+                        tag['href'] = href
+                except ValueError:
+                    pass
+    return str(soup)
+
+
 def render(src, out=None, page=None):
     src = Path(src).resolve()
     out = Path(out).resolve() if out else src.with_suffix('.pdf')
@@ -71,14 +109,21 @@ def render(src, out=None, page=None):
             lines.append('')
         lines.append(line)
         prev = line
-    body = markdown.markdown('\n'.join(lines), extensions=['nl2br'])
+    body = sanitize_html(markdown.markdown('\n'.join(lines), extensions=['nl2br']))
     html = src.with_suffix('.html')
-    css = CSS % {'page': page or page_size()}
-    html.write_text(f'<!doctype html><html><head><meta charset="utf-8"><style>{css}</style></head><body>{body}</body></html>',
+    size = page or page_size()
+    css = CSS % {'page': size if size in ('Letter', 'A4') else 'Letter'}
+    html.write_text(f'''<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<style>{css}</style></head><body>{body}</body></html>''',
                     encoding='utf-8')
     try:
+        out.unlink(missing_ok=True)
         subprocess.run([browser, '--headless=new', '--disable-gpu', '--no-pdf-header-footer',
+                        *(['--blink-settings=scriptEnabled=false'] if DISABLE_SCRIPTS else []),
                         f'--print-to-pdf={out}', html.as_uri()], check=True, capture_output=True, timeout=120)
+        if not out.is_file() or out.stat().st_size == 0:
+            raise RuntimeError('El navegador no generó el PDF')
     finally:
         html.unlink(missing_ok=True)
     return out

@@ -55,8 +55,6 @@ window.__indeed_done = null;
     const home = new RegExp(__HOME__, 'i').test(j.formattedLocation || '');
     if ((!mode && !home) || !legal.test(j.title)) continue;
     const sal = j.salarySnippet?.text || '';
-    const monthly = /por mes/.test(sal) ? parseInt((sal.match(/[\d,]+/g) || []).pop()?.replace(/,/g, '') || '0') : null;
-    if (monthly !== null && monthly > 0 && monthly < __FLOOR__) continue;   // tope del rango publicado bajo el piso
     jobs.push({source: 'indeed', external_id: j.jobkey, url: `${location.origin}/viewjob?jk=${j.jobkey}`, title: j.title,
                company: j.company || '', location: j.formattedLocation || '', mode,
                description: (sal ? `Sueldo: ${sal}. ` : '') + `Modalidad Indeed: ${remoteAttr || mode || 'sin dato (verificar)'}. ` + strip(j.snippet).slice(0, 700)});

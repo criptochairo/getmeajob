@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def user_dir():
-    return Path(os.environ.get('GMAJ_USER_DIR') or ROOT / 'user')
+    return Path(os.environ.get('GMAJ_USER_DIR') or ROOT / 'user').resolve()
 
 
 def user(*parts):
@@ -22,3 +22,9 @@ def data(*parts):
 
 def applications(*parts):
     return user('applications', *parts)
+
+
+def active():
+    return {name: str(user(name).resolve()) for name in
+            ('profile.yaml', 'answers.yaml', 'search.yaml', 'engines.yaml',
+             'generated/candidate_brief.md', 'variants', 'applications', 'data', 'inbox', 'reports', 'state', 'logs')} | {'user_dir': str(user_dir())}

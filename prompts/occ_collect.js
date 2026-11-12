@@ -42,8 +42,7 @@ window.__occ_done = null;
     } catch (e) {}
     await new Promise(r => setTimeout(r, 300));
   }
-  const floor = (j) => { const m = (j.description.match(/Sueldo: \$\s?([\d,]+)/) || [])[1]; return m ? parseInt(m.replace(/,/g, '')) : null; };
-  const keep = jobs.filter(j => (__KEEP_ONSITE__ || j.mode !== 'onsite') && j.title && !(floor(j) !== null && floor(j) < __FLOOR__));
+  const keep = jobs.filter(j => (__KEEP_ONSITE__ || j.mode !== 'onsite') && j.title);
   const legal = new RegExp(__RELEVANT__, 'i');
   window.__occ = keep.filter(j => legal.test(j.title));
   const rows = window.__occ.map(j => [j.external_id, j.mode, j.title, j.company, j.location,

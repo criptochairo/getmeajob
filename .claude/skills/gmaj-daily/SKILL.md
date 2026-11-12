@@ -5,17 +5,20 @@ description: Corrida diaria de GetMeAJob - lee lo descubierto, califica, verific
 
 # Corrida diaria
 
+Antes de leer o escribir archivos ejecuta `uv run gmaj paths`: toda ruta `user/…` de esta skill está dentro del `user_dir` que devuelve (puede no ser la carpeta `user/` de este repo).
+
 Reglas: `AGENTS.md`. Si la corrida es desatendida, **no hagas preguntas**: todo lo que requiera al usuario va a `user/inbox/`. Ahorra tokens: lee solo lo necesario, usa `uv run gmaj` para lo mecánico.
 
 ## 0. Guardas
 - `uv run gmaj validate`: si falla, escribe el motivo en `user/reports/<fecha>.md` y termina.
 - Si ya existe `user/reports/<fecha>.md` con "Corrida completa", termina (evita doble corrida). Si son más de las 20:00, haz solo descubrimiento y reporte.
 - Lee `user/data/discover_done.json`. Si no es de hoy, corre `uv run gmaj discover` en segundo plano (puede tardar 30+ min por las esperas de LinkedIn); **nunca lances dos a la vez**. Mientras, avanza con el paso 1b.
+- `uv run gmaj resume`: primero lo que quedó pendiente de corridas anteriores. `send` → paso 5; `approval` → supervisado: `set-status <id> reviewed` y agrégala a `user/inbox/por_aprobar.md` (paso 5), piloto automático: `set-status <id> approved`; `check_review` → paso 4 desde `check`; `tailor` → paso 4.
 - Modo y canales: `uv run gmaj engines` y `uv run gmaj autonomy`. Revisa `catalogs/channels.yaml` para tu motor.
 
 ## 1. Descubrimiento extra
 a. **Correo** (si hay conector/plugin de Gmail): `uv run gmaj mail` (o sigue `prompts/mail_triage.md` en la sesión). Si existe `user/data/mail_leads.json`: `uv run gmaj add-jobs user/data/mail_leads.json`.
-b. **OCC / Indeed** (solo si están en `search.yaml sources` con `browser: true`): en una pestaña nueva del sitio con sesión iniciada, pega el resultado de `uv run gmaj collector occ` (o `indeed`) en la herramienta de JavaScript; espera consultando `window.__occ_done` / `window.__indeed_done` (≤ 10 s por consulta); lee las páginas; arma el JSON para `uv run gmaj add-jobs <archivo>`. Indeed tarda ~15–20 min por su ritmo humano: deja esa pestaña en primer plano (en segundo plano Chrome la congela), sigue el avance en `window.__indeed_progress` y mientras haz trabajo sin navegador (scoring). Si termina con `blocked: true`, inserta lo parcial, anótalo en el reporte y no lo relances ese día. Ver `docs/browser-quirks.md`. Cierra la pestaña. **Verificaciones** (Cloudflare "verifica que eres humano", CAPTCHA): nunca las saltes ni intentes resolverlas; deja esa pestaña abierta para el usuario, anota la URL en el reporte y en `user/inbox/tareas_humanas.md`, y sigue.
+b. **OCC / Indeed** (solo las que `uv run gmaj sources --browser` liste en `active`; si trae `warnings` de portales desactivados, anótalos en el reporte y díselo al usuario en una frase sencilla al terminar: "OCC está apagado en tu configuración; si lo usas, dime y lo enciendo"): en una pestaña nueva del sitio con sesión iniciada, pega el resultado de `uv run gmaj collector occ` (o `indeed`) en la herramienta de JavaScript; espera consultando `window.__occ_done` / `window.__indeed_done` (≤ 10 s por consulta); lee las páginas; arma el JSON para `uv run gmaj add-jobs <archivo>`. Indeed tarda ~15–20 min por su ritmo humano: deja esa pestaña en primer plano (en segundo plano Chrome la congela), sigue el avance en `window.__indeed_progress` y mientras haz trabajo sin navegador (scoring). Si termina con `blocked: true`, inserta lo parcial, anótalo en el reporte y no lo relances ese día. Ver `docs/browser-quirks.md`. Cierra la pestaña. **Verificaciones** (Cloudflare "verifica que eres humano", CAPTCHA): nunca las saltes ni intentes resolverlas; deja esa pestaña abierta para el usuario, anota la URL en el reporte y en `user/inbox/tareas_humanas.md`, y sigue.
 c. `uv run gmaj prefilter`.
 
 ## 2. Scoring
@@ -28,10 +31,10 @@ c. `uv run gmaj prefilter`.
 ## 4. Adaptación y revisión cruzada
 - Score ≥ 75: `uv run gmaj tailor <carpetas> --high`; el resto: `uv run gmaj tailor <carpetas>` (lotes de ~8).
 - `uv run gmaj check <carpetas>`; corrige los FAIL solo con datos del perfil o marca `needs_user`.
-- `uv run gmaj review <carpetas>` (otra llamada, contexto limpio; en modo dual la hace el otro motor). `reject` → `set-status rejected` y mueve la carpeta a `user/applications/_rejected/`. `changes` → aplica solo correcciones respaldadas, vuelve a renderizar el PDF y repite `check` + `review` **una vez**; si aún no sale `approve`, `needs_user` con el motivo.
+- `uv run gmaj review <carpetas>` (otra llamada, contexto limpio; en modo dual la hace el otro motor). `reject` → `set-status rejected` y mueve la carpeta a `user/applications/_rejected/`. `changes` → aplica solo correcciones respaldadas, vuelve a renderizar el PDF y repite `check` + `uv run gmaj review` **una vez** (toda corrección invalida la revisión anterior; la revisión de paquetes es siempre con `uv run gmaj review`, nunca con un subagente); si aún no sale `approve`, `needs_user` con el motivo.
 - Solo las que tienen `review.json` con `approve` y `check` OK pasan al paso 5:
   - **Supervisado:** `set-status <id> reviewed` (lista para que el usuario la vea). **Nunca** `approved`: ese estado lo pone solo la aprobación del usuario en gmaj-inbox, y gmaj-apply envía lo que esté `approved`.
-  - **Piloto automático:** `set-status <id> approved`.
+  - **Piloto automático:** `set-status <id> approved` (falla si `check`/`review` no corresponden al contenido actual: entonces `needs_user` con el motivo).
 
 ## 5. Envío o aprobación
 - **Supervisado** (`autonomy: supervised`): NO envíes. Agrega cada una (estado `reviewed`) a `user/inbox/por_aprobar.md` (número, empresa, rol, URL, score, canal, ruta del PDF, 3 respuestas clave, salario que se pondrá). Opcional: llena el formulario hasta antes de enviar solo si el sitio guarda borradores.
@@ -39,4 +42,4 @@ c. `uv run gmaj prefilter`.
 - Modo dual, **solo en piloto automático** (en supervisado no se envía nada en esta corrida): el turno de navegador lo toma un motor a la vez (`user/state/browser.lock`); los ATS largos (`assign.apply`) los envía ese motor con `uv run gmaj run-role apply --chrome --prompt-file <prompt con prompts/apply.md + carpetas>`; espera a que termine antes de tocar el navegador.
 
 ## 6. Reporte
-Escribe `user/reports/<fecha>.md`: fuentes con errores o 0 resultados (`user/data/fetch_report.json`; si LinkedIn está en pausa por bloqueo — `user/data/linkedin_guest_cooldown.json` — dilo y que las alertas por correo cubren el hueco), nuevas / filtradas / calificadas, carpetas creadas, enviadas, por aprobar, escaladas (con motivo), correos importantes, consumo (`user/logs/usage.jsonl` de hoy). Última línea: "Corrida completa". Cierra todas tus pestañas.
+Escribe `user/reports/<fecha>.md`: fuentes con errores o 0 resultados (`user/data/fetch_report.json`; si LinkedIn está en pausa por bloqueo — `user/data/linkedin_guest_cooldown.json` — dilo y que las alertas por correo cubren el hueco), nuevas / filtradas / calificadas, carpetas creadas, enviadas, por aprobar, escaladas (con motivo), correos importantes, consumo (`user/logs/usage.jsonl` de hoy). Última línea: "Corrida completa". Cierra tus pestañas, **excepto** las que esperan una acción del usuario (CAPTCHA, inicio de sesión, cuenta nueva, video o assessment): esas se quedan abiertas.

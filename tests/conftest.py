@@ -31,3 +31,22 @@ def pytest_configure(config):
         base = ROOT / '.pytest-tmp'
         base.mkdir(exist_ok=True)
         config.option.basetemp = str(base / getpass.getuser())
+
+
+@pytest.fixture
+def approve_package(user_dir):
+    def make(conn, ident):
+        import json
+        from gmaj import applications, approval, check_package, db
+        folder = user_dir / applications.one(conn, ident)['dir']
+        (folder / 'cv.md').write_text((user_dir / 'variants/cv_datos_es.md').read_text(encoding='utf-8'), encoding='utf-8')
+        (folder / 'cover.md').write_text('Estimado equipo: me interesa la vacante de analista de datos para el equipo.', encoding='utf-8')
+        (folder / 'answers.json').write_text('{"cv_language":"es"}', encoding='utf-8')
+        (folder / 'cv.pdf').write_bytes(b'%PDF-1.4 fictional test')
+        assert check_package.check(folder)['ok']
+        snapshot = approval.content(folder)
+        (folder / 'review.json').write_text(json.dumps({'verdict': 'approve', 'unsupported_claims': [], 'language_issues': []}), encoding='utf-8')
+        approval.seal_review(folder, snapshot, 0)
+        db.set_status(conn, ident, 'approved', agent='human')
+        return folder
+    return make

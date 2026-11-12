@@ -8,8 +8,8 @@ linkedin_passes:
   # Si acepta híbrido/presencial en su ciudad: {name: local, locations: ["<Ciudad>, Mexico"], filter: "f_WT=1,3"}
 sources:
   computrabajo: {enabled: true, url: "https://mx.computrabajo.com", modality: "remoto", language: es}
-  occ: {enabled: false, browser: true, location_suffix: "México", offer_url: "https://www.occ.com.mx/empleo/oferta/{id}/", start_url: "https://www.occ.com.mx/"}
-  indeed: {enabled: false, browser: true, domain: "mx.indeed.com", start_url: "https://mx.indeed.com/", locations: ["México"]}
+  occ: {enabled: true, browser: true, location_suffix: "México", offer_url: "https://www.occ.com.mx/empleo/oferta/{id}/", start_url: "https://www.occ.com.mx/"}
+  indeed: {enabled: true, browser: true, domain: "mx.indeed.com", start_url: "https://mx.indeed.com/", locations: ["México"]}
 eligibility:
   accept_phrases: ["latam", "latin america", "mexico", "méxico", "anywhere", "worldwide", "americas", "contractor"]
   location_ok: ["mexico", "méxico", "latam", "latin america", "latinoamerica", "americas", "worldwide", "anywhere", "global", "remote", "remoto"]

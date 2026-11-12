@@ -125,5 +125,11 @@ def check(folder, forbidden=None, contact=None, profile_text=None, limits=None):
     except Exception as e:
         issues.append(f'answers.json invalid: {e}')
     result = {'ok': not issues, 'cv_language': lang, 'issues': issues}
+    from .approval import content
+    try:
+        result['content'] = content(folder, require_pdf=False)
+    except ValueError as exc:
+        result['ok'] = False
+        result['issues'].append(str(exc))
     (folder / 'check.json').write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding='utf-8')
     return result

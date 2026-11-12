@@ -41,3 +41,28 @@ def get(tree, dotted, default=None):
             return default
         node = node[key]
     return node
+
+
+def active_sources(cfg, browser=False):
+    """Normalize legacy scalar sources; explicit enabled always wins."""
+    result = {}
+    for name, value in (cfg.get('sources') or {}).items():
+        options = {'enabled': value} if isinstance(value, bool) else value
+        if not isinstance(options, dict):
+            continue
+        enabled = options.get('enabled', options.get('browser', False)) is True
+        if enabled and (not browser or options.get('browser') is True):
+            result[name] = options
+    return result
+
+
+def disabled_browser_sources(cfg):
+    return {name: options for name, options in (cfg.get('sources') or {}).items()
+            if isinstance(options, dict) and options.get('browser') is True
+            and options.get('enabled') is False}
+
+
+def source_warnings(cfg):
+    return [f'{name.upper()} está en browser: true pero enabled: false; no se consultará. '
+            'Si la usas, pon enabled: true en search.yaml.'
+            for name in disabled_browser_sources(cfg)]

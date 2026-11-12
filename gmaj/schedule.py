@@ -23,7 +23,10 @@ def python_exe(windowless=True):
 
 
 def args_for(kind):
-    return ['-m', 'gmaj', 'discover'] if kind == 'discover' else ['-m', 'gmaj', 'run-daily']
+    # Persist the active user even when the scheduler has a different environment.
+    code = ('import os,runpy;os.environ[\"GMAJ_USER_DIR\"]=' + repr(str(paths.user_dir()))
+            + ';runpy.run_module(\"gmaj\",run_name=\"__main__\")')
+    return ['-c', code, 'discover' if kind == 'discover' else 'run-daily']
 
 
 def plist_path(kind):
@@ -39,7 +42,7 @@ def install(kind='discover', at='08:30', runner=subprocess.run):
     logs = paths.user('logs')
     logs.mkdir(parents=True, exist_ok=True)
     if os.name == 'nt':
-        argument = ' '.join(args_for(kind))
+        argument = subprocess.list2cmdline(args_for(kind))
         script = (
             "$ErrorActionPreference = 'Stop';"
             f"$a = New-ScheduledTaskAction -Execute {ps_quote(python_exe())} -Argument {ps_quote(argument)} -WorkingDirectory {ps_quote(paths.ROOT)};"
@@ -61,7 +64,7 @@ def install(kind='discover', at='08:30', runner=subprocess.run):
                 'Label': label, 'ProgramArguments': [python_exe(False), *args_for(kind)],
                 'WorkingDirectory': str(paths.ROOT), 'StartCalendarInterval': {'Hour': hour, 'Minute': minute},
                 'StandardOutPath': str(logs / f'{kind}.out.log'), 'StandardErrorPath': str(logs / f'{kind}.err.log'),
-                'EnvironmentVariables': {'PYTHONIOENCODING': 'utf-8', 'PATH': os.environ.get('PATH', '/usr/bin:/bin')},
+                'EnvironmentVariables': {'PYTHONIOENCODING': 'utf-8', 'GMAJ_USER_DIR': str(paths.user_dir()), 'PATH': os.environ.get('PATH', '/usr/bin:/bin')},
             }, stream)
         uid = os.getuid()
         runner(['launchctl', 'bootout', f'gui/{uid}', str(path)], capture_output=True)

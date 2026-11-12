@@ -61,6 +61,8 @@ def checks():
     v = validate.check()
     out.append(item('perfil completo (gmaj validate)', v['ok'], '; '.join(v['problems'][:5]) or 'ok',
                     'continúa la entrevista (skill gmaj-onboarding)', required=False))
+    for warning in v['warnings']:
+        out.append(item('aviso de configuración', False, warning, required=False))
     paused = cooldown.active('linkedin_guest')
     out.append(item('LinkedIn sin bloqueo', not paused, cooldown.describe(paused) if paused else 'ok',
                     'esperar; las alertas por correo siguen trayendo vacantes', required=False))

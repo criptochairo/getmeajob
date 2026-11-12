@@ -3,6 +3,7 @@ import argparse
 import datetime as dt
 import json
 import logging
+import sqlite3
 import subprocess
 import sys
 
@@ -158,14 +159,35 @@ def cmd_one(a):
 
 
 def batch_role(role, prompt_name, items, extra=''):
-    dirs = folders(items)
+    dirs, snapshots, failures = [], {}, []
+    for item in items:
+        try:
+            d = applications.resolve(item)
+            if role == 'review':
+                from . import approval
+                snapshots[d] = approval.content(d)
+            dirs.append(d)
+        except (OSError, ValueError) as exc:
+            failures.append(str(item))
+            print(f'No se selló {item}: {exc}')
+    if not dirs:
+        sys.exit(1)
     listing = '\n'.join('- ' + rel(d) for d in dirs)
+    import time
+    started = time.time_ns()
     r = engines.run(role, engines.prompt_file(prompt_name, FOLDERS=listing, EXTRA=extra), timeout=3600)
     print(r['output'][-3000:])
+    if role == 'review' and r['code'] == 0:
+        for d in dirs:
+            try:
+                approval.seal_review(d, snapshots[d], started)
+            except (OSError, ValueError) as exc:
+                failures.append(str(d))
+                print(f'No se selló {rel(d)}: {exc}')
     if r['limit_hit']:
         print('ENGINE_LIMIT')
         sys.exit(engines.LIMIT_EXIT)
-    sys.exit(0 if r['code'] == 0 else 1)
+    sys.exit(0 if r['code'] == 0 and not failures else 1)
 
 
 def cmd_tailor(a):
@@ -191,6 +213,12 @@ def cmd_check(a):
         bad += not r['ok']
         print(('OK   ' if r['ok'] else 'FAIL ') + rel(folder) + ('' if r['ok'] else ' -> ' + '; '.join(r['issues'])))
     sys.exit(1 if bad else 0)
+
+
+def cmd_before_send(a):
+    from . import approval
+    folder = applications.resolve(a.folder)
+    out(approval.before_send(connect(), applications.job_id_of(folder)))
 
 
 def cmd_render(a):
@@ -335,7 +363,22 @@ def cmd_welcome(a):
     print((paths.ROOT / 'docs' / 'welcome.txt').read_text(encoding='utf-8'))
 
 
+def cmd_sources(a):
+    cfg = config.search()
+    if a.browser:
+        out({'active': config.active_sources(cfg, browser=True),
+             'disabled_browser': config.disabled_browser_sources(cfg),
+             'warnings': config.source_warnings(cfg)})
+    else:
+        out(config.active_sources(cfg))
+
+
 def cmd_update(a):
+    if a.sync_complete:
+        tools.sync_skills()
+        (paths.ROOT / '.gmaj-sync-pending').unlink(missing_ok=True)
+        print('Sincronizacion manual confirmada.')
+        return
     if a.auto:   # hook de inicio de sesión: una línea, nunca falla
         print(update.auto()['message'])
         return
@@ -360,8 +403,10 @@ def build():
     add('init', cmd_init, 'crea user/ desde las plantillas').add_argument('--no-git', action='store_true')
     add('doctor', cmd_doctor, 'revisa el entorno').add_argument('--json', action='store_true')
     add('validate', cmd_validate, 'revisa que el perfil esté completo').add_argument('--only', help='p. ej. profile,answers')
-    add('update', cmd_update, 'actualiza el motor (git pull) y revisa el perfil').add_argument(
+    sp = add('update', cmd_update, 'actualiza el motor (git pull) y revisa el perfil')
+    sp.add_argument(
         '--auto', action='store_true', help='modo silencioso y seguro para el inicio de cada sesión')
+    sp.add_argument('--sync-complete', action='store_true', help='confirma que uv sync manual termino bien y limpia los reintentos')
     add('discover', cmd_discover, 'fetch + prefilter sin LLM (lo corre el programador del SO)').add_argument(
         '--no-update', action='store_true', help='no hacer git pull antes')
     sp = add('fetch', cmd_fetch, 'solo descubrir vacantes')
@@ -381,6 +426,10 @@ def build():
     sp.add_argument('id')
     sp.add_argument('score', type=int)
     sp.add_argument('--reason', required=True)
+    add('paths', lambda a: out(paths.active()), 'rutas absolutas del usuario activo')
+    add('sources', cmd_sources, 'fuentes activas').add_argument('--browser', action='store_true')
+    add('resume', lambda a: out(applications.resume(connect())), 'paquetes por terminar y aprobaciones por enviar')
+    add('before-send', cmd_before_send, 'verifica la huella aprobada antes de enviar').add_argument('folder')
     add('stats', cmd_stats, 'conteos por estado y fuente')
     add('add-jobs', cmd_add_jobs, 'inserta vacantes de un JSON (navegador / correo)').add_argument('file')
     sp = add('score', cmd_score, 'scoring en lotes: export | import | run')
@@ -455,6 +504,10 @@ def main(argv=None):
         parser.error('autonomy set requiere: supervised | autopilot')
     try:
         args.func(args)
+    except sqlite3.OperationalError as exc:
+        if 'locked' not in str(exc).lower() and 'busy' not in str(exc).lower():
+            raise
+        parser.exit(2, 'gmaj: La base de datos está ocupada por otro proceso; vuelve a intentar en unos segundos.\n')
     except (ValueError, FileNotFoundError, config.MissingUserFile) as exc:
         parser.exit(2, f'gmaj: {exc}\n')
 

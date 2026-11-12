@@ -5,6 +5,8 @@ description: Sugiere familias de rol e industrias a buscar a partir del perfil d
 
 # Sugerir roles
 
+Antes de leer o escribir archivos ejecuta `uv run gmaj paths`: toda ruta `user/…` de esta skill está dentro del `user_dir` que devuelve (puede no ser la carpeta `user/` de este repo).
+
 1. Lee `user/profile.yaml` (experiencia, educación, certificaciones, habilidades, años por área, `preferences`) y `catalogs/role_families.yaml` como inspiración (no es una lista cerrada).
 2. Propón **4–8 familias de rol**. Para cada una:
    - nombre corto e `id` (minúsculas, sin espacios: `analista-datos`);

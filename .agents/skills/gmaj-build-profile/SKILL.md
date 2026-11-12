@@ -5,13 +5,15 @@ description: Genera la configuración de búsqueda (user/search.yaml), los CV ma
 
 # Construir el perfil operativo
 
+Antes de leer o escribir archivos ejecuta `uv run gmaj paths`: toda ruta `user/…` de esta skill está dentro del `user_dir` que devuelve (puede no ser la carpeta `user/` de este repo).
+
 Entrada: `user/profile.yaml`, `user/answers.yaml` (confirmados) y `preferences.chosen_role_families`. **No inventes nada**: solo seleccionar, reordenar, traducir y reformular.
 
 La confirmación ya se dio en gmaj-suggest-roles (grupos, CVs y alertas en un solo sí): **no vuelvas a pedir permiso** en los pasos 1–4 y 6. Avisa en una línea lo que vas haciendo ("Armando el CV del grupo A en español…"). Si llegas aquí sin esa confirmación (p. ej. desde gmaj-update-profile), da primero el mismo anuncio corto de gmaj-suggest-roles paso 5.
 
 ## 1. `user/search.yaml`
 Parte de `templates/user/search.yaml` (ya copiado por `gmaj init`) y de `catalogs/countries/<país>.yaml`:
-- `market`, `currency` (base + tipos de cambio aproximados), fuentes del país (`sources`) y `apply_sources` según los canales donde el usuario tiene cuenta.
+- `market`, `currency` (base + tipos de cambio aproximados), fuentes del país (`sources`) y `apply_sources` según los canales donde el usuario tiene cuenta. En los portales de navegador (`occ`, `indeed`) pon `enabled: true` solo si el usuario dijo que los usa (ver `user/onboarding/setup.json`) y `enabled: false` si no.
 - `salary.floor_month` / `target_month` / `office_min_month` desde `answers.salary_expectation.floor_month` / `target_month` / `office_min_month`.
 - `work_mode`: `remote: accept`; `hybrid`/`onsite`: `reject`, `accept` o `zones` con las zonas que dio el usuario.
 - `eligibility`: frases de rechazo según su autorización de trabajo (p. ej. si puede trabajar en EE.UU., quita las de EE.UU.); `location_ok` con su país/región; `remote_abroad_ok: true` salvo que el usuario no acepte trabajar como contratista internacional (`answers.engagement.contractor_ok: false`).

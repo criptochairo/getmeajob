@@ -45,11 +45,11 @@ def collector(kind):
     cfg = config.search()
     template = (paths.ROOT / 'prompts' / f'{kind}_collect.js').read_text(encoding='utf-8')
     queries = list(dict.fromkeys(q for values in (cfg.get('queries') or {}).values() for q in values))
-    floor = (cfg.get('salary') or {}).get('floor_month') or 0
-    source = (cfg.get('sources') or {}).get('occ' if kind == 'occ' else 'indeed') or {}
+    if kind not in config.active_sources(cfg, browser=True):
+        raise ValueError(f'Fuente de navegador desactivada: {kind}')
+    source = config.active_sources(cfg, browser=True)[kind]
     values = {
         '__QUERIES__': js([re.sub(r'[^a-z0-9]+', '-', db.normalize(q)).strip('-') for q in queries] if kind == 'occ' else queries),
-        '__FLOOR__': str(int(floor)),
         '__RELEVANT__': js(relevance_regex(cfg)),
         '__KEEP_ONSITE__': 'true' if (cfg.get('work_mode') or {}).get('onsite') != 'reject' else 'false',
         '__LOCATIONS__': js(source.get('locations') or [config.get(cfg, 'market.city') or config.get(cfg, 'market.country_label') or '']),

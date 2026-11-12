@@ -141,6 +141,10 @@ def run(role, prompt, chrome=False, timeout=None, runner=subprocess.run):
 
 def prompt_file(name, **values):
     text = (paths.ROOT / 'prompts' / name).read_text(encoding='utf-8')
+    text = text.replace('user/', paths.user_dir().as_posix() + '/')
+    if name != 'score.md':
+        text = ('Usuario activo: `' + paths.user_dir().as_posix() + '`\n'
+                'Antes de leer skills o archivos, ejecuta `uv run gmaj paths`; toda ruta user/ en instrucciones se resuelve en ese directorio.\n\n' + text)
     for key, value in values.items():
         text = text.replace('{{' + key + '}}', str(value))
     return text

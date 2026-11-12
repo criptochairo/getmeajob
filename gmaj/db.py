@@ -74,6 +74,14 @@ def connect(path=None):
     CREATE INDEX IF NOT EXISTS jobs_status ON jobs(status);
     CREATE INDEX IF NOT EXISTS jobs_url ON jobs(url);
     """)
+    # Idempotent upgrade of existing user databases.
+    if 'approval_hash' not in {r[1] for r in conn.execute('PRAGMA table_info(jobs)')}:
+        try:
+            with conn:
+                conn.execute('ALTER TABLE jobs ADD COLUMN approval_hash TEXT')
+        except sqlite3.OperationalError as exc:
+            if 'duplicate column' not in str(exc).lower():
+                raise
     return conn
 
 def insert_job(conn, job):
@@ -121,15 +129,31 @@ def set_status(conn, ident, status, note=None, app_dir=None, agent=None, **extra
         raise ValueError('Invalid agent')
     if set(extra) - {'filter_reason', 'score', 'score_reason', 'work_mode'}:
         raise ValueError('Invalid update fields')
+    # Submission is a fact already confirmed by the portal (or the user).
+    # Only before-send checks the approval before the irreversible action.
     updates = {'status': status, 'updated_at': now(), **extra}
     if app_dir is not None:
         updates['app_dir'] = app_dir
     if agent is not None:
         updates['assigned_agent'] = agent
     with conn:
-        old = conn.execute('SELECT status FROM jobs WHERE id=?', (ident,)).fetchone()
+        old = conn.execute('SELECT status,app_dir FROM jobs WHERE id=?', (ident,)).fetchone()
         if not old:
             raise ValueError(f'Unknown job: {ident}')
+        if status == 'approved':
+            from .approval import validated
+            from .tools import autonomy_state
+            if autonomy_state()['autonomy'] == 'supervised' and agent != 'human':
+                raise ValueError('En modo supervisado solo el usuario puede aprobar (--agent human).')
+            folder = app_dir if app_dir is not None else old['app_dir']
+            if not folder:
+                raise ValueError('Falta el paquete: requiere check + review + aprobación.')
+            from .applications import job_id_of
+            if job_id_of(paths.user(folder)) != ident:
+                raise ValueError('El paquete pertenece a otra vacante.')
+            updates['approval_hash'] = validated(paths.user(folder))
+        elif status not in ('applied', 'needs_user'):
+            updates['approval_hash'] = None
         conn.execute('UPDATE jobs SET ' + ','.join(f'{k}=?' for k in updates) + ' WHERE id=?', [*updates.values(), ident])
         if old['status'] != status:
             conn.execute('INSERT INTO events VALUES (?,?,?,?)', (ident, now(), status, note))

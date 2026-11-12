@@ -92,10 +92,11 @@ def test_top_is_idempotent(user_dir):
 
 
 
-def test_top_skips_company_already_applied(user_dir):
+def test_top_skips_company_already_applied(user_dir, approve_package):
     from conftest import load_config
     conn = db.connect()
     first = scored_job(conn)
+    approve_package(conn, first)
     db.set_status(conn, first, 'applied', 'sent')
     again = scored_job(conn, source='computrabajo', external_id='10', url='https://example.com/10', title='Data Analyst', company='ACME ')
     assert applications.top(conn, load_config()) == []
@@ -117,11 +118,12 @@ def test_check_package_uses_profile_contact_and_forbidden(user_dir):
     assert 'forbidden "55 9999 9999"' in issues and 'contact missing' in issues and '75%' in issues  # scrub:ok
 
 
-def test_log_submission(user_dir):
+def test_log_submission(user_dir, approve_package):
     from conftest import load_config
     conn = db.connect()
     ident = scored_job(conn)
     folder = applications.top(conn, load_config())[0]['dir']
+    approve_package(conn, ident)
     applications.log_submission(conn, folder, 'applied', 'linkedin', 'Easy Apply', agent='codex')
     row = conn.execute('SELECT status, assigned_agent FROM jobs WHERE id=?', (ident,)).fetchone()
     assert tuple(row) == ('applied', 'codex')
@@ -130,10 +132,15 @@ def test_log_submission(user_dir):
 
 
 def test_collectors_render_user_values(user_dir):
+    import yaml
+    cfg = yaml.safe_load((user_dir / 'search.yaml').read_text(encoding='utf-8'))
+    for name in ('occ', 'indeed'):
+        cfg['sources'][name]['enabled'] = True
+    (user_dir / 'search.yaml').write_text(yaml.safe_dump(cfg), encoding='utf-8')
     occ = tools.collector('occ')
     indeed = tools.collector('indeed')
     for js in (occ, indeed):
-        assert '30000' in js
+        assert '__FLOOR__' not in js
     assert '"analista-de-datos"' in occ and 'const QUERIES = __QUERIES__' not in occ
     assert '"data analyst"' in indeed and 'coyoac' in indeed.lower()
     assert '__HOME__' not in indeed and '__RELEVANT__' not in occ

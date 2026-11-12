@@ -5,6 +5,8 @@ description: Entrevista de GetMeAJob para armar el perfil del candidato (datos b
 
 # Entrevista de perfil
 
+Antes de leer o escribir archivos ejecuta `uv run gmaj paths`: toda ruta `user/…` de esta skill está dentro del `user_dir` que devuelve (puede no ser la carpeta `user/` de este repo).
+
 Objetivo: llenar `user/profile.yaml` y `user/answers.yaml` con hechos **confirmados por el usuario**, para que nunca haya que inventar nada en un CV o formulario.
 
 ## Reglas de conversación

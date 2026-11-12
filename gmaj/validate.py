@@ -4,7 +4,7 @@ from datetime import date
 
 import yaml
 
-from . import paths
+from . import config, paths
 
 SCHEMA_VERSION = 1
 
@@ -96,6 +96,7 @@ def check(user_dir=None, only=None):
     if years is not None and years < MIN_AGE:
         problems.append(f'GetMeAJob requiere {MIN_AGE} años o más (answers.yaml identity indica {years})')
     search = loaded.get('search') or {}
+    warnings += config.source_warnings(search)
     entry = search.get('entry_level') or {}
     if 'profile' in loaded and 'search' in loaded and is_entry_level(profile) and not entry.get('enabled'):
         warnings.append('search.yaml: entry_level.enabled es false pero el perfil es de entrada; corre gmaj-build-profile')

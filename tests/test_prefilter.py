@@ -44,11 +44,11 @@ def test_dedupe_and_history(tmp_path):
     job = dict(source='a', external_id='1', url='https://example.com/1?utm_source=a', title='Data Analyst', company='Acme, Inc.', work_mode='remote')
     assert db.insert_job(conn, job)
     ident = db.job_id(job)
-    db.set_status(conn, ident, 'approved', 'Reviewed', agent='claude')
+    db.set_status(conn, ident, 'reviewed', 'Reviewed', agent='claude')
     assert not db.insert_job(conn, {**job, 'source': 'b', 'external_id': '2', 'url': 'https://other.com/2', 'company': 'ACME INC', 'title': 'data analyst'})
     assert not db.insert_job(conn, {**job, 'external_id': '3', 'url': 'https://example.com/1?utm_source=b'})
-    assert conn.execute('SELECT status FROM jobs').fetchone()[0] == 'approved'
-    assert [r[0] for r in conn.execute('SELECT status FROM events')] == ['new', 'approved']
+    assert conn.execute('SELECT status FROM jobs').fetchone()[0] == 'reviewed'
+    assert [r[0] for r in conn.execute('SELECT status FROM events')] == ['new', 'reviewed']
     assert prefilter.run(conn, load_config()) == {}
     with pytest.raises(ValueError):
         db.set_status(conn, ident, 'invalid')
@@ -101,15 +101,15 @@ def test_cli_agent_score_and_json(capsys):
     ident = db.job_id(record)
     conn.close()
     cli.main(['set-score', ident, '80', '--reason', 'Role fit'])
-    cli.main(['set-status', ident, 'approved', '--note', 'Reviewed', '--agent', 'claude', '--app-dir', 'applications/example'])
+    cli.main(['set-status', ident, 'reviewed', '--note', 'Reviewed', '--agent', 'claude', '--app-dir', 'applications/example'])
     capsys.readouterr()
-    cli.main(['list', '--status', 'approved', '--json'])
+    cli.main(['list', '--status', 'reviewed', '--json'])
     result = json.loads(capsys.readouterr().out)
     assert len(result[0]['description']) == 4000
     conn = db.connect()
     row = conn.execute('SELECT * FROM jobs').fetchone()
     assert (row['score'], row['score_reason'], row['assigned_agent'], row['app_dir']) == (80, 'Role fit', 'claude', 'applications/example')
-    assert [r[0] for r in conn.execute('SELECT status FROM events')] == ['new', 'scored', 'approved']
+    assert [r[0] for r in conn.execute('SELECT status FROM events')] == ['new', 'scored', 'reviewed']
     conn.close()
 
 
