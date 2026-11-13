@@ -12,7 +12,7 @@ def test_ensure_chrome_launches_profile(monkeypatch, tmp_path):
     exe = tmp_path / 'chrome.exe'
     exe.write_text('')
     monkeypatch.setattr(browser, 'running', lambda runner=None: False)
-    monkeypatch.setattr(browser.os, 'name', 'nt')
+    monkeypatch.setattr(browser, '_is_windows', lambda: True)
     monkeypatch.setattr(browser, 'WINDOWS_PATHS', [str(exe)])
     launched = []
     assert browser.ensure_chrome('Profile 1', popen=launched.append, sleep=lambda s: None) == 'started'

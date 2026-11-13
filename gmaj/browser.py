@@ -15,8 +15,13 @@ WINDOWS_PATHS = [r'%ProgramFiles%\Google\Chrome\Application\chrome.exe',
                  r'%LocalAppData%\Google\Chrome\Application\chrome.exe']
 
 
+def _is_windows():
+    """Indirección para pruebas: parchear os.name rompe pathlib en otros sistemas."""
+    return os.name == 'nt'
+
+
 def running(runner=subprocess.run):
-    if os.name == 'nt':
+    if _is_windows():
         out = runner(['tasklist', '/FI', 'IMAGENAME eq chrome.exe', '/NH'], capture_output=True, text=True).stdout or ''
         return 'chrome.exe' in out.lower()
     out = runner(['pgrep', '-x', 'Google Chrome'], capture_output=True, text=True)
@@ -28,7 +33,7 @@ def ensure_chrome(profile='', wait=20, runner=subprocess.run, popen=subprocess.P
     if running(runner):
         return 'running'
     args = [f'--profile-directory={profile}'] if profile else []
-    if os.name == 'nt':
+    if _is_windows():
         exe = next((p for p in (Path(os.path.expandvars(x)) for x in WINDOWS_PATHS) if p.exists()), None)
         if not exe:
             return 'not_found'
