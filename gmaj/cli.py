@@ -368,7 +368,7 @@ def cmd_sources(a):
     if a.browser:
         out({'active': config.active_sources(cfg, browser=True),
              'disabled_browser': config.disabled_browser_sources(cfg),
-             'warnings': config.source_warnings(cfg)})
+             'warnings': []})
     else:
         out(config.active_sources(cfg))
 

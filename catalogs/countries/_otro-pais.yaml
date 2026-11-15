@@ -10,7 +10,8 @@ sources:
   # Computrabajo existe en varios países: co., pe., cl., ar., ec., ve., gt., cr., do., bo., py., uy. + computrabajo.com
   computrabajo: {enabled: false, url: "https://<cc>.computrabajo.com", modality: "remoto", language: es}
   # Indeed por país: <cc>.indeed.com (p. ej. co.indeed.com); el colector funciona igual dentro de la pestaña.
-  indeed: {enabled: false, browser: true, domain: "<cc>.indeed.com", locations: ["<País>"]}
+  # Queda apagado (browser: false) hasta rellenar dominio y ubicaciones; entonces poner browser: true.
+  indeed: {enabled: false, browser: false, domain: "<cc>.indeed.com", locations: ["<País>"]}
 eligibility:
   accept_phrases: ["latam", "latin america", "anywhere", "worldwide", "americas", "contractor"]
   location_ok: ["latam", "latin america", "americas", "worldwide", "anywhere", "global", "remote", "remoto"]

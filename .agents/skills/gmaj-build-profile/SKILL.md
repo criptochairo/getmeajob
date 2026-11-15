@@ -13,7 +13,7 @@ La confirmación ya se dio en gmaj-suggest-roles (grupos, CVs y alertas en un so
 
 ## 1. `user/search.yaml`
 Parte de `templates/user/search.yaml` (ya copiado por `gmaj init`) y de `catalogs/countries/<país>.yaml`:
-- `market`, `currency` (base + tipos de cambio aproximados), fuentes del país (`sources`) y `apply_sources` según los canales donde el usuario tiene cuenta. En los portales de navegador (`occ`, `indeed`) pon `enabled: true` solo si el usuario dijo que los usa (ver `user/onboarding/setup.json`) y `enabled: false` si no.
+- `market`, `currency` (base + tipos de cambio aproximados), fuentes del país (`sources`) y `apply_sources` según los canales donde el usuario tiene cuenta. En los portales de navegador (`occ`, `indeed`) deja `browser: true` si el usuario dijo que los usa (ver `user/onboarding/setup.json`) y pon `browser: false` si no; su `enabled: false` se queda así (solo significa que la búsqueda automática no los consulta).
 - `salary.floor_month` / `target_month` / `office_min_month` desde `answers.salary_expectation.floor_month` / `target_month` / `office_min_month`.
 - `work_mode`: `remote: accept`; `hybrid`/`onsite`: `reject`, `accept` o `zones` con las zonas que dio el usuario.
 - `eligibility`: frases de rechazo según su autorización de trabajo (p. ej. si puede trabajar en EE.UU., quita las de EE.UU.); `location_ok` con su país/región; `remote_abroad_ok: true` salvo que el usuario no acepte trabajar como contratista internacional (`answers.engagement.contractor_ok: false`).

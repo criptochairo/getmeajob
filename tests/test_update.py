@@ -126,18 +126,18 @@ def test_current_does_not_sync():
 
 
 @pytest.mark.parametrize('updated', [False, True])
-def test_update_warns_about_disabled_browser_sources(user_dir, updated):
+def test_update_does_not_warn_about_browser_portals(user_dir, updated):
+    # OCC/Indeed con enabled: false y browser: true están activos por navegador:
+    # la actualización no debe sugerir cambiar nada en search.yaml.
     (user_dir / 'search.yaml').write_text('''sources:
   occ: {browser: true, enabled: false}
   indeed: {browser: true, enabled: false}
-  active: {browser: true, enabled: true}
 ''', encoding='utf-8')
     runner, _ = updated_runner() if updated else fake_git({'rev-parse': 'same'})
     result = update.auto(runner)
     assert result['status'] == ('updated' if updated else 'current')
-    warnings = config.source_warnings(config.search())
-    assert len(warnings) == 2
-    assert result['message'].endswith('\n' + '\n'.join(warnings))
+    assert 'search.yaml' not in result['message']
+    assert 'OCC' not in result['message'] and 'INDEED' not in result['message']
 
 
 @pytest.mark.parametrize('updated', [False, True])

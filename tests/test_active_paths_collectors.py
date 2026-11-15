@@ -13,13 +13,44 @@ from gmaj import add_job, cli, config, db, doctor, engines, paths, pipeline, pre
 
 @pytest.mark.parametrize('options', [False, {},
                                      {'enabled': False, 'browser': True}, {'enabled': 1, 'browser': True}])
-def test_sources_require_explicit_enabled(options, monkeypatch):
+def test_automatic_discovery_requires_explicit_enabled(options):
     cfg = {'sources': {'occ': options}}
-    monkeypatch.setattr(config, 'search', lambda: cfg)
     assert config.active_sources(cfg) == {}
     assert not pipeline.enabled(cfg, 'occ')
+
+
+@pytest.mark.parametrize('options', [False, {}, {'enabled': True}, {'browser': False},
+                                     {'enabled': True, 'browser': False}])
+def test_browser_collector_requires_browser_true(options, monkeypatch):
+    cfg = {'sources': {'occ': options}}
+    monkeypatch.setattr(config, 'search', lambda: cfg)
+    assert config.active_sources(cfg, browser=True) == {}
     with pytest.raises(ValueError):
         tools.collector('occ')
+
+
+def test_template_browser_portals_stay_active(monkeypatch):
+    # La plantilla trae OCC e Indeed con enabled: false (la búsqueda automática no
+    # los consulta) y browser: true. Así los recolecta el agente sin tocar nada.
+    cfg = yaml.safe_load((paths.ROOT / 'templates' / 'user' / 'search.yaml').read_text(encoding='utf-8'))
+    monkeypatch.setattr(config, 'search', lambda: cfg)
+    active = config.active_sources(cfg, browser=True)
+    assert {'occ', 'indeed'} <= set(active)
+    assert cfg['sources']['occ']['enabled'] is False
+    assert 'const QUERIES' in tools.collector('occ')
+    assert not pipeline.enabled(cfg, 'occ')
+
+
+@pytest.mark.parametrize('enabled', [False, True])
+def test_automatic_discovery_never_touches_browser_portals(enabled, monkeypatch):
+    cfg = load_config()
+    cfg['sources'] = {'occ': {'enabled': enabled, 'browser': True},
+                      'indeed': {'enabled': enabled, 'browser': True}}
+    imported = []
+    monkeypatch.setattr(pipeline.importlib, 'import_module', lambda name: imported.append(name))
+    monkeypatch.setattr(pipeline, 'Client', lambda *a, **k: pytest.fail('no debe crear clientes'))
+    pipeline.fetch(db.connect(), cfg)
+    assert imported == []
 
 
 def test_active_browser_list_and_collectors_share_filter(monkeypatch):
@@ -56,18 +87,19 @@ def test_scalar_source_reaches_fetcher_as_options(monkeypatch):
     assert result['sources']['remotive']['errors'] == []
 
 
-def test_browser_disabled_sources_are_visible(user_dir, monkeypatch, capsys):
+def test_browser_sources_listing(user_dir, monkeypatch, capsys):
     cfg = load_config()
     cfg['sources']['occ'] = {'enabled': False, 'browser': True}
-    cfg['sources']['indeed'] = {'browser': True}
+    cfg['sources']['indeed'] = {'enabled': False, 'browser': False}
     (user_dir / 'search.yaml').write_text(yaml.safe_dump(cfg), encoding='utf-8')
     cli.main(['sources', '--browser'])
     output = json.loads(capsys.readouterr().out)
-    assert 'occ' in output['disabled_browser'] and 'occ' not in output['active']
-    assert 'indeed' in output['active']
-    assert any('OCC' in w and 'enabled: true' in w for w in validate.check()['warnings'])
+    assert 'occ' in output['active'] and 'occ' not in output['disabled_browser']
+    assert 'indeed' in output['disabled_browser'] and 'indeed' not in output['active']
+    assert output['warnings'] == []
+    assert not any('OCC' in w or 'INDEED' in w for w in validate.check()['warnings'])
     monkeypatch.setattr(schedule, 'status', lambda *a: False)
-    assert any('OCC' in r['detail'] and 'enabled: true' in r['detail'] for r in doctor.checks())
+    assert not any('enabled: true' in r['detail'] for r in doctor.checks())
 
 
 def test_prompts_resolve_active_user_and_scheduled_command_captures_it(user_dir, monkeypatch):

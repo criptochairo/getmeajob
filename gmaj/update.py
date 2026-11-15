@@ -5,7 +5,7 @@ user/ is gitignored, so the user's data never blocks or is touched by the pull.
 """
 import subprocess
 
-from . import config, paths, tools
+from . import paths, tools
 
 TIMEOUT = 15
 SYNC_TIMEOUT = 90
@@ -13,14 +13,6 @@ MAX_SYNC_FAILURES = 3
 
 
 def result(status, message):
-    if status in ('updated', 'current'):
-        try:
-            notices = config.source_warnings(config.search())
-        except Exception:
-            # A missing or unreadable search config must not break self-update.
-            notices = []
-        if notices:
-            message += '\n' + '\n'.join(notices)
     return {'status': status, 'message': message}
 
 

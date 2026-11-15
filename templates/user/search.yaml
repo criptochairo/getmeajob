@@ -85,8 +85,10 @@ sources:
     cooldown_hours: 6             # tras rendirse, nadie vuelve a llamar a LinkedIn en este tiempo (también el conteo de mercado)
   computrabajo:   {enabled: true, url: "https://mx.computrabajo.com", modality: "remoto", language: es}
   # Solo por navegador (anti-bot): los barre el agente con `gmaj collector occ|indeed` y `gmaj add-jobs`.
-  occ:    {enabled: true, browser: true, location_suffix: "México", offer_url: "https://www.occ.com.mx/empleo/oferta/{id}/"}
-  indeed: {enabled: true, browser: true, domain: "mx.indeed.com", locations: ["México"]}
+  # `browser: true` los activa; `enabled: false` solo indica que la búsqueda automática no los consulta.
+  # Para dejar de usarlos: `browser: false`.
+  occ:    {enabled: false, browser: true, location_suffix: "México", offer_url: "https://www.occ.com.mx/empleo/oferta/{id}/"}
+  indeed: {enabled: false, browser: true, domain: "mx.indeed.com", locations: ["México"]}
   greenhouse: []                 # slugs de empresas (catalogs/ats_boards.yaml)
   lever: []
   ashby: []
